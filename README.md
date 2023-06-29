@@ -14,20 +14,20 @@ MiResiliencia consists of three parts:
 
 In order to install the application, the database and the geoserver must be installed first.
 
-### Installation Datenbank
+### Installation database
 
 Download version 12 from; https://www.postgresql.org/download
 - Run the standard installation, including PostGIS package
 - Login to the database using pqAdmin
 - Create the user miresiliencia (the password is used hereafter)
 - Create a database schema
-- Execute the SQL miresiliencia_initial.sql inside the restb schema
+- Execute the SQL miresiliencia_initial.sql inside the miresiliencia schema [MiResiliencia-initial.sql](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/miresiliencia-initial.sql)
 
 ### Geo-servidor (servidor cartográfico)
 
 Download GeoServer version 2.23 from http://geoserver.org/download/
 - Do the standard installation on port 8080
-- Overwrite the data_dir directory with the provided data.zip file
+- Overwrite the data_dir directory with the provided and extracted [data.zip](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/data.zip)
 - Login to Geoserver (http://localhost:8080) with standard Geoserver access (admin/geoserver). For both PostGISView and Projectperimeter database connections, reset the database URL and password.
 - In Security > Data, set the write permissions (*.w) to "Enable for each function".
 
