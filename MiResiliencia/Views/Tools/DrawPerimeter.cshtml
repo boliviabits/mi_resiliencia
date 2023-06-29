@@ -1,0 +1,66 @@
+﻿@model int
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        drawWindow = Ext.getCmp('draw-window');
+        drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.ProjectPerimeter)');
+        GeoWebGIS.progress.addLoading();
+        GeoWebGIS.workingNamespace = 'Project';
+        GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Project&featureID=@Model&outputFormat=application/json');
+
+        GeoWebGIS.progress.addLoaded();
+        GeoWebGIS.progress.addLoaded();
+    });
+</script>
+@if (ViewBag.ProjectWrite)
+{
+<button class="btn ink-reaction btn-raised btn-primary" style="margin:5px;" type="button" id="startDraw" onclick="startDrawing();">@Resources.Global.DrawNew</button>
+<button class="btn ink-reaction btn-raised btn-danger" style="margin:5px;" type="button" id="startModify" onclick="startModify();">@Resources.Global.DrawModify</button>
+<button class="btn ink-reaction btn-raised btn-danger endDrawButton" type="button" id="stopDraw" style="display:none;margin:5px;" onclick="GeoWebGIS.endDrawInteraction();$('#startDraw').show();$('#startModify').show();$('#stopDraw').hide();">@Resources.Global.Stop</button>
+}
+
+<script type="text/javascript">
+    function startModify() {
+        GeoWebGIS.checkProjectState(
+            function () {
+                var drawStyle = 'Polygon';
+                GeoWebGIS.workingNamespace = 'Project';
+                GeoWebGIS.drawsource = new ol.source.Vector({
+                    format: new ol.format.GeoJSON(),
+                    url: function (extent) {
+                        wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Project&featureID=@Model&outputFormat=application/json';
+                        return wfsurl;
+
+                    },
+                    strategy: ol.loadingstrategy.bbox
+                });
+
+                GeoWebGIS.addDrawInteraction(drawStyle, "Modify");
+                $('#stopDraw').show();
+                $('#startDraw').hide();
+                $('#startModify').hide();
+            });
+    }
+
+    function startDrawing() {
+        GeoWebGIS.checkProjectState(
+            function () {
+                var drawStyle = 'Polygon';
+                GeoWebGIS.workingNamespace = 'Project';
+                GeoWebGIS.drawsource = new ol.source.Vector({
+                    format: new ol.format.GeoJSON(),
+                    url: function (extent) {
+                        wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Project&featureID=@Model&outputFormat=application/json';
+                        return wfsurl;
+
+                    },
+                    strategy: ol.loadingstrategy.bbox
+                });
+
+                GeoWebGIS.addDrawInteraction(drawStyle, "Draw",@Model);
+                $('#stopDraw').show();
+                $('#startDraw').hide();
+                $('#startModify').hide();
+            });
+    }
+</script>

@@ -1,0 +1,100 @@
+﻿@model MiResiliencia.Models.Project
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        drawWindow = Ext.getCmp('draw-window');
+        drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.Schutzmassnahme)');
+        GeoWebGIS.progress.addLoading();
+        GeoWebGIS.workingNamespace = 'ProtectionMeasure';
+            GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ProtectionMeasure&cql_filter=ProjectID=@Model.Id&outputFormat=application/json');
+            //drawWindow.setHeight(150);
+            GeoWebGIS.progress.addLoaded();
+    });
+
+    function startModifyPM() {
+        GeoWebGIS.checkProjectState(
+            function () {
+                var drawStyle = 'MultiPolygon';
+                GeoWebGIS.workingNamespace = 'ProtectionMeasure';
+                GeoWebGIS.drawsource = new ol.source.Vector({
+                    format: new ol.format.GeoJSON(),
+                    url: function (extent) {
+                        wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ProtectionMeasure&featureID=@Model.ProtectionMeasure.ID&outputFormat=application/json';
+                        return wfsurl;
+
+                    },
+                    strategy: ol.loadingstrategy.bbox
+                });
+
+                GeoWebGIS.addDrawInteraction(drawStyle, "Modify");
+                $('#stopPMDraw').show();
+                $('#startPMDraw').hide();
+                $('#startPMModify').hide();
+                $('#startPMDelete').hide();
+            });
+    }
+
+    function startDeletePM() {
+        GeoWebGIS.checkProjectState(
+            function () {
+                var drawStyle = 'MultiPolygon';
+                GeoWebGIS.workingNamespace = 'ProtectionMeasure';
+                GeoWebGIS.drawsource = new ol.source.Vector({
+                    format: new ol.format.GeoJSON(),
+                    url: function (extent) {
+                        wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ProtectionMeasure&featureID=@Model.ProtectionMeasure.ID&outputFormat=application/json';
+                        return wfsurl;
+
+                    },
+                    strategy: ol.loadingstrategy.bbox
+                });
+
+                GeoWebGIS.addDrawInteraction(drawStyle, "Delete");
+                $('#stopPMDraw').show();
+                $('#startPMDraw').hide();
+                $('#startPMModify').hide();
+                $('#startPMDelete').hide();
+            });
+    }
+
+    function startDrawingPM() {
+        GeoWebGIS.checkProjectState(
+            function () {
+                var drawStyle = 'MultiPolygon';
+                GeoWebGIS.workingNamespace = 'ProtectionMeasure';
+                GeoWebGIS.drawsource = new ol.source.Vector({
+                    format: new ol.format.GeoJSON(),
+                    url: function (extent) {
+                        wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ProtectionMeasure&featureID=@Model.ProtectionMeasure.ID&outputFormat=application/json';
+                        return wfsurl;
+
+                    },
+                    strategy: ol.loadingstrategy.bbox
+                });
+
+        @if (Model.ProtectionMeasure!=null)
+        {
+            <text>GeoWebGIS.addDrawInteraction(drawStyle, "Draw", @Model.ProtectionMeasure.ID, 0, 0, 0, 0, @Model.Id);</text>
+        }
+        else
+        {
+            <text>GeoWebGIS.addDrawInteraction(drawStyle, "Draw", 0, 0, 0, 0, 0, @Model.Id);</text>
+        }
+
+
+                $('#stopPMDraw').show();
+                $('#startPMDraw').hide();
+                $('#startPMModify').hide();
+                $('#startPMDelete').hide();
+            });
+    }
+</script>
+@if (ViewBag.ProjectWrite)
+{ 
+    <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startPMDraw" onclick="startDrawingPM();">@Resources.Global.DrawNew</button>
+    <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startPMModify" onclick="startModifyPM();">@Resources.Global.DrawModify</button>
+    <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startPMDelete" onclick="startDeletePM();">@Resources.Global.DrawDelete</button>
+
+    <button class="btn ink-reaction btn-raised btn-danger endDrawButton" type="button" id="stopPMDraw" style="display:none;" onclick="GeoWebGIS.endDrawInteraction();$('#startPMDraw').show();$('#startPMModify').show();$('#startPMDelete').show();$('#stopPMDraw').hide();">@Resources.Global.Stop</button>
+
+}

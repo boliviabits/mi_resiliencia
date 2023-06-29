@@ -1,0 +1,199 @@
+/**=====================
+     01. General CSS Start
+==========================**/
+//Custom css Start
+
+body {
+    background-color: rgba(246, 246, 246, 0.6);
+    font-size: $theme-font-size;
+    overflow-x: hidden;
+    font-family: $font-raleway;
+    color: $theme-body-font-color;
+}
+
+ul {
+    padding-left: 0;
+    list-style-type: none;
+    margin-bottom: 0;
+}
+
+* a {
+    color: $primary-color;
+}
+
+*.btn:focus {
+    box-shadow: none !important;
+}
+
+p {
+    font-size: 13px;
+    line-height: 1.7;
+    letter-spacing: 0.7px;
+}
+
+code {
+    color: $primary-color !important;
+    background-color: $light-color;
+    padding: 3px;
+    margin: 0 3px;
+    border-radius: 2px;
+}
+
+blockquote {
+    border-left: 4px solid $light-gray;
+    padding: 15px;
+}
+
+blockquote {
+    &.text-center {
+        border: none;
+        padding: 15px;
+    }
+}
+
+blockquote {
+    &.text-right {
+        border-left: none;
+        border-right: 4px solid $light-gray;
+        padding: 15px;
+    }
+}
+
+:focus {
+    outline-color: $primary-color;
+}
+
+.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.ace-editor {
+    height: 400px;
+    width: 100%;
+}
+
+.editor-toolbar {
+    width: 100% !important;
+}
+
+.CodeMirror {
+    top: 0 !important;
+}
+
+//Custom css End
+
+//Typography css start
+
+.typography {
+
+    h1,
+    .h1,
+    h2,
+    .h2,
+    h3,
+    .h3,
+    h4,
+    .h4,
+    h5,
+    .h5,
+    h6,
+    .h6 {
+        margin: 20px 0;
+        margin-top: 0;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    small {
+        padding-left: 10px;
+        color: $dark-color;
+    }
+}
+
+pre {
+    background-color: #f9f7ff;
+    padding: 20px 0;
+}
+
+a {
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+//Typography css end
+
+.owl-theme {
+    .owl-dots {
+        .owl-dot {
+            span {
+                background: lighten($primary-color, 20%);
+            }
+
+            &.active,
+            &:hover {
+                span {
+                    background: $primary-color;
+                }
+            }
+        }
+    }
+
+    .owl-nav {
+        &.disabled {
+            &+.owl-dots {
+                margin-bottom: -10px;
+                margin-top: 25px;
+            }
+        }
+    }
+}
+
+.click2edit {
+    &~.note-editor {
+        &.note-frame {
+            margin-bottom: 30px;
+        }
+    }
+}
+
+.note-editor {
+    &.note-frame {
+        border-color: $light-color;
+    }
+}
+
+.note-editor {
+    &.note-frame {
+        border-color: $light-color;
+    }
+}
+
+.pull-right {
+    float: right;
+}
+
+// modal page
+.modal-dialog {
+    .modal-content {
+        .modal-body {
+            p {
+                a {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}
+
+// map js page
+.map-js-height {
+    height: 500px;
+}
+
+/**=====================
+      01. General CSS Ends
+==========================**/

@@ -1,0 +1,245 @@
+﻿@model MiResiliencia.Models.MappedObject
+@using MiResiliencia.Models
+@{
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+}
+<style>
+    .tooltip.in {
+        opacity: 0.9;
+    }
+    .tooltip.show {
+        opacity: 0.9;
+    }
+</style>
+
+<script type="text/javascript">
+    function copyResilience(to) {
+        GeoWebGIS.progress.addLoading();
+
+        $.ajax({
+            url: '@Url.Action("CopyResilience", "Tools")',
+                    data: {
+                        from: @Model.ID,
+                        to: to,
+                        before: beforeResilience
+                    },
+                    success: function () {
+                        GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectWithResilience&cql_filter=ProjectId=@Model.Project.Id&outputFormat=application/json');
+
+                        GeoWebGIS.progress.addLoaded();
+                    }
+                });
+
+
+    }
+
+</script>
+
+
+<h3>
+    @Model.Objectparameter.Name
+@if ((Model.Objectparameter.Description != null) && (Model.Objectparameter.Description != ""))
+{
+    <text>(@Model.Objectparameter.Description)</text>
+}
+
+</h3>
+
+@foreach (ResilienceFactor f in ViewBag.PossibleFactors)
+{
+    <h4><b>@f.Preparedness</b></h4>
+    <table class="table" style="padding-left:50px; width:100%;">
+        @foreach (NatHazard n in ViewBag.NatHazards)
+        {
+            if (f.ResilienceWeights.Where(m => m.NatHazard == n && m.BeforeAction == ViewBag.ResilienceBefore).Count() > 0)
+            {
+            <tr>
+                <td style="padding: 5px 30px;"><span style="font-weight:bold; margin-right:5px;">
+                    @if ((n.Name != "Sequía") && (n.Name != "Drought"))
+                    {
+                        <text>@Resources.Global.Other</text>
+                    }
+                    else
+                    {
+                    @n.Name
+                    }
+                    </span></td>
+                <td>
+                    @{
+                        ResilienceValues v = Model.ResilienceValues.Where(m => m.ResilienceWeight.ResilienceFactor.ID == f.ID && m.ResilienceWeight.NatHazard.ID == n.ID && m.ResilienceWeight.BeforeAction == ViewBag.ResilienceBefore).FirstOrDefault();
+                        if (v != null)
+                        {
+                <input type="text"
+                       data-provide="slider"
+                       data-slider-id='ex1Slider'
+                       data-slider-value="@v.Value.ToString().Replace(",", ".")"
+                       id="@(v.ID)_@(f.ID)_@(n.ID)_@(Model.ID)_slider"
+                       data-slider-tooltip="hide" />
+
+}
+else
+{
+                <input type="text"
+                       data-provide="slider"
+                       data-slider-value="-1"
+                       id="0_@(f.ID)_@(n.ID)_@(Model.ID)_slider"
+                       data-slider-tooltip="hide" />
+}
+                    }
+
+                </td>
+                <td>
+                    @{
+
+                    }
+
+                    @if (v != null)
+                    {
+                        double weight = v.OverwrittenWeight;
+                        if (weight < 0)
+                        {
+                            weight = v.ResilienceWeight.Weight;
+                        }
+                    <select data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Weight" id="@(v.ID)_@(f.ID)_@(n.ID)_@(Model.ID)_weight" class="form-control resilienceWeight">
+                        @if (weight == 0)
+                        {
+                <option value="0" selected>0</option>
+                        }
+                        else
+                        {
+                <option value="0">0</option>
+                        }
+                        @if (weight == 0.5)
+                        {
+                <option value="0.5" selected>0.5</option>
+                        }
+                        else
+                        {
+                <option value="0.5">0.5</option>
+                        }
+                        @if (weight == 1)
+                        {
+                <option value="1" selected>1</option>
+                        }
+                        else
+                        {
+                <option value="1">1</option>
+                        }
+                    </select>
+                    }
+                    else
+                    {
+
+
+                        double weight = f.ResilienceWeights.Where(m => m.NatHazard == n && m.BeforeAction == ViewBag.ResilienceBefore).FirstOrDefault().Weight;
+
+
+                    <select data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Weight" id="0_@(f.ID)_@(n.ID)_@(Model.ID)_weight" class="form-control resilienceWeight">
+                        @if (weight == 0)
+                        {
+                <option value="0" selected>0</option>
+                        }
+                        else
+                        {
+                <option value="0">0</option>
+                        }
+                        @if (weight == 0.5)
+                        {
+                <option value="0.5" selected>0.5</option>
+                        }
+                        else
+                        {
+                <option value="0.5">0.5</option>
+                        }
+                        @if (weight == 1)
+                        {
+                <option value="1" selected>1</option>
+                        }
+                        else
+                        {
+                <option value="1">1</option>
+                        }
+                    </select>
+
+                    }
+                </td>
+            </tr>
+                            }
+
+
+                        }
+    </table>
+
+    
+}
+
+    <script type="text/javascript">
+        $('[data-provide="slider"]').bootstrapSlider({
+            ticks: [0, 0.25, 0.5, 0.75, 1],
+            ticks_positions: [0, 25, 50, 75, 100],
+            step: 0.25,
+            tooltip: 'show',
+            formatter: function (value) {
+                var showValue;
+                /*if (value == 1) showValue = 0.25;
+                else if (value == 2) showValue = 0.5;
+                else if (value == 3) showValue = 0.75;
+                else if (value == 4) showValue = 1;
+                else */
+                showValue = value;
+                return 'Índice: ' + showValue;
+            }
+            
+
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-provide="slider"]').slider().on('slideStop', function (e1) {
+            GeoWebGIS.checkProjectState(
+                function () {
+                    if (projectwrite) {
+
+
+                        var parameters = e1.target.id.split("_");
+                        var weight = $('#' + e1.target.id.replace("slider", "weight")).val();
+
+
+                        $.ajax({
+                            dataType: "json",
+                            url: '@Url.Action("ChangeResilience")',
+                            data: {
+                                'ResilienceValueID': parameters[0], 'ResilienceFactorId': parameters[1], 'NatHazardId': parameters[2], 'value': e1.value, 'MappedObjectId': parameters[3], 'Weight': weight, 'BeforeAction' : '@ViewBag.ResilienceBefore'
+                            },
+                            success: function (data) {
+                                GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectWithResilience&cql_filter=ProjectId={ProjectID}&outputFormat=application/json');
+                            }
+                        });
+                    }
+                });
+
+        });
+
+        $('.resilienceWeight').on("change", function (e1) {
+            GeoWebGIS.checkProjectState(
+                function () {
+                    if (projectwrite) {
+                        var parameters = e1.target.id.split("_");
+                        var resvalue = $('#' + e1.target.id.replace("weight", "slider")).val();
+                        console.log(e1);
+
+                        $.ajax({
+                            dataType: "json",
+                            url: '@Url.Action("ChangeResilience")',
+                            data: {
+                                'ResilienceValueID': parameters[0], 'ResilienceFactorId': parameters[1], 'NatHazardId': parameters[2], 'value': resvalue, 'MappedObjectId': parameters[3], 'Weight': e1.target.value, 'BeforeAction' : '@ViewBag.ResilienceBefore'
+                            },
+                            success: function (data) {
+
+                                GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectWithResilience&cql_filter=ProjectId={ProjectID}&outputFormat=application/json');}
+                        });
+                    }
+                });
+        });
+
+
+    </script>

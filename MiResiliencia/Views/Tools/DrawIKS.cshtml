@@ -1,0 +1,210 @@
+﻿@model int
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        GeoWebGIS.progress.addLoading();
+
+        drawWindow = Ext.getCmp('draw-window');
+        drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.IntensityMaps)');
+
+        GeoWebGIS.workingNamespace = 'Intensity';
+        reloadIKs();
+        changeIKDrawSettings();
+        GeoWebGIS.progress.addLoaded();
+        //drawWindow.setHeight($('#ikeditorwindow').height()+100);
+    });
+
+
+    function startDrawingIK(mode) {
+        GeoWebGIS.checkProjectState(
+            function () {
+                var natgef = $('#NatHazardIKBefore').val();
+                var ikclass = $('#IKClassesBefore').val();
+                var degree = $('#IntensityDegreeBefore').val();
+
+
+                var drawStyle = 'MultiPolygon';
+                GeoWebGIS.workingNamespace = 'Intensity';
+                // new layer
+                if (mode == "new") {
+                    $.ajax({
+                        url: '@Url.Action("GetIntensityID")?ProjectId=@Model&NatHazardId=' + natgef + '&IKClassID=' + ikclass + '&isBefore=true&IntensityDegree=' + degree,
+                        success: function (data) {
+                            // nothing there
+                            if (data == "false") {
+
+                                GeoWebGIS.drawsource = new ol.source.Vector({
+                                    format: new ol.format.GeoJSON(),
+                                    url: function (extent) {
+                                        wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=0&outputFormat=application/json';
+                                        return wfsurl;
+
+                                    },
+                                    strategy: ol.loadingstrategy.bbox
+                                });
+
+
+                                GeoWebGIS.addDrawInteraction(drawStyle, "Draw", 0, natgef, ikclass, true, degree,@Model);
+                            }
+                            // we have already a polygon
+                            else {
+                                GeoWebGIS.drawsource = new ol.source.Vector({
+                                    format: new ol.format.GeoJSON(),
+                                    url: function (extent) {
+                                        wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + data + '&outputFormat=application/json';
+                                        return wfsurl;
+
+                                    },
+                                    strategy: ol.loadingstrategy.bbox
+                                });
+
+
+                                GeoWebGIS.addDrawInteraction(drawStyle, "Draw", data, natgef, ikclass, true, degree,@Model);
+                            }
+
+                        }
+                    });
+                }
+                // already existing layer
+                else if (mode == "modify") {
+                    var featureIDs = '';
+                    $('.ikbefore').each(function (e) {
+                        if ($(this).is(':checked')) featureIDs = featureIDs + $(this).attr('id') + ',';
+                    });
+                    GeoWebGIS.drawsource = new ol.source.Vector({
+                                format: new ol.format.GeoJSON(),
+                                url: function (extent) {
+                                    wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json';
+                                    return wfsurl;
+
+                                },
+                                strategy: ol.loadingstrategy.bbox
+                            });
+                            GeoWebGIS.addDrawInteraction(drawStyle, "Modify");
+                }
+                //delete layer
+                else if (mode == "delete") {
+
+                    var featureIDs = '';
+                    $('.ikbefore').each(function (e) {
+                        if ($(this).is(':checked')) featureIDs = featureIDs + $(this).attr('id') + ',';
+                    });
+                    GeoWebGIS.drawsource = new ol.source.Vector({
+                                format: new ol.format.GeoJSON(),
+                                url: function (extent) {
+                                    wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json';
+                                    return wfsurl;
+
+                                },
+                                strategy: ol.loadingstrategy.bbox
+                            });
+                            GeoWebGIS.addDrawInteraction(drawStyle, "Delete");
+                }
+
+                $('#stopIKDrawBefore').show();
+                $('#startDrawIKBefore').hide();
+                $('#startIKModifyBefore').hide();
+                $('#startIKDeleteBefore').hide();
+
+            }
+            
+
+        );
+
+
+    }
+
+    function changeIKDrawSettings() {
+        //GeoWebGIS.endDrawInteraction();
+        //$('#stopIKDrawBefore').hide();
+        if (!GeoWebGIS.isDrawing) {
+            var natgef = $('#NatHazardIKBefore').val();
+            var ikclass = $('#IKClassesBefore').val();
+            var degree = $('#IntensityDegreeBefore').val();
+
+            $('#startIKModifyBefore').show();
+            $('#startIKDeleteBefore').show();
+            $('#startDrawIKBefore').show();
+        }
+        
+    }
+
+
+    // refresh the list wit the IKs
+    function reloadIKs() {
+        var featureIDs = [];
+        $('.ikbefore').each(function (e) {
+            if ($(this).is(":checked")) featureIDs.push($(this).attr('id'));
+        });
+        // check if we have a new intensity layer. Add it to the checked layers
+        if (GeoWebGIS.lastInsertedFeatureId != null) {
+            featureIDs.push(GeoWebGIS.lastInsertedFeatureId);
+        }
+
+
+        url = '@Url.Action("IksList", "Tools", new { id = Model })';
+        $.get(url, function (data) {
+            $('#IKsListBefore').html(data);
+
+            //window.materialadmin.App.initialize();
+            //window.materialadmin.AppCard.initialize();
+            //window.materialadmin.AppForm.initialize();
+            // recheck the checked chekcboxes
+            $('.ikbefore').each(function (e) {
+                if (featureIDs.indexOf($(this).attr('id')) >= 0) $(this).prop('checked', true);
+            });
+            showIKsbefore();
+
+
+
+        });
+
+        url = '@Url.Action("IksListSmall", "Tools", new { id = Model })';
+        $.get(url, function (data) {
+            $('#layerBeforCopyDiv').html(data);
+            //window.materialadmin.App.initialize();
+            //window.materialadmin.AppCard.initialize();
+            //window.materialadmin.AppForm.initialize();
+
+            $('.ikbefore').each(function (e) {
+                if ($(this).is(":checked")) featureIDs.push($(this).attr('id'));
+            });
+
+            // recheck the checked chekcboxes
+            $('.ikbeforesmall').each(function (e) {
+
+                var id = $(this).attr('id');
+                id = id.replace("small_", "");
+                if (featureIDs.indexOf(id) >= 0) $(this).prop('checked', true);
+            });
+            showIKsbeforeSmall();
+            //$("#layerBeforCopyDiv").html('');
+            //$("#IKsListBefore").clone(true, true).appendTo("#layerBeforCopyDiv");
+        });
+    }
+
+</script>
+
+<div id="ikeditorwindow">
+    @if (ViewBag.ProjectWrite)
+    {
+        <div class="row">
+            <div class="col-md-3" style="padding-top:10px;">@Resources.Global.NatHaz</div>
+            <div class="col-md-6">@Html.DropDownList("NatHazardIKBefore", (IEnumerable<SelectListItem>)ViewBag.Hazards, new { id = "NatHazardIKBefore", @class = "form-control", onchange = "changeIKDrawSettings();" })</div>
+        </div>
+        <div class="row">
+            <div class="col-md-3" style="padding-top:5px;">@Resources.Global.IKClasses</div>
+            <div class="col-md-6">@Html.DropDownList("IKClassesBefore", (IEnumerable<SelectListItem>)ViewBag.IKClasses, new { id = "IKClassesBefore", @class = "form-control", onchange = "changeIKDrawSettings();" })</div>
+        </div>
+        <div class="row">
+            <div class="col-md-3" style="padding-top:10px;">@Resources.Global.Intensitaetsstufe</div>
+            <div class="col-md-6">@Html.DropDownList("IntensityDegreeBefore", (IEnumerable<SelectListItem>)ViewBag.IntensityDegree, new { id = "IntensityDegreeBefore", @class = "form-control", onchange = "changeIKDrawSettings();" })</div>
+        </div>
+        <p></p>
+        <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startDrawIKBefore" onclick="startDrawingIK('new');" style="display:none;">@Resources.Global.DrawNew</button>
+        <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startIKModifyBefore" onclick="startDrawingIK('modify');" style="display:none;">@Resources.Global.Modify</button>
+        <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startIKDeleteBefore" onclick="startDrawingIK('delete');" style="display:none;">@Resources.Global.DrawDelete</button>
+
+        <button class="btn ink-reaction btn-raised btn-danger endDrawButton" type="button" id="stopIKDrawBefore" style="display:none;" onclick="GeoWebGIS.endDrawInteraction(); $('#stopIKDrawBefore').hide(); reloadIKs(); changeIKDrawSettings();">@Resources.Global.Stop</button>
+    }
+</div>

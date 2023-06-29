@@ -1,0 +1,56 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<h1></h1>
+
+<section class="section-account">
+    
+    <div class="card style-transparent">
+        <div class="card-body floating-label">
+            <div class="row">
+                <div class="col-sm-12">
+                </div>
+                <div class="col-sm-5">
+                    <div style="background-image: url('/img/logo_miresiliencia.png');width: 100%;background-size: contain;height: 100%;background-repeat: no-repeat;"></div>
+                 </div>
+                 <div class="col-sm-7">
+                     
+                    <h1 style="font-weight:bold; color:darkred;">MiResiliencia</h1><br />
+                    <h2>Herramienta para el Anàlisis del Riesgo de Desastres y Costo-Beneficio de Medidas de Mitigaciòn</h2>
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <input asp-for="Input.Username" class="form-control" autocomplete="username" aria-required="true" />
+                            <label asp-for="Input.Username" class="form-label"></label>
+                            <span asp-validation-for="Input.Username" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                            <label asp-for="Input.Password" class="form-label"></label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div style="width:100px; margin-top:20px;">
+                            <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                        </div>
+
+                    </form>
+                </div><!--end .col -->
+
+                <div class="col-sm-6 col-sm-offset-1 text-center">
+
+                    <h3 class="text-light"></h3>
+                </div>
+            </div><!--end .row -->
+        </div><!--end .card-body -->
+    </div><!--end .card -->
+</section>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

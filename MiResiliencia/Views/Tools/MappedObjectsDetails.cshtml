@@ -1,0 +1,66 @@
+﻿@model MiResiliencia.Models.MappedObject
+@{
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+}
+
+<div class="panel-group" id="">
+    <div class="card panel">
+        <div class="card-header style-primary">
+            <h5>@Resources.Global.SelectedObject</h5>
+        </div>
+        <script type="text/javascript">
+        function reloadObjectParameter() {
+
+            url = '@Url.Action("ObjectParameterEdit", "Tools", new { id = Model.ID })?lat=@Model.lat.ToString().Replace(",", ".")&lon=@Model.lon.ToString().Replace(",", ".")&inErrorView=@ViewBag.inErrorView';
+            $.get(url, function (data) {
+
+                @{
+                    if (ViewBag.inErrorView)
+                    {
+                        <text>$('#selectedObjectParameterError').html(data);
+                $('#selectedObjectParameter').html("");
+
+                </text>
+                    }
+                    else
+                    {
+                        <text>$('#selectedObjectParameter').html(data);
+                $('#selectedObjectParameterError').html("");</text>
+                    }
+                }
+
+
+                //window.materialadmin.App.initialize();
+                //window.materialadmin.AppCard.initialize();
+                //
+                // window.materialadmin.AppForm.initialize();
+            });
+        }
+
+
+            $(document).ready(function () {
+                reloadObjectParameter();
+            });
+
+        </script>
+        @{ 
+            if (ViewBag.inErrorView)
+            {
+        <text><div class="card-body" id="selectedObjectParameterError">
+    </text>
+    }
+    else
+    {
+    <text><div class="card-body" id="selectedObjectParameter">
+    </text>
+}
+}
+
+
+<div style="text-align:center; width:100%;display:none;">
+    @Resources.Global.LoadingMessage <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
+</div>
+
+</div>
+    </div>
+</div>

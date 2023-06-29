@@ -1,0 +1,479 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AfterChange" xml:space="preserve">
+    <value>After protection</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="BeforeChange" xml:space="preserve">
+    <value>Before protection</value>
+  </data>
+  <data name="BenutzernameLabel" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="CarsPerDay" xml:space="preserve">
+    <value>Number of vehicles / day</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ChangePasswordSuccess" xml:space="preserve">
+    <value>&lt;strong&gt;Successfully changed Password&lt;/strong&gt;</value>
+  </data>
+  <data name="ChooseProject" xml:space="preserve">
+    <value>Choose project</value>
+  </data>
+  <data name="ClickHereForUploading" xml:space="preserve">
+    <value>Click here to upload all Shapefile-Files</value>
+  </data>
+  <data name="ClickOnAnObject" xml:space="preserve">
+    <value>Please click on an object for more information</value>
+  </data>
+  <data name="Close Project" xml:space="preserve">
+    <value>Close project</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="Companymanager" xml:space="preserve">
+    <value>Companymanager</value>
+  </data>
+  <data name="Construction Costs" xml:space="preserve">
+    <value>Construction Costs</value>
+  </data>
+  <data name="ConstructionCosts" xml:space="preserve">
+    <value>Construction costs [Bs]</value>
+  </data>
+  <data name="Coordinates" xml:space="preserve">
+    <value>Coordinates</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="CopyFromBefore" xml:space="preserve">
+    <value>Copy from "Before Measurement"</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="dpi" xml:space="preserve">
+    <value>DPI</value>
+  </data>
+  <data name="Draw" xml:space="preserve">
+    <value>Draw</value>
+  </data>
+  <data name="DrawDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DrawModify" xml:space="preserve">
+    <value>Modify</value>
+  </data>
+  <data name="DrawNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="DrawObject" xml:space="preserve">
+    <value>Draw object</value>
+  </data>
+  <data name="Employees" xml:space="preserve">
+    <value>Employees</value>
+  </data>
+  <data name="Existing Users" xml:space="preserve">
+    <value>Existing Users</value>
+  </data>
+  <data name="ExistingIK" xml:space="preserve">
+    <value>Existing intensity maps</value>
+  </data>
+  <data name="Exitsting Companies" xml:space="preserve">
+    <value>Existing Companies</value>
+  </data>
+  <data name="ExportAsPDF" xml:space="preserve">
+    <value>Export as PDF</value>
+  </data>
+  <data name="fast" xml:space="preserve">
+    <value>fast</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="Floors" xml:space="preserve">
+    <value>Number of floors</value>
+  </data>
+  <data name="Gefahrenanalyse" xml:space="preserve">
+    <value>Danger analysis</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="IKClasses" xml:space="preserve">
+    <value>Intensity class</value>
+  </data>
+  <data name="ImportShp" xml:space="preserve">
+    <value>Import SHP</value>
+  </data>
+  <data name="Index" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="Intensitaetsstufe" xml:space="preserve">
+    <value>Intensity degree</value>
+  </data>
+  <data name="IntensityMaps" xml:space="preserve">
+    <value>Intensity maps</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LayerDisplay" xml:space="preserve">
+    <value>Display</value>
+  </data>
+  <data name="LayerLabel" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="LayerLayers" xml:space="preserve">
+    <value>Available layers</value>
+  </data>
+  <data name="Layers" xml:space="preserve">
+    <value>Layers</value>
+  </data>
+  <data name="LifeSpan" xml:space="preserve">
+    <value>Lifespan [years]</value>
+  </data>
+  <data name="LoadingMessage" xml:space="preserve">
+    <value>Loading content. Please wait...</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="MaintenanceCosts" xml:space="preserve">
+    <value>Maintenance Costs</value>
+  </data>
+  <data name="Map" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="MapExport" xml:space="preserve">
+    <value>Export map</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="mittel" xml:space="preserve">
+    <value>medium</value>
+  </data>
+  <data name="Modify" xml:space="preserve">
+    <value>Modify</value>
+  </data>
+  <data name="MotivationToChangePerson" xml:space="preserve">
+    <value>Motivation to change presence</value>
+  </data>
+  <data name="MotivationToChnageValue" xml:space="preserve">
+    <value>Motivation to change value</value>
+  </data>
+  <data name="Move logo here" xml:space="preserve">
+    <value>Click or drag your logo here</value>
+  </data>
+  <data name="NatHaz" xml:space="preserve">
+    <value>Natural hazard</value>
+  </data>
+  <data name="New Company" xml:space="preserve">
+    <value>New Company</value>
+  </data>
+  <data name="New User" xml:space="preserve">
+    <value>New User</value>
+  </data>
+  <data name="NewProject" xml:space="preserve">
+    <value>New Project</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="ObjectName" xml:space="preserve">
+    <value>Name of object</value>
+  </data>
+  <data name="Objekt" xml:space="preserve">
+    <value>Object</value>
+  </data>
+  <data name="OperatingCosts" xml:space="preserve">
+    <value>Operating costs</value>
+  </data>
+  <data name="Operational Costs" xml:space="preserve">
+    <value>Operational Costs      </value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>All hazards without drought</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="PasswortLabel" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PersonPerFloor" xml:space="preserve">
+    <value>Presence of persons</value>
+  </data>
+  <data name="PersonPresence" xml:space="preserve">
+    <value>Presence of persons</value>
+  </data>
+  <data name="Picture" xml:space="preserve">
+    <value>Picture</value>
+  </data>
+  <data name="Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="PleaseChooseProject" xml:space="preserve">
+    <value>Please choose project</value>
+  </data>
+  <data name="PowerdBy" xml:space="preserve">
+    <value>Powerd by</value>
+  </data>
+  <data name="Pra" xml:space="preserve">
+    <value>Pra</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="PrintHeading" xml:space="preserve">
+    <value>Heading</value>
+  </data>
+  <data name="PrintMap" xml:space="preserve">
+    <value>Print map</value>
+  </data>
+  <data name="PrintPageSize" xml:space="preserve">
+    <value>Page size</value>
+  </data>
+  <data name="Project" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="ProjectDefinition" xml:space="preserve">
+    <value>Project Overview</value>
+  </data>
+  <data name="ProjectManager" xml:space="preserve">
+    <value>Project Manager</value>
+  </data>
+  <data name="ProjectName" xml:space="preserve">
+    <value>Project Name</value>
+  </data>
+  <data name="ProjectNotFound" xml:space="preserve">
+    <value>ERROR: Project not found</value>
+  </data>
+  <data name="ProjectNumber" xml:space="preserve">
+    <value>Project Number</value>
+  </data>
+  <data name="ProjectPerimeter" xml:space="preserve">
+    <value>Perimeter</value>
+  </data>
+  <data name="ProjectState" xml:space="preserve">
+    <value>Project state</value>
+  </data>
+  <data name="RateofReturn" xml:space="preserve">
+    <value>Rate of Return</value>
+  </data>
+  <data name="Recalculate" xml:space="preserve">
+    <value>Recalculate</value>
+  </data>
+  <data name="Resilienz" xml:space="preserve">
+    <value>Resilience</value>
+  </data>
+  <data name="Resultate" xml:space="preserve">
+    <value>Results</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Schadenpotential" xml:space="preserve">
+    <value>Claims potential</value>
+  </data>
+  <data name="Schutzmassnahme" xml:space="preserve">
+    <value>Protection</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="SelectedObject" xml:space="preserve">
+    <value>Selected object</value>
+  </data>
+  <data name="SelectGoal" xml:space="preserve">
+    <value>Please select the goal:</value>
+  </data>
+  <data name="SessionOut" xml:space="preserve">
+    <value>ERROR: Session expired, please reload page</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Show Result" xml:space="preserve">
+    <value>Show Result</value>
+  </data>
+  <data name="ShowErrorsOnMap" xml:space="preserve">
+    <value>Show Errors on map</value>
+  </data>
+  <data name="slow" xml:space="preserve">
+    <value>slow</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="strong" xml:space="preserve">
+    <value>strong</value>
+  </data>
+  <data name="UnityOfObject" xml:space="preserve">
+    <value>Unity of object</value>
+  </data>
+  <data name="UploadingFiles" xml:space="preserve">
+    <value>Uploading following files</value>
+  </data>
+  <data name="UserInformation" xml:space="preserve">
+    <value>Userinformation</value>
+  </data>
+  <data name="Usermanager" xml:space="preserve">
+    <value>Usermanger</value>
+  </data>
+  <data name="UserProfile" xml:space="preserve">
+    <value>Userprofile</value>
+  </data>
+  <data name="ValueAddedTax" xml:space="preserve">
+    <value>Value Added Tax</value>
+  </data>
+  <data name="ValuePerUnity" xml:space="preserve">
+    <value>Actual value / unit [Bs]</value>
+  </data>
+  <data name="Velocity" xml:space="preserve">
+    <value>Average speed</value>
+  </data>
+  <data name="Warnings" xml:space="preserve">
+    <value>Warnings</value>
+  </data>
+  <data name="weak" xml:space="preserve">
+    <value>weak</value>
+  </data>
+  <data name="Weight" xml:space="preserve">
+    <value>Weight</value>
+    <comment>Weig</comment>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ExportProject" xml:space="preserve">
+    <value>Export as GPKG</value>
+  </data>
+  <data name="ImportMessage" xml:space="preserve">
+    <value>Upload import file. Geopakage files are possible. For a valid data model it is recommended to make an export of the project first and to edit or complete this data.</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+</root>

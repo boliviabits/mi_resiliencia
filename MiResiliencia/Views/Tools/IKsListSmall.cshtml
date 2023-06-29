@@ -1,0 +1,58 @@
+﻿@model MiResiliencia.Models.Project
+
+
+@{
+    /**/
+
+    string nathaz = "";
+    string ikklass = "";
+
+    bool isFirstNatHazard = true;
+    bool isFirstIKClass = true;
+
+    var natHazList = Model.Intesities.Where(m => m.BeforeAction == ViewBag.BeforeAction).OrderByDescending(m => m.IntensityDegree).OrderBy(m => m.IKClasses.Value).OrderBy(m => m.NatHazard)
+                                                .GroupBy(u => u.NatHazard)
+                                                .Select(grp => grp.ToList()).ToList();
+}
+
+@foreach (List<MiResiliencia.Models.Intensity> intPerHazard in natHazList)
+{
+    var intInHazard = intPerHazard.GroupBy(u => u.IKClasses).Select(grp => grp.ToList()).ToList();
+
+    foreach (List<MiResiliencia.Models.Intensity> intPerHazardPerIK in intInHazard)
+    {
+
+        foreach (MiResiliencia.Models.Intensity i in intPerHazardPerIK)
+        {
+            <div class="col-sm-12">
+                <div class="checkbox checkbox-styled" style="margin-bottom:5px;">
+                    @if (ViewBag.BeforeAction)
+                    {
+                        <div class="form-group m-checkbox-inline mb-0">
+                            <div class="checkbox checkbox-primary">
+                                <input id="small_@i.ID" class="ikbeforesmall" onchange="showIKsbeforeSmall()" type="checkbox">
+                                <label for="small_@i.ID" class="mb-0">@i.IntensityDegree.ToString()</label>
+                            </div>
+                        </div>
+
+
+                    }
+                    else
+                    {
+                        <div class="form-group m-checkbox-inline mb-0">
+                            <div class="checkbox checkbox-primary">
+                                <input id="small_@i.ID" class="ikaftersmall" onchange="showIKsafterSmall()" type="checkbox">
+                                <label for="small_@i.ID" class="mb-0">@i.IntensityDegree.ToString()</label>
+                            </div>
+                        </div>
+
+                    }
+
+                </div>
+            </div>
+
+            
+        }
+    }
+
+}

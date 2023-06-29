@@ -1,0 +1,45 @@
+{
+  "profiles": {
+    "MiResiliencia": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "hotReloadProfile": "aspnetcore",
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7119;http://localhost:5290"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "hotReloadProfile": "aspnetcore"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "environmentVariables": {
+        "Environment:DBHost": "db.FeldApp.ch",
+        "Environment:DB": "restb2",
+        "Environment:DBUser": "postgres",
+        "Environment:DBPassword": "",
+        "Environment:SplittingBehavior": "true",
+        "Environment:Geoserver": "https://geoserver.geobrowser.ch/geoserver/"
+      },
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:60260",
+      "sslPort": 44367
+    }
+  }
+}

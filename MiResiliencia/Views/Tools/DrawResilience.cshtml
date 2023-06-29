@@ -1,0 +1,37 @@
+﻿@model MiResiliencia.Models.Project
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        drawWindow = Ext.getCmp('draw-window');
+        drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.Resilienz)');
+        GeoWebGIS.workingNamespace = 'Resilience';
+    });
+
+    function startCopyResilience() {
+        GeoWebGIS.checkProjectState(
+            function () {
+                GeoWebGIS.workingNamespace = 'ResilienceCopy';
+                $('#stopCopyDraw').show();
+                $('#startCopyDraw').hide();
+                document.body.style.cursor = "copy";
+            });
+    }
+
+    function stopCopyResilience() {
+
+        GeoWebGIS.workingNamespace = 'Resilience';
+        $('#startCopyDraw').show();
+        $('#stopCopyDraw').hide();
+        document.body.style.cursor = "default";
+    }
+
+
+
+</script>
+@if (ViewBag.ProjectWrite)
+{ 
+    <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startCopyDraw" onclick="startCopyResilience();">@Resources.Global.Copy</button>
+
+    <button class="btn ink-reaction btn-raised btn-danger endDrawButton" type="button" id="stopCopyDraw" style="display:none;" onclick="stopCopyResilience();">@Resources.Global.Stop</button>
+
+}

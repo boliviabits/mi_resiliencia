@@ -1,0 +1,115 @@
+﻿@using MiResiliencia.Resources.API;
+@model MiResiliencia.Models.API.ProjectResult
+
+@{
+    ViewBag.Title = ResSummary.TXT_Summary;
+
+    if (Context.Request.Headers.Keys.Contains("x-ic-request"))
+    {
+        if (Context.Request.Headers["X-IC-Request"] == "true")
+        {
+            Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@Html.Raw(ResSummary.TXT_ProjectSummary)</title>
+    @if (ViewBag.attachCss ?? false)
+    {
+        @*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+        <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    }
+    @if (ViewBag.attachCss ?? false)
+    {
+        <style>
+            .collapse {
+                display: block !important
+            }
+        </style>
+    }
+    @if (ViewBag.print ?? false)
+    {
+        <style>
+            html, body {
+                height: 297mm;
+                width: 210mm;
+            }
+        </style>
+    }
+    <script src="~/Scripts/Chart.min.js" type="text/javascript"></script>
+</head>
+<body>
+    <p><br /></p>
+    @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+    @* PROJECT SUMMARY *@
+    @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+
+    <div class="card card-bordered style-danger">
+        @*HEADER*@
+        <div class="card-header">
+            <h5>
+                @if (ViewBag.attachCss ?? false)
+                {
+                    @ResSummary.TXT_ProjectSummary
+                }
+                else
+                {
+                    @ResSummary.TXT_ProjectSummary
+                }
+            </h5>
+            <div class="tools">
+                @*<a class="btn btn-icon-toggle btn-collapse"><i class="fa fa-angle-down"></i></a>*@
+            </div>
+        </div>
+        @*CONTENT*@
+        <div class="card-body style-default-bright" style="display: block;">
+            <h2 class="bg-info">@ResSummary.TXT_Project</h2>
+            <table class="table table-condensed table-bordered table-hover table-responsive">
+                <tr>
+                    <th>
+                        @Html.Raw(ResSummary.TXT_Number)
+                    </th>
+                    <th>
+                        @Html.Raw(ResSummary.TXT_Name)
+                    </th>
+                    <th>
+                        @Html.Raw(ResSummary.TXT_Message)
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => model.Project.Number)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Project.Name)
+                    </td>
+                    <td>
+                        @Html.Raw(ResResult.PRJ_NoDamageExtent)
+                    </td>
+                </tr>
+            </table>
+
+
+        </div>
+    </div>
+
+    @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+    @* FOOTER *@
+    @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+    <p>
+        <hr />
+        WebApp Version @typeof(MiResiliencia.Controllers.API.ResultController).Assembly.GetName().Version
+        <br />
+        Built @System.IO.File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location).ToString()
+    </p>
+</body>
+</html>

@@ -1,0 +1,64 @@
+﻿@model MiResiliencia.Models.ProtectionMeasure
+@using MiResiliencia.Helpers
+<div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <table class="table">
+        @Html.MyEditorRowFor(x => x.Costs, "PM")
+        @Html.MyEditorRowFor(x => x.LifeSpan, "PM")
+        @Html.MyEditorRowFor(x => x.OperatingCosts, "PM")
+        @Html.MyEditorRowFor(x => x.MaintenanceCosts, "PM")
+        @Html.MyEditorRowFor(x => x.RateOfReturn, "PM")
+        @Html.MyEditorRowFor(x => x.Description, "PM")
+
+    </table>
+    @if (ViewBag.ProjectWrite)
+    {
+        <button type="button" onclick="insidePMEdit('PM')" id="edit_PM_button_PM" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Modify</button>
+        <button type="button" onclick="savePMEdit('PM')" id="save_PM_button_PM" style="display:none;" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Save</button>
+    }
+        <p></p>
+
+        <script type="text/javascript">
+            function insidePMEdit(id) {
+                GeoWebGIS.checkProjectState(
+                    function () {
+                        $('.insideEditor').each(function () {
+                            if ($(this).attr("id").indexOf(id.toString() + "_") == 0) $(this).show();
+                            else $(this).hide();
+                        });
+                        $('.insideText').each(function () {
+                            if ($(this).attr("id").indexOf(id.toString() + "_") == 0) $(this).hide();
+                        });
+
+                        $('#edit_PM_button_' + id).hide();
+                        $('#save_PM_button_' + id).show();
+                    }); 
+            }
+
+
+            function savePMEdit(id) {
+                $.ajax({
+                url: '@Url.Action("EditInsidePM", "Tools")/' + @Model.ID,
+                    data: {
+
+                        costs: $('#' + id + '_Costs').val().replace(",","."),
+                        lifespan: $('#' + id + '_LifeSpan').val().replace(",", "."),
+                        operatingcosts: $('#' + id + '_OperatingCosts').val().replace(",", "."),
+                        maintenancecosts: $('#' + id + '_MaintenanceCosts').val().replace(",", "."),
+                        rateofreturn: $('#' + id + '_RateOfReturn').val().replace(",", "."),
+                        valueaddedtax: '0',
+                        description: $('#' + id + '_Description').val()
+                    },
+                    success: function () { reloadPMid(@Model.ID); }
+                });
+
+            }
+
+        </script>
+
+    </div>
+
+
+
+

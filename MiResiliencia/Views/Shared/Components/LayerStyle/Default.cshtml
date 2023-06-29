@@ -1,0 +1,132 @@
+﻿@model IEnumerable<MiResiliencia.Models.LayerStyle>
+@using MiResiliencia.Models
+
+@foreach (LayerStyle l in Model.Where(m => m.Function != null))
+{
+    @Html.Raw(@l.Function)
+}
+
+            function getStrokeColor(feature) {
+                // Do coloring effects like this
+@foreach (LayerStyle l in Model.Where(m => m.StrokeOrFill == StrokeOrFill.Stroke))
+{
+    <text>if (feature.get('@l.Attribute') @Html.Raw(@l.Condition)) return '@l.Color';</text>
+}
+        else return 'blue';
+    }
+
+    function getFillColor(feature) {
+        // Do coloring effects like this
+@foreach (LayerStyle l in Model.Where(m => m.StrokeOrFill == StrokeOrFill.Fill))
+{
+    <text>if (feature.get('@l.Attribute') @Html.Raw(@l.Condition)) return '@l.Color';</text>
+}
+        else return 'rgba(0,0,255, 0.1)';
+    }
+
+    var getText = function (feature) {
+            var text = feature.get('name');
+            return text;
+        };
+
+        var createTextStyle = function (feature) {
+            if (!GeoWebGIS.showLabels) return null;
+
+            var offsetX = 0;
+            var offsetY = 0;
+
+            if (feature.getGeometry().getType() == 'Point') {
+                offsetX = 12;
+                offsetY = -12;
+            }
+            var normalfont = '12px Calibri,sans-serif';
+
+            return new ol.style.Text({
+                font: normalfont,
+                align: 'Start',
+                offsetX: offsetX,
+                offsetY: offsetY,
+                text: getText(feature),
+                fill: new ol.style.Fill({
+                    color: '#000'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#fff',
+                    width: 3
+                })
+            });
+        };
+
+    function getLineWidth(feature) {
+        // strong line if we have no fill, else small one
+        if (getFillColor(feature)=='rgba(0,0,255, 0.1)') return 5;
+        else return 1;
+    }
+
+    function polygonStyleFunction(feature) {
+        return new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: getStrokeColor(feature),
+                width: getLineWidth(feature)
+            }),
+            fill: new ol.style.Fill({
+                color: getFillColor(feature)
+            }),
+            text: createTextStyle(feature)
+        });
+    }
+
+    function lineStyleFunction(feature) {
+        return new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: getStrokeColor(feature),
+                width: 3
+            }),
+            fill: new ol.style.Fill({
+                color: getFillColor(feature)
+            }),
+            text: createTextStyle(feature)
+        });
+    }
+
+    function pointStyleFunction(feature) {
+        return new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 5,
+                fill: new ol.style.Fill({
+                    color: getFillColor(feature)
+                }),
+                stroke: new ol.style.Stroke({ color: getStrokeColor(feature), width: 3 })
+
+            }),
+            text: createTextStyle(feature)
+        });
+    }
+
+
+
+    var styleFunction = function (feature) {
+@foreach (LayerStyle l in Model.Where(m => m.Function != null))
+{
+    <text>
+        try {
+
+        if (feature.getLayer(GeoWebGIS.map).getSource().getUrl().toString().indexOf('@(l.Layer)&')>=0) return @l.Attribute
+        }
+        catch (e) {
+        if ((feature.getLayer(GeoWebGIS.map).get('id')=='wfslayer') && (GeoWebGIS.wfsurl.indexOf('@(l.Layer)&')>=0)) {
+        return @l.Attribute
+        }
+        }
+    </text>
+}
+
+
+        if (feature.getGeometry().getType() == 'Point') return pointStyleFunction(feature);
+        if (feature.getGeometry().getType() == 'LineString') return lineStyleFunction(feature);
+        if (feature.getGeometry().getType() == 'Polygon') return polygonStyleFunction(feature);
+        if (feature.getGeometry().getType() == 'MultiPolygon') return polygonStyleFunction(feature);
+
+        };
+
+        GeoWebGIS.wfslayer.setStyle(styleFunction);

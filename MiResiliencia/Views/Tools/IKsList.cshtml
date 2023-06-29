@@ -1,0 +1,100 @@
+﻿@model MiResiliencia.Models.Project
+@using MiResiliencia.Helpers
+@using System.ComponentModel.DataAnnotations
+
+@{
+    /**/
+
+    string nathaz = "";
+    string ikklass = "";
+
+    bool isFirstNatHazard = true;
+    bool isFirstIKClass = true;
+
+    var natHazList = Model.Intesities.Where(m => m.BeforeAction == ViewBag.BeforeAction).OrderByDescending(m => m.IntensityDegree).OrderBy(m => m.IKClasses.Value).OrderBy(m => m.NatHazard)
+                                                .GroupBy(u => u.NatHazard)
+                                                .Select(grp => grp.ToList()).ToList();
+}
+
+@foreach (List<MiResiliencia.Models.Intensity> intPerHazard in natHazList)
+{
+    var intInHazard = intPerHazard.GroupBy(u => u.IKClasses).Select(grp => grp.ToList()).ToList();
+
+    foreach (List<MiResiliencia.Models.Intensity> intPerHazardPerIK in intInHazard)
+    {
+
+        foreach (MiResiliencia.Models.Intensity i in intPerHazardPerIK)
+        {
+
+
+            if (nathaz != i.NatHazard.Name)
+            {
+                nathaz = i.NatHazard.Name;
+                ikklass = "";
+
+                if (!isFirstNatHazard)
+                {
+                    @Html.Raw("</div></li></ul></div>")
+
+                }
+                else
+                {
+
+                }
+                @Html.Raw("<div class='card' style='width: 100%'>")
+                <div class="card-header card-head-xs style-default">
+                    <h5><b>@nathaz</b></h5>
+                </div>
+                @Html.Raw("<ul class='list-group list-group-flush' stlye='margin-bottom: -4px;'>")
+                isFirstNatHazard = false; isFirstIKClass = true;
+
+            }
+
+            if (ikklass != i.IKClasses.Description)
+            {
+                ikklass = i.IKClasses.Description;
+
+                if (!isFirstIKClass)
+                {
+                    @Html.Raw("</div></div></li>")
+                }
+
+                @Html.Raw("<li class='list-group-item'><div class='row'>")
+                isFirstIKClass = false;
+
+                <div class="col-sm-3" style="padding-left:40px; font-weight:bold;">@ikklass</div>
+                @Html.Raw("<div class='col-sm-9'>")
+
+            }
+
+                <div class="col-sm-12">
+                    <div class="checkbox checkbox-styled" style="margin-bottom:5px;">
+                            @if (ViewBag.BeforeAction)
+                            {
+                                <div class="form-group m-checkbox-inline mb-0">
+                                    <div class="checkbox checkbox-primary">
+                                    <input id="@i.ID" class="ikbefore" onchange="showIKsbefore()" type="checkbox">
+                                        <label for="@i.ID" class="mb-0">@i.IntensityDegree.GetDisplayName()</label>
+                                    </div>
+                                </div>
+
+                                
+                            }
+                            else
+                            {
+                                <div class="form-group m-checkbox-inline mb-0">
+                                    <div class="checkbox checkbox-primary">
+                                    <input id="@i.ID" class="ikafter" onchange="showIKsafter()" type="checkbox">
+                                        <label for="@i.ID" class="mb-0">@i.IntensityDegree.GetDisplayName()</label>
+                                    </div>
+                                </div>
+                                
+                            }
+
+                    </div>
+                </div>
+        }
+    }
+
+}
+@Html.Raw("</div></li></ul></div>")

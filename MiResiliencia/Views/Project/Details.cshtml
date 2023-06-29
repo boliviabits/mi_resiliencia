@@ -1,0 +1,965 @@
+﻿@model MiResiliencia.Models.Project
+@using MiResiliencia.Helpers;
+@using MiResiliencia.Models
+@{
+    ViewBag.Title = "Details";
+    if (Context.Request.Headers.Keys.Contains("x-ic-request"))
+    {
+        if (Context.Request.Headers["X-IC-Request"] == "true")
+        {
+            Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<script type="text/javascript">
+    @if (ViewBag.ProjectWrite)
+    {
+        <text>var projectwrite = true; </text>
+    }
+    else
+    {
+        <text>var projectwrite = false; </text>
+    }
+
+        $('#projectDiv').sizeChanged(function () {
+            if ($('#projectDiv').width() < 1111) {
+                $(".insideTab > h6").hide();
+
+            }
+            else {
+                $(".insideTab > h6").show();
+            }
+
+
+        });
+
+    function loadPerimeterDraw() {
+
+        GeoWebGIS.progress.addLoading();
+        $("#drawContainer").load('@Url.Action("DrawPerimeter", "Tools", new { @id = Model.Id, @projectWrite = ViewBag.ProjectWrite })', function () {
+            GeoWebGIS.progress.addLoaded();
+        });
+    }
+
+    $(document).ready(function () {
+        $("#drawContainer").html("");
+        $("#plContainer").html("");
+        GeoWebGIS.progress.addLoading();
+        $('#projectTitle').contents().first()[0].textContent = "Proyecto (@Html.Raw(Model.Name))";
+        GeoWebGIS.clusterselect.getFeatures().clear();
+
+
+        if ($('#projectDiv').width() < 1111) {
+            $(".insideTab > h6").hide();
+        }
+        else {
+            $(".insideTab > h6").show();
+        }
+        if (projectwrite) {
+            openDrawWindow();
+        }
+
+
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+        // load Projectlayer Window
+        openProjectLayerWindow();
+
+
+
+        //window.materialadmin.AppForm._initRadioAndCheckbox();
+
+
+        GeoWebGIS.progress.addLoaded();
+
+    }
+    );
+
+
+    // load project layers for IKs
+    function loadIKSSmall() {
+        url = '@Url.Action("IksList", "Tools", new { id = Model.Id })';
+        $.get(url, function (data) {
+            $('#IKsListBefore').html(data);
+            //.materialadmin.App.initialize();
+            //window.materialadmin.AppCard.initialize();
+            //window.materialadmin.AppForm.initialize();
+        });
+        url = '@Url.Action("IksList", "Tools", new { id = Model.Id, beforeAction = false })';
+        $.get(url, function (data) {
+            $('#IKsListAfter').html(data);
+            //window.materialadmin.App.initialize();
+            //window.materialadmin.AppCard.initialize();
+            //window.materialadmin.AppForm.initialize();
+        });
+
+        url = '@Url.Action("IksListSmall", "Tools", new { id = Model.Id })';
+        $.get(url, function (data) {
+
+            $('#layerBeforCopyDiv').html(data);
+            //window.materialadmin.App.initialize();
+            //window.materialadmin.AppCard.initialize();
+            //window.materialadmin.AppForm.initialize();
+        });
+        url = '@Url.Action("IksListSmall", "Tools", new { id = Model.Id, beforeAction = false })';
+        $.get(url, function (data) {
+
+            $('#layerAfterCopyDiv').html(data);
+            //window.materialadmin.App.initialize();
+            //window.materialadmin.AppCard.initialize();
+            //window.materialadmin.AppForm.initialize();
+
+        });
+    }
+
+
+    function showIKsbefore() {
+        var featureIDs = '';
+        $('.ikbefore').each(function (e) {
+
+            var id = $(this).attr('id');
+            id = id.replace("small_", "");
+            if ($(this).is(":checked")) {
+
+                featureIDs = featureIDs + id + ',';
+                // check the others in projectlayer
+                $('#' + id).prop("checked", true);
+                $('#small_' + id).prop("checked", true);
+            }
+            else {
+
+                $('#' + id).prop("checked", false);
+                $('#small_' + id).prop("checked", false);
+            }
+        });
+        console.log("ShowIKSbefore");
+
+        GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json&sortBy=IntensityDegree+D');
+
+
+        // add it to the project layer
+        var la = GeoWebGIS.getLayer('projectintensities');
+        var isAlreadyIn = $.grep(GeoWebGIS.customLayers, function (obj) { return obj.id == 'projectintensities'; })
+        if (isAlreadyIn.length > 0) {
+            var la = GeoWebGIS.getLayer('projectintensities');
+            la.setSource(null);
+            var source = new ol.source.Vector({
+                format: new ol.format.GeoJSON(),
+                url: function (extent) {
+                    var featureIDs = '';
+                    $('.ikbefore').each(function (e) {
+                        if ($(this).is(':checked')) featureIDs = featureIDs + $(this).attr('id') + ',';
+                    });
+                    return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json&sortBy=IntensityDegree+D';
+                },
+                strategy: ol.loadingstrategy.bbox
+            });
+            la.setSource(source);
+        }
+    }
+
+    function showIKsbeforeSmall() {
+        console.log("showIKsbeforeSmall");
+        var featureIDs = '';
+        $('.ikbeforesmall').each(function (e) {
+
+            var id = $(this).attr('id');
+            id = id.replace("small_", "");
+            if ($(this).is(":checked")) {
+
+                featureIDs = featureIDs + id + ',';
+                // check the others in projectlayer
+                $('#' + id).prop("checked", true);
+                $('#small_' + id).prop("checked", true);
+            }
+            else {
+                $('#' + id).prop("checked", false);
+                console.log("Entklick 1 + " + id);
+                $('#small_' + id).prop("checked", false);
+            }
+        });
+        // add it to the project layer
+        var la = GeoWebGIS.getLayer('projectintensities');
+        var isAlreadyIn = $.grep(GeoWebGIS.customLayers, function (obj) { return obj.id == 'projectintensities'; })
+        if (isAlreadyIn.length > 0) {
+            var la = GeoWebGIS.getLayer('projectintensities');
+            la.setSource(null);
+            var source = new ol.source.Vector({
+                format: new ol.format.GeoJSON(),
+                url: function (extent) {
+                    var featureIDs = '';
+                    $('.ikbefore').each(function (e) {
+                        if ($(this).is(':checked')) featureIDs = featureIDs + $(this).attr('id') + ',';
+                    });
+                    return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json&sortBy=IntensityDegree+D';
+                },
+                strategy: ol.loadingstrategy.bbox
+            });
+            la.setSource(source);
+        }
+
+    }
+
+
+    function showIKsafter() {
+        var featureIDs = '';
+        $('.ikafter').each(function (e) {
+
+            var id = $(this).attr('id');
+            id = id.replace("small_", "");
+            if ($(this).is(":checked")) {
+
+                featureIDs = featureIDs + id + ',';
+                // check the others in projectlayer
+                $('#' + id).prop("checked", true);
+                $('#small_' + id).prop("checked", true);
+            }
+            else {
+
+                $('#' + id).prop("checked", false);
+
+                console.log("Entklick 2 + " + id);
+                $('#small_' + id).prop("checked", false);
+            }
+        });
+        GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json&sortBy=IntensityDegree+D');
+
+
+        // add it to the project layer
+        var la = GeoWebGIS.getLayer('projectintensitiesafter');
+        var isAlreadyIn = $.grep(GeoWebGIS.customLayers, function (obj) { return obj.id == 'projectintensitiesafter'; })
+        if (isAlreadyIn.length > 0) {
+            var la = GeoWebGIS.getLayer('projectintensitiesafter');
+            la.setSource(null);
+            var source = new ol.source.Vector({
+                format: new ol.format.GeoJSON(),
+                url: function (extent) {
+                    var featureIDs = '';
+                    $('.ikafter').each(function (e) {
+                        if ($(this).is(':checked')) featureIDs = featureIDs + $(this).attr('id') + ',';
+                    });
+                    return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json&sortBy=IntensityDegree+D';
+                },
+                strategy: ol.loadingstrategy.bbox
+            });
+            la.setSource(source);
+        }
+    }
+
+    function showIKsafterSmall() {
+        var featureIDs = '';
+        $('.ikaftersmall').each(function (e) {
+
+            var id = $(this).attr('id');
+            id = id.replace("small_", "");
+            if ($(this).is(":checked")) {
+
+                featureIDs = featureIDs + id + ',';
+                // check the others in projectlayer
+                $('#' + id).prop("checked", true);
+                $('#small_' + id).prop("checked", true);
+            }
+            else {
+
+                $('#' + id).prop("checked", false);
+                $('#small_' + id).prop("checked", false);
+            }
+        });
+
+        // add it to the project layer
+        var la = GeoWebGIS.getLayer('projectintensitiesafter');
+        var isAlreadyIn = $.grep(GeoWebGIS.customLayers, function (obj) { return obj.id == 'projectintensitiesafter'; })
+        if (isAlreadyIn.length > 0) {
+            var la = GeoWebGIS.getLayer('projectintensitiesafter');
+            la.setSource(null);
+            var source = new ol.source.Vector({
+                format: new ol.format.GeoJSON(),
+                url: function (extent) {
+                    var featureIDs = '';
+                    $('.ikafter').each(function (e) {
+                        if ($(this).is(':checked')) featureIDs = featureIDs + $(this).attr('id') + ',';
+                    });
+                    return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json&sortBy=IntensityDegree+D';
+                },
+                strategy: ol.loadingstrategy.bbox
+            });
+            la.setSource(source);
+        }
+
+    }
+
+    var loadDrawContent;
+
+    var beforeResilience = true;
+
+    // change Tab Event
+    $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        // Finalizar all open mappings
+        $('.endDrawButton:visible').each(function (e) {
+            $(this).click();
+        });
+        GeoWebGIS.clusterselect.getFeatures().clear();
+        var loading = '<div id="loading-spinner" style="text-align:center; width:100%"><i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i> @Resources.Global.LoadingMessage</div>';
+        $("#drawContainer").html(loading);
+        var target = $(e.target).attr("href") // activated tab
+        if (target == "#pOverview") {
+            GeoWebGIS.progress.addLoading();
+            GeoWebGIS.progress.addLoading();
+            if (loadDrawContent != null) loadDrawContent.abort();
+            loadDrawContent = $.ajax({
+                url: '@Url.Action("DrawPerimeter", "Tools", new { id = Model.Id, @projectWrite = ViewBag.ProjectWrite })',
+                success: function (data) {
+                    $("#drawContainer").html(data);
+                    GeoWebGIS.progress.addLoaded();
+                }
+            });
+        }
+        else if (target == "#pIKBefore") {
+            if (loadDrawContent != null) loadDrawContent.abort();
+            loadDrawContent = $.ajax({
+                url: '@Url.Action("DrawIKS", "Tools", new { id = Model.Id, @projectWrite = ViewBag.ProjectWrite })',
+                success: function (data) {
+                    $("#drawContainer").html(data);
+                }
+            });
+        }
+        else if (target == "#pPotential") {
+            GeoWebGIS.progress.addLoading();
+            if (loadDrawContent != null) loadDrawContent.abort();
+            loadDrawContent = $.ajax({
+                url: '@Url.Action("DrawPotential", "Tools", new { id = Model.Id, @projectWrite = ViewBag.ProjectWrite })',
+                success: function (data) {
+                    $("#drawContainer").html(data);
+
+                    GeoWebGIS.progress.addLoaded();
+                }
+            });
+        }
+        else if (target == "#pMassnahme") {
+            if (loadDrawContent != null) loadDrawContent.abort();
+            loadDrawContent = $.ajax({
+                url: '@Url.Action("DrawProtection", "Tools", new { id = Model.Id, @projectWrite = ViewBag.ProjectWrite })',
+                success: function (data) {
+                    $("#drawContainer").html(data);
+                }
+            });
+        }
+        else if (target == "#pResilienz") {
+            if (loadDrawContent != null) loadDrawContent.abort();
+            loadDrawContent = $.ajax({
+                url: '@Url.Action("DrawResilience", "Tools", new { id = Model.Id, @projectWrite = ViewBag.ProjectWrite })',
+                success: function (data) {
+                    $("#drawContainer").html(data);
+                }
+            });
+            GeoWebGIS.workingNamespace = 'Resilience';
+            beforeResilience = true;
+            GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectWithResilience&cql_filter=ProjectId=@Model.Id&outputFormat=application/json');
+        }
+        else if (target == "#pResilienzAfter") {
+            if (loadDrawContent != null) loadDrawContent.abort();
+            loadDrawContent = $.ajax({
+                url: '@Url.Action("DrawResilience", "Tools", new { id = Model.Id, @projectWrite = ViewBag.ProjectWrite })',
+                success: function (data) {
+                    $("#drawContainer").html(data);
+                }
+            });
+            GeoWebGIS.workingNamespace = 'Resilience';
+            beforeResilience = false;
+            GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectWithResilience&cql_filter=ProjectId=@Model.Id&outputFormat=application/json');
+        }
+        else if (target == "#pIKAfter") {
+            if (loadDrawContent != null) loadDrawContent.abort();
+            loadDrawContent = $.ajax({
+                url: '@Url.Action("DrawIKSAfter", "Tools", new { id = Model.Id, @projectWrite = ViewBag.ProjectWrite })',
+                success: function (data) {
+                    $("#drawContainer").html(data);
+                }
+            });
+        }
+        else if (target == "#pResults") {
+            if (loadDrawContent != null) loadDrawContent.abort();
+
+            $("#drawContainer").html('');
+            GeoWebGIS.workingNamespace = 'Results';
+
+
+            //GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectWithResilience&cql_filter=ProjectId=@Model.Id&outputFormat=application/json');
+        }
+        else {
+            if (loadDrawContent != null) loadDrawContent.abort();
+            $("#drawContainer").html('');
+        }
+    });
+</script>
+
+<p></p>
+<div class="row" id="projectDiv">
+    <div class="col-md-12">
+        <div class="card">
+            <!--<ul class="card-header nav nav-tabs text-center" data-toggle="tabs">
+                <li class="nav item active" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Project (@Resources.Global.Overview)"><a href="#pOverview" class="insideTab" data-toggle="tab"><i class="fa fa-lg fa-file"></i><br><h4>@Resources.Global.Project<br><small>@Resources.Global.Overview</small></h4></a></li>
+                <li data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Gefahrenanalyse (@Resources.Global.BeforeChange)"><a href="#pIKBefore" class="insideTab" data-toggle="tab"><i class="fa fa-lg fa-bolt"></i><br><h4>@Resources.Global.Gefahrenanalyse<br><small>@Resources.Global.BeforeChange</small></h4></a></li>
+                <li data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Schadenpotential"><a href="#pPotential" class="insideTab" data-toggle="tab"><i class="fa fa-lg fa-exclamation-triangle"></i><br><h4>@Resources.Global.Schadenpotential<br><small>&nbsp;</small></h4></a></li>
+                <li data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Resilienz (@Resources.Global.BeforeChange)"><a href="#pResilienz" class="insideTab" data-toggle="tab"><i class="icon miresiliencia-lg miresiliencia-font-resilience-1"></i><br><h4>@Resources.Global.Resilienz<br><small>@Resources.Global.BeforeChange</small></h4></a></li>
+                <li data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Schutzmassnahme"><a href="#pMassnahme" class="insideTab" data-toggle="tab"><i class="icon miresiliencia-lg miresiliencia-font-medida-de-mitigacion"></i><br><h4>@Resources.Global.Schutzmassnahme<br><small>&nbsp;</small></h4></a></li>
+                <li data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Gefahrenanalyse (@Resources.Global.AfterChange)"><a href="#pIKAfter" class="insideTab" data-toggle="tab"><i class="fa fa-lg fa-bolt"></i><br><h4>@Resources.Global.Gefahrenanalyse<br><small>@Resources.Global.AfterChange</small></h4></a></li>
+                <li data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Resilienz (@Resources.Global.AfterChange)"><a href="#pResilienzAfter" class="insideTab" data-toggle="tab"><i class="icon miresiliencia-lg miresiliencia-font-resilience-1"></i><br><h4>@Resources.Global.Resilienz<br><small>@Resources.Global.AfterChange</small></h4></a></li>
+                <li data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Resultate"><a href="#pResults" class="insideTab" data-toggle="tab"><i class="fa fa-lg fa-calculator"></i><br /><h4>@Resources.Global.Resultate<br><small>&nbsp;</small></h4></a></li>
+            </ul>-->
+            <div class="card-header" style="padding-bottom:8px;">
+                <ul class="nav nav-theme nav-tabs card-header-tabs text-center" role="tablist">
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Project (@Resources.Global.Overview)">
+                        <a style="padding-bottom:1rem;" class="nav-link active insideTab" id="pOverview-tab" data-bs-toggle="tab" data-bs-target="#pOverview" role="tab" aria-controls="pOverview" aria-selected="true" href="#pOverview"><i class="fa fa-lg fa-file"></i><br><h6>@Resources.Global.Project<br><small>@Resources.Global.Overview</small></h6></a>
+                    </li>
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Gefahrenanalyse (@Resources.Global.BeforeChange)">
+                        <a style="padding-bottom:1rem;" href="#pIKBefore" class="nav-link insideTab" id="pIKBefore-tab" data-bs-toggle="tab" data-bs-target="#pIKBefore" role="tab" aria-controls="pIKBefore" aria-selected="false"><i class="fa fa-lg fa-bolt"></i><br><h6>@Resources.Global.Gefahrenanalyse<br><small>@Resources.Global.BeforeChange</small></h6></a>
+                    </li>
+
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Schadenpotential">
+                        <a style="padding-bottom:1rem;" href="#pPotential" class="nav-link insideTab" id="pPotential-tab" data-bs-toggle="tab" data-bs-target="#pPotential" role="tab" aria-controls="pPotential" aria-selected="false"><i class="fa fa-lg fa-exclamation-triangle"></i><br><h6>@Resources.Global.Schadenpotential<br><small>&nbsp;</small></h6></a>
+                    </li>
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Resilienz (@Resources.Global.BeforeChange)">
+                        <a style="padding-bottom:1rem;" href="#pResilienz" class="nav-link insideTab" id="pResilienz-tab" data-bs-toggle="tab" data-bs-target="#pResilienz" role="tab" aria-controls="pResilienz" aria-selected="false"><i class="icon miresiliencia-lg miresiliencia-font-resilience-1"></i><br><h6>@Resources.Global.Resilienz<br><small>@Resources.Global.BeforeChange</small></h6></a>
+                    </li>
+
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Schutzmassnahme">
+                        <a style="padding-bottom:1rem;" href="#pMassnahme" class="nav-link insideTab" id="pMassnahme-tab" data-bs-toggle="tab" data-bs-target="#pMassnahme" role="tab" aria-controls="pMassnahme" aria-selected="false"><i class="icon miresiliencia-lg miresiliencia-font-medida-de-mitigacion"></i><br><h6>@Resources.Global.Schutzmassnahme<br><small>&nbsp;</small></h6></a>
+                    </li>
+
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Gefahrenanalyse (@Resources.Global.AfterChange)">
+                        <a style="padding-bottom:1rem;" href="#pIKAfter" class="nav-link insideTab" id="pIKAfter-tab" data-bs-toggle="tab" data-bs-target="#pIKAfter" role="tab" aria-controls="pIKAfter" aria-selected="false"><i class="fa fa-lg fa-bolt"></i><br><h6>@Resources.Global.Gefahrenanalyse<br><small>@Resources.Global.AfterChange</small></h6></a>
+                    </li>
+
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Resilienz (@Resources.Global.AfterChange)">
+                        <a style="padding-bottom:1rem;" href="#pResilienzAfter" class="nav-link insideTab" id="pResilienzAfter-tab" data-bs-toggle="tab" data-bs-target="#pResilienzAfter" role="tab" aria-controls="pResilienzAfter" aria-selected="false"><i class="icon miresiliencia-lg miresiliencia-font-resilience-1"></i><br><h6>@Resources.Global.Resilienz<br><small>@Resources.Global.AfterChange</small></h6></a>
+                    </li>
+
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Resultate">
+                        <a style="padding-bottom:1rem;" href="#pResults" class="nav-link insideTab" id="pResults-tab" data-bs-toggle="tab" data-bs-target="#pResults" role="tab" aria-controls="pResults" aria-selected="false"><i class="fa fa-lg fa-calculator"></i><br><h6>@Resources.Global.Resultate</h6></a>
+                    </li>
+
+                </ul>
+            </div>
+
+
+
+            <div class="card-body tab-content style-default-bright">
+                <div class="tab-pane active" id="pOverview" role="tablist" aria-labelledby="pOverview-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>@Resources.Global.ProjectDefinition</h5>
+                            <div class="tools">
+                                <div class="btn-group">
+                                    <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "Project" })')"><i class="md md-help"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <table class="table">
+                                    <tr><td style="font-weight:bold;">@Resources.Global.ProjectName</td><td>@Model.Name</td></tr>
+                                    <tr><td style="font-weight:bold;">@Resources.Global.ProjectNumber</td><td>@Model.Number</td></tr>
+                                    <tr>
+                                        <td style="font-weight:bold;">@Resources.Global.ProjectState</td>
+                                        <td>
+                                            @Model.ProjectState.Description
+
+
+                                        </td>
+                                    </tr>
+                                    @Html.MyEditorRowFor(x => x.Description, "projectFields")
+                                </table>
+                                @if (ViewBag.ProjectWrite)
+                                {
+                                    <button type="button" onclick="insideProjectEdit('projectFields')" id="edit_Project_button" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Modify</button>
+                                    <button type="button" onclick="saveProjectEdit('projectFields')" id="save_Project_button" style="display:none;" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Save</button>
+                                }
+
+
+                                <script type="text/javascript">
+                                    function insideProjectEdit(id) {
+                                        GeoWebGIS.checkProjectState(
+                                            function () {
+                                                $('.insideEditor').each(function () {
+                                                    if ($(this).attr("id").indexOf(id.toString() + "_") == 0) $(this).show();
+                                                    else $(this).hide();
+                                                });
+                                                $('.insideText').each(function () {
+                                                    if ($(this).attr("id").indexOf(id.toString() + "_") == 0) $(this).hide();
+                                                });
+
+                                                $('#edit_Project_button').hide();
+                                                $('#save_Project_button').show();
+                                            });
+                                    }
+
+
+                                    function saveProjectEdit(id) {
+
+
+                                        $.ajax({
+                                            url: '@Url.Action("EditInsideProject", "Project")/' + @Model.Id,
+                                            data: {
+
+                                                desc: $('#' + id + '_Description').val()
+                                            },
+                                            success: function (data) {
+                                                $('#projectFields_Description_text').html(data);
+
+                                                $('#edit_Project_button').show();
+                                                $('#save_Project_button').hide();
+
+                                                $('.insideEditor').each(function () {
+                                                    if ($(this).attr("id").indexOf(id.toString() + "_") == 0) $(this).hide();
+                                                    else $(this).hide();
+                                                });
+                                                $('.insideText').each(function () {
+                                                    if ($(this).attr("id").indexOf(id.toString() + "_") == 0) $(this).show();
+                                                });
+                                            }
+                                        });
+
+                                    }
+
+                                </script>
+
+                                <script type="text/javascript">
+                                    function closeProject() {
+                                        BootstrapDialog.show({
+                                            type: BootstrapDialog.TYPE_DANGER,
+                                            title: 'Finalizar el proyecto',
+                                            message: '¿Estás seguro de que quieres que el proyecto se cierre? A continuación, no se pueden realizar más modificaciones.',
+                                            buttons: [{
+                                                label: 'Sí',
+                                                action: function (dialogItself) {
+                                                    dialogItself.close();
+                                                    $.get('@Url.Action("MarkForClose","Project", new { @id = Model.Id })', function (data) {
+                                                        insideLoadUrl('@Url.Action("Details","Project", new { @id = Model.Id })');
+                                                    });
+                                                }
+                                            },
+                                            {
+                                                label: 'Abortar',
+                                                action: function (dialogItself) {
+                                                    dialogItself.close();
+
+                                                }
+                                            }
+                                            ]
+                                        });
+                                    }
+                                </script>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane" id="pIKBefore" role="tablist" aria-labelledby="pIKBefore-tab">
+
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>@Resources.Global.Gefahrenanalyse (@Resources.Global.BeforeChange)</h5>
+                            <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "IKS" })')"><i class="fas fa-question-circle"></i></a>
+
+                        </div>
+                        <div class="card-body">
+
+                            <div class="row" id="IKsListBefore">
+                                <div id="loading-spinner" style="text-align:center; width:100%">
+                                    @Resources.Global.LoadingMessage
+                                    <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
+                    <div class="card panel">
+                        <div class="card-header" data-toggle="collapse" data-target="#praPanel-1">
+                            <h5>@Resources.Global.Pra</h5>
+                            <div class="tools">
+                                <div class="btn-group">
+                                    <a class="btn btn-icon-toggle"><i class="fa fa-angle-up"></i></a>
+                                    <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "PrA" })')"><i class="md md-help"></i></a>
+                                </div>
+                            </div>
+                        </div>@using (Html.BeginForm("PraEdit", "Project", FormMethod.Post, new { @id = "praEditForm", @class = "form insideTab" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div id="praPanel-1" class="collapse">
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        @{
+                                            var pralist = Model.PrAs.OrderBy(m => m.IKClasses.Value).OrderBy(m => m.NatHazard).GroupBy(u => u.NatHazard)
+                                            .Select(grp => grp.ToList()).ToList();
+                                            string nathaz = "";
+                                            bool isFirstNatHazard = true;
+                                        }
+                                        @foreach (List<MiResiliencia.Models.PrA> intPerPra in pralist)
+                                        {
+                                            var intInHazard = intPerPra.GroupBy(u => u.IKClasses).Select(grp => grp.ToList()).ToList();
+
+                                            foreach (List<MiResiliencia.Models.PrA> intPerHazardPerIK in intInHazard)
+                                            {
+
+                                                foreach (MiResiliencia.Models.PrA pra in intPerHazardPerIK)
+                                                {
+                                                    if (nathaz != pra.NatHazard.Name)
+                                                    {
+                                                        nathaz = pra.NatHazard.Name;
+
+                                                        if (!isFirstNatHazard)
+                                                        {
+                                                            @Html.Raw("</table>")
+                                                            ;
+                                                        }
+                                                        @Html.Raw("<h3>" + pra.NatHazard.Name + "</h3><br /><table>")
+                                                        ;
+                                                        isFirstNatHazard = false;
+
+                                                    }
+
+                                                            //Html.MyPrAEditorRowFor(x => pra.Value, pra.IKClasses.Description, pra.NatHazardId + "_" + pra.IKClassesId)
+
+                                                            ;
+                                                }
+
+                                            }
+                                            @Html.Raw("</table>")
+                                            ;
+                                        }
+
+
+
+                                    </div>
+
+                                </div>
+                                <div class="card-actionbar">
+                                    <div class="card-actionbar-row">
+                                        @if (Model.ProjectState.ID < 2)
+                                        {
+                                            <button type="button" onclick="insideEditPra()" id="edit_button_insidePra" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Modify</button>
+                                            <button type="submit" id="save_button_insidePra" style="display:none;" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Save</button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <script type="text/javascript">
+
+                            function insideEditPra() {
+                                $('.insidePraEditor').each(function () {
+                                    $(this).show();
+                                });
+                                $('.insidePraText').each(function () {
+                                    $(this).hide();
+                                });
+
+                                $('#edit_button_insidePra').hide();
+                                $('#save_button_insidePra').show();
+                            }
+
+                            $(document).ready(function () {
+                                $("#praEditForm").validate({
+                                    lang: 'es',
+                                    submitHandler: function (form) {
+                                        savePraEdit('@Model.Id');
+                                        $('.insidePraEditor').each(function () {
+                                            $(this).hide();
+                                        });
+                                        $('.insidePraText').each(function () {
+                                            $(this).show();
+                                        });
+
+                                        $('#edit_button_insidePra').show();
+                                        $('#save_button_insidePra').hide();
+                                    }
+                                });
+                            });
+
+
+                            function savePraEdit(id) {
+
+                                $.ajax({
+                                    url: '@Url.Action("PraEdit", "Project")/@Model.Id',
+                                    method: 'POST',
+                                    data:
+                                        $('#praEditForm').serialize()
+                                    ,
+                                    success: function () {
+                                        goToInsideUrl = "/Project/Details/" + id;
+                                        insideLoadUrl(goToInsideUrl);
+                                    }
+                                });
+                            }
+
+                        </script>
+                    </div>
+
+                </div>
+                <div class="tab-pane" id="pPotential" role="tablist" aria-labelledby="pOverview-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>@Resources.Global.Schadenpotential</h5>
+                            <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "potdamage" })')"><i class="md md-help"></i></a>
+                        </div>
+                        <div class="card-body">
+
+                            <script type="text/javascript">
+                                function reloadMappedObject(id, lat, long) {
+
+                                    url = '@Url.Action("MappedObjectsDetails", "Tools")/' + id + "?lat=" + lat + "&lon=" + long;
+                                    $.get(url, function (data) {
+                                        $('#mappedObjectDiv').html(data);
+                                        //window.materialadmin.App.initialize();
+                                        //window.materialadmin.AppCard.initialize();
+                                        //window.materialadmin.AppForm.initialize();
+                                    });
+                                }
+
+                                function reloadMultipleMappedObject(ids, lat, long) {
+                                    console.log("Mutliple");
+                                    var idswithtext = ids.join('&ids=');
+                                    console.log(idswithtext);
+                                    url = '@Url.Action("MultipleMappedObjectsDetails", "Tools")?ids=' + idswithtext;
+                                    $.get(url, function (data) {
+                                        $('#mappedObjectDiv').html(data);
+                                        //window.materialadmin.App.initialize();
+                                        //window.materialadmin.AppCard.initialize();
+                                        //window.materialadmin.AppForm.initialize();
+                                    });
+                                }
+
+                                function reloadErrorViewMappedObject(id, lat, long) {
+
+                                    url = '@Url.Action("MappedObjectsDetails", "Tools")/' + id + "?lat=" + lat + "&lon=" + long + "&inErrorView=true";
+                                    $.get(url, function (data) {
+                                        $('#mappedObjectDivErrorView').html(data);
+                                        //window.materialadmin.App.initialize();
+                                        //window.materialadmin.AppCard.initialize();
+                                        //window.materialadmin.AppForm.initialize();
+                                    });
+                                }
+
+
+                            </script>
+                            <div id="mappedObjectDiv">
+                                <h4>@Resources.Global.ClickOnAnObject</h4>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="pResilienz" role="tablist" aria-labelledby="pResilienz-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>@Resources.Global.Resilienz (@Resources.Global.BeforeChange)</h5>
+                            <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "resilience" })')"><i class="fas fa-question-circle"></i></a>
+
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Start Resilience-MappedObject Editor -->
+                                <script type="text/javascript">
+                                    function reloadRMid(id) {
+
+                                        url = '@Url.Action("EditResilience", "Tools")/' + id;
+                                        $.get(url, function (data) {
+                                            $('#rmDiv').html(data);
+                                            //window.materialadmin.App.initialize();
+                                            //window.materialadmin.AppCard.initialize();
+                                            //window.materialadmin.AppForm.initialize();
+                                        });
+
+                                        url2 = '@Url.Action("EditResilience", "Tools")/' + id + '?beforeAction=false';
+                                        $.get(url2, function (data) {
+                                            $('#rmDivAfter').html(data);
+                                            //window.materialadmin.App.initialize();
+                                            //window.materialadmin.AppCard.initialize();
+                                            //window.materialadmin.AppForm.initialize();
+                                        });
+                                    }
+
+
+                                </script>
+                                <div id="rmDiv">
+                                    <h4>@Resources.Global.ClickOnAnObject</h4>
+                                </div>
+                                <!-- End Resilience-MappedObject Editor-->
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane" id="pMassnahme" role="tablist" aria-labelledby="pMassnahme-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>@Resources.Global.Schutzmassnahme</h5>
+                            <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "PM" })')"><i class="md md-help"></i></a>
+
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Start Parameter -->
+                                <script type="text/javascript">
+                                    function reloadPMid(id) {
+
+                                        url = '@Url.Action("PMDetails", "Tools")/' + id + '?projectWrite=' + projectwrite;
+                                        $.get(url, function (data) {
+                                            $('#pmDiv').html(data);
+                                            //window.materialadmin.App.initialize();
+                                            //window.materialadmin.AppCard.initialize();
+                                            //window.materialadmin.AppForm.initialize();
+                                        });
+
+
+                                    }
+
+                                    @if (Model.ProtectionMeasure != null)
+                                    {
+                                        <text>reloadPMid(@Model.ProtectionMeasure.ID); </text>
+                                    }
+
+
+
+                                </script>
+                                <div id="pmDiv"></div>
+                                <!-- End Schutzmassnahmen Parameter-->
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+                <div class="tab-pane" id="pIKAfter" role="tablist" aria-labelledby="pIKAfter-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>@Resources.Global.Gefahrenanalyse (@Resources.Global.AfterChange)</h5>
+                            <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "IKS" })')"><i class="fas fa-question-circle"></i></a>
+
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="row" id="IKsListAfter">
+                                <div id="loading-spinner" style="text-align:center; width:100%">
+                                    @Resources.Global.LoadingMessage
+                                    <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="pResilienzAfter" role="tablist" aria-labelledby="pResilienzAfter-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>@Resources.Global.Resilienz (@Resources.Global.AfterChange)</h5>
+                            <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "resilience" })')"><i class="fas fa-question-circle"></i></a>
+
+                        </div>
+
+
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Start Resilience-MappedObject Editor -->
+
+                                <div id="rmDivAfter">
+                                    <h4>@Resources.Global.ClickOnAnObject</h4>
+                                </div>
+                                <!-- End Resilience-MappedObject Editor-->
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="pResults" role="tablist" aria-labelledby="pResults-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>@Resources.Global.Resultate</h5>
+                            <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "resultados" })')"><i class="fas fa-question-circle"></i></a>
+
+                        </div>
+
+                        <div class="card-body">
+                            <button class="btn ink-reaction btn-raised btn-primary" type="button" onclick="showCalcResults()">@Resources.Global.Recalculate</button> &nbsp; <button class="btn ink-reaction btn-raised btn-primary" type="button" onclick="showCalcSummary()">@Resources.Global.Show_Result</button>
+                            <br />
+                            @if (Model.ProjectState.ID <= 2)
+                            {
+                                <br />
+
+                                <button type="button" onclick="closeProject()" id="" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Close_Project</button>
+                            }
+                            <br />
+                            <script type="text/javascript">
+                                function showCalcErrors() {
+                                    GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ErrorView&cql_filter=ProjectId=@Model.Id&outputFormat=application/json');
+                                }
+
+
+                            </script>
+                            <br />
+                            <div id="loading-spinner-results" style="text-align:center; width:100%;display:none;">
+                                @Resources.Global.LoadingMessage
+                                <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
+                            </div>
+
+                            <div id="calcResults">
+                            </div>
+                        </div>
+
+                        <script type="text/javascript">
+                            function showCalcResults() {
+                                $('#loading-spinner-results').show();
+                                sidebar.fullscreen();
+                                $.get('/api/Result/Run/@Model.Id', function (data) {
+                                    $('#loading-spinner-results').hide();
+                                    $('#calcResults').html(data);
+
+                                })
+                            };
+                            function showCalcSummary() {
+                                $('#loading-spinner-results').show();
+                                sidebar.fullscreen();
+                                $.get('/api/Result/Summary/@Model.Id', function (data) {
+                                    $('#loading-spinner-results').hide();
+                                    $('#calcResults').html(data);
+
+                                })
+                            }
+
+                        </script>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

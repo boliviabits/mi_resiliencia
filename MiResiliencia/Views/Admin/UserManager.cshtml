@@ -1,0 +1,195 @@
+﻿@model MiResiliencia.Models.UserManagerViewModel
+@using MiResiliencia.Models
+@{
+    if (Context.Request.Headers.Keys.Contains("x-ic-request"))
+    {
+        if (Context.Request.Headers["X-IC-Request"] == "true")
+        {
+            Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<div class="row">
+    @if (ViewBag.TheResult != null)
+    {
+        @if (ViewBag.TheResult == true)
+        {
+            <div class="alert alert-success">
+                @ViewBag.SuccessMessage
+            </div>
+        }
+        else if (ViewBag.TheResult == false)
+        {
+            <div class="alert alert-danger">
+                <strong>Error!</strong> @ViewBag.Error
+            </div>
+        }
+
+    }
+    <div class="col-xs-12">
+
+
+
+        <div class="card">
+            <div class="card-header">
+                <h5>@Resources.Global.Usermanager</h5>
+            </div>
+            <a id="usermanagerinsidedivLinker" class="interLink" href="#" style="display:none;"></a>
+            <div id="usermanagerinsidediv">
+
+                <div class="card-body floating-label">
+                    <div class="panel-group" id="newUserPanel">
+                        <div class="card panel" style="margin-top:20px;">
+                            <div class="card-header" data-toggle="collapse" data-parent="#newUserPanel" data-target="#newUserPanel-1">
+                                <h5>@Resources.Global.New_User</h5>
+                            </div>
+                            @using (Html.BeginForm("UserManager", "Admin", FormMethod.Post, new { @id = "createNewUserForm", @class = "form insideTab", ic_post_to = "/Admin/UserManager", ic_target = "#usermanagercontent", ic_on_beforeSend = "validateUserForm()" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="form">
+
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    <div id="newUserPanel-1">
+                                        <div class="card-body">
+
+                                            <div class="form-group floating-label">
+                                                @Html.EditorFor(model => model.NewUser.Username, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.LabelFor(model => model.NewUser.Username, htmlAttributes: new { @class = "" })
+                                                @Html.ValidationMessageFor(model => model.NewUser.Username, "", new { @class = "text-danger  " })
+                                            </div>
+                                            <div class="form-group floating-label">
+                                                @Html.EditorFor(model => model.NewUser.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.LabelFor(model => model.NewUser.FirstName, htmlAttributes: new { @class = "" })
+                                                @Html.ValidationMessageFor(model => model.NewUser.FirstName, "", new { @class = "text-danger  " })
+                                            </div>
+                                            <div class="form-group floating-label">
+                                                @Html.EditorFor(model => model.NewUser.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.LabelFor(model => model.NewUser.LastName, htmlAttributes: new { @class = "" })
+                                                @Html.ValidationMessageFor(model => model.NewUser.FirstName, "", new { @class = "text-danger  " })
+                                            </div>
+                                            <div class="form-group floating-label">
+                                                @Html.EditorFor(model => model.NewUser.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.LabelFor(model => model.NewUser.Email, htmlAttributes: new { @class = "" })
+                                                @Html.ValidationMessageFor(model => model.NewUser.Email, "", new { @class = "text-danger  " })
+                                            </div>
+                                            <div class="form-group floating-label">
+                                                @Html.EditorFor(model => model.NewUser.Password, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.LabelFor(model => model.NewUser.Password, htmlAttributes: new { @class = "" })
+                                                @Html.ValidationMessageFor(model => model.NewUser.Password, "", new { @class = "text-danger  " })
+                                            </div>
+                                            <div class="form-group floating-label">
+                                                @Html.EditorFor(model => model.NewUser.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.LabelFor(model => model.NewUser.ConfirmPassword, htmlAttributes: new { @class = "" })
+                                                @Html.ValidationMessageFor(model => model.NewUser.ConfirmPassword, "", new { @class = "text-danger  " })
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3" style="padding-top:10px;">@Resources.Global.Select @Resources.Global.Company</div>
+                                                <div class="col-md-9">
+                                                    @Html.DropDownListFor(m => m.NewUser.CompanyID
+                                                ,
+                                                new SelectList(Model.Rights.UserForCompanies.Distinct(),
+                                                "ID", "CompanyTitle"), new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="checkbox checkbox-styled">
+                                                        <label>
+                                                            <label>
+                                                                @Html.CheckBoxFor(model => model.NewUser.isAdmin, new { })
+                                                                @Html.LabelFor(model => model.NewUser.isAdmin, htmlAttributes: new { @class = "" })
+                                                            </label>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                        <div class="card-actionbar">
+                                            <div class="card-actionbar-row">
+                                                <button class="btn ink-reaction btn-raised btn-danger insideTab" type="submit">@Resources.Global.Create</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div><!--end .panel -->
+                        <div class="card panel">
+                            <div class="card-header" data-toggle="collapse" data-parent="#newUserPanel" data-target="#newUserPanel-2">
+                                <h5>@Resources.Global.Existing_Users</h5>
+                                <div class="tools">
+                                    <a class="btn btn-icon-toggle"><i class="fa fa-angle-down"></i></a>
+                                </div>
+                            </div>
+                            <div id="newUserPanel-2">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <table class="table" id="userlisttable">
+                                        <thead>
+                                            <tr>
+                                                <th>Username</th>
+                                                <th>Name</th>
+                                                <th>Company</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (ApplicationUser a in ViewBag.UserList)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @a.UserName
+                                                    </td>
+                                                    <td>
+                                                        @a.FirstName @a.LastName
+                                                    </td>
+                                                    <td>
+                                                        @a.MainCompany?.CompanyTitle
+                                                    </td>
+                                                    <td><button type="button" onclick="insideUserProfileTabLoadUrl('@Url.Action("UserEdit","Admin")/@a.Id', '#usermanagerinsidediv', '#usermanagerinsidedivLinker')" class="btn ink-reaction btn-raised btn-primary" style="word-wrap:break-word;">Edit</button></td>
+                                                </tr>
+
+                                            }
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--end .panel -->
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+
+    function validateUserForm() {
+        var f = $("#createNewUserForm");
+        $.validator.unobtrusive.parse(f);
+    }
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#userlisttable').DataTable({
+            "scrollX": true,
+            "language": GeoWebGIS.translator.get("table")
+        });
+    });
+</script>

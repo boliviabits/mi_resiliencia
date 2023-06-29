@@ -1,0 +1,135 @@
+﻿@model int
+
+<div class="form-group">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            drawWindow = Ext.getCmp('draw-window');
+            drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.Schadenpotential)');
+            GeoWebGIS.progress.addLoading();
+            GeoWebGIS.workingNamespace = 'MappedObject';
+            GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectsView&cql_filter=ProjectId=@Model&outputFormat=application/json&count=5000');
+            //drawWindow.setHeight(250);
+            GeoWebGIS.progress.addLoaded();
+        });
+
+
+
+        function KatSelectorChange() {
+            GeoWebGIS.endDrawInteraction(); $('#startSPDraw').show(); $('#startSPModify').show(); $('#startSPDelete').show(); $('#stopSPDraw').hide();
+            $('#stopIKDrawAfter').hide();
+            $.getJSON("/Tools/GetObjects/" + $('#katselector').find(":selected").val(), function (result) {
+                var options = $("#landuseselector");
+                options.find('option').remove().end()
+                //don't forget error handling!
+                $.each(result, function () {
+                    options.append($("<option />").val(this.ID).text(this.Name));
+                });
+
+                $("#detailSelection").show();
+            });
+        }
+
+        function changeOType() {
+            GeoWebGIS.endDrawInteraction(); $('#startSPDraw').show(); $('#startSPModify').show(); $('#startSPDelete').show(); $('#stopSPDraw').hide();
+        }
+
+        function startSPDrawing() {
+            GeoWebGIS.checkProjectState(
+                function () {
+                    $.getJSON("/Tools/GetObjectType/" + $('#landuseselector').find(":selected").val(), function (result) {
+
+                        var drawStyle = 'Polygon';
+                        if (result == 0) drawStyle = 'Point';
+                        else if (result == 1) drawStyle = 'LineString';
+
+                        GeoWebGIS.workingNamespace = 'MappedObject';
+                        GeoWebGIS.drawsource = new ol.source.Vector({
+                            format: new ol.format.GeoJSON(),
+                            url: function (extent) {
+                                wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectsView&cql_filter=ProjectId=@Model&outputFormat=application/json';
+                                return wfsurl;
+
+                            },
+                            strategy: ol.loadingstrategy.bbox
+                        });
+
+                        GeoWebGIS.addDrawInteraction(drawStyle, "Draw", 0, 0, 0, 0, 0, @Model);
+                    });
+
+
+                    $('#stopSPDraw').show();
+                    $('#startSPModify').hide();
+                    $('#startSPDraw').hide();
+                    $('#startSPDelete').hide();
+                });
+        }
+
+        function startSPModifying() {
+            GeoWebGIS.checkProjectState(
+                function () {
+                    var drawStyle = 'Polygon';
+                    GeoWebGIS.workingNamespace = 'MappedObject';
+                    GeoWebGIS.drawsource = new ol.source.Vector({
+                        format: new ol.format.GeoJSON(),
+                        url: function (extent) {
+                            wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObject&cql_filter=ProjectId=@Model&outputFormat=application/json';
+                            return wfsurl;
+
+                        },
+                        strategy: ol.loadingstrategy.bbox
+                    });
+
+                    GeoWebGIS.addDrawInteraction(drawStyle, "Modify");
+                    $('#stopSPDraw').show();
+                    $('#startSPModify').hide();
+                    $('#startSPDraw').hide();
+                    $('#startSPDelete').hide();
+                });
+        }
+
+        function startSPDelete() {
+            GeoWebGIS.checkProjectState(
+                function () {
+                    GeoWebGIS.workingNamespace = 'MappedObject';
+
+                    GeoWebGIS.drawsource = new ol.source.Vector({
+                        format: new ol.format.GeoJSON(),
+                        url: function (extent) {
+                            wfsurl = '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObject&cql_filter=ProjectId=@Model&outputFormat=application/json';
+                            return wfsurl;
+
+                        },
+                        strategy: ol.loadingstrategy.bbox
+                    });
+
+                    GeoWebGIS.addDrawInteraction('Polygon', "Delete");
+                    $('#stopSPDraw').show();
+                    $('#startSPModify').hide();
+                    $('#startSPDraw').hide();
+                    $('#startSPDelete').hide();
+                });
+        }
+
+    </script>
+    @if (ViewBag.ProjectWrite)
+    {
+
+
+
+        <div id="potentialEditor">
+
+            <label class="control-labeL" for="katselector">@Resources.Global.Category</label>
+            @Html.DropDownList("ObjClasses", (IEnumerable<SelectListItem>)ViewBag.ObjClasses, new { id = "katselector", @class = "form-control", onchange = "KatSelectorChange();" })
+        </div>
+        <div class="form-group" id="detailSelection" style="display:none;">
+            <label class="control-labeL" for="landuseselector">@Resources.Global.Objekt</label>
+            <select class="form-control static dirty" id="landuseselector" name="landuseselector" onchange="changeOType();"></select>
+            <span class="field-validation-valid has-error form-control-feedback" data-valmsg-for="" data-valmsg-replace="true"></span>
+        </div>
+
+        <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startSPDraw" onclick="startSPDrawing();">@Resources.Global.Draw</button>
+        <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startSPModify" onclick="startSPModifying();">@Resources.Global.Modify</button>
+        <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startSPDelete" onclick="startSPDelete();">@Resources.Global.DrawDelete</button>
+        <button class="btn ink-reaction btn-raised btn-danger endDrawButton" type="button" id="stopSPDraw" style="display:none;" onclick="GeoWebGIS.endDrawInteraction();$('#startSPDraw').show();$('#startSPModify').show();$('#startSPDelete').show();$('#stopSPDraw').hide();">@Resources.Global.Stop</button>
+    }
+</div>

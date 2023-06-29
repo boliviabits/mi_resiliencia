@@ -1,0 +1,1070 @@
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GleamTech.AspNet.Core
+@using GleamTech.FileUltimate.AspNet.UI
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - MiResiliencia</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+    <link href="~/css/themify-icons.css" rel="stylesheet" />
+    <link href="~/css/restb-font-styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
+    <link href="~/css/sidebar/ol3-sidebar.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <link rel="stylesheet" href="~/css/theme/style.css" />
+    <link href="~/lib/bootstrap4-dialog/css/bootstrap-dialog.min.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/a81fb04c4f.js" crossorigin="anonymous"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" />
+    <link href="https://cdn.datatables.net/rowreorder/1.2.8/css/rowReorder.bootstrap5.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.css" integrity="sha512-SZgE3m1he0aEF3tIxxnz/3mXu/u/wlMNxQSnE0Cni9j/O8Gs+TjM9tm1NX34nRQ7GiLwUEzwuE3Wv2FLz2667w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/js/mathjs/math.js"></script>
+    @this.RenderHead(new FileManager())
+    <style>
+        img.olTileImage {
+            max-width: none;
+        }
+
+        #toolbar {
+            border: solid 1px #999;
+            background-color: #ccc;
+            margin-bottom: 10px;
+            margin-right: 10px;
+            width: 100%;
+            height: 3%;
+            border-radius: 6px;
+        }
+
+        #map {
+            bottom: 0px;
+            width: 100%;
+            position: fixed;
+            top: 0px;
+            right: 0px;
+        }
+
+        .ol-option-bar {
+            top: -2px !important;
+            right: 40px !important;
+        }
+
+        .ui-resizable-e {
+            width: 20px !important;
+        }
+
+        .btn-clipboard {
+            max-width: 40px;
+            padding: 0.375rem 0.7rem !important;
+        }
+
+        .ol-control.ol-legend {
+            top: 100px !important;
+            right: 20px !important;
+            overflow: hidden;
+            z-index: 2000;
+            bottom: inherit;
+            left: inherit;
+        }
+
+        .ol-control.ol-bar {
+            margin-top: 65px;
+        }
+
+        .geocoder {
+            position: absolute;
+            z-index: 1000;
+            width: 400px;
+            right: 80px;
+            margin-left: -25%;
+            top: 75px;
+        }
+
+        .mapboxgl-ctrl-geocoder {
+            min-width: 100%;
+        }
+
+        .ol-popup {
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #cccccc;
+            bottom: 12px;
+            left: -50px;
+            min-width: 280px;
+        }
+
+            .ol-popup:after, .ol-popup:before {
+                top: 100%;
+                border: solid transparent;
+                content: " ";
+                height: 0;
+                width: 0;
+                position: absolute;
+                pointer-events: none;
+            }
+
+            .ol-popup:after {
+                border-top-color: white;
+                border-width: 10px;
+                left: 48px;
+                margin-left: -10px;
+            }
+
+            .ol-popup:before {
+                border-top-color: #cccccc;
+                border-width: 11px;
+                left: 48px;
+                margin-left: -11px;
+            }
+
+        .ol-popup-closer {
+            text-decoration: none;
+            position: absolute;
+            top: 2px;
+            right: 8px;
+        }
+
+            .ol-popup-closer:after {
+                content: "✖";
+            }
+
+        .popover-content {
+            min-width: 350px;
+        }
+
+        #progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: rgba(229, 16, 16,0.8);
+            width: 0;
+            transition: width 250ms;
+        }
+    </style>
+</head>
+<body style="margin-bottom:0px !important;">
+    <div class="container-fluid">
+        <div id="olsidebar" class="olsidebar collapsed">
+            <!-- Nav tabs -->
+            <div class="olsidebar-tabs">
+                <ul role="tablist">
+                    <li><a href="#home" role="tab" data-toggle="tooltip" data-placement="top" title="MiResiliencia" onclick="showOverview();"><i class="icon miresiliencia-font-resilience-tb-title" style="padding-left:5px;"></i></a></li>
+                    <li>
+                        <a href="#project" role="tab" onclick="backToProject();">
+                            <i class="fa fa-tasks"></i>
+                        </a>
+                    </li>
+                    <li><a href="#print" role="tab"><i class="fa fa-print"></i></a></li>
+                    <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li>
+                </ul>
+            </div>
+
+            <!-- Tab panes -->
+            <div class="olsidebar-content">
+                <div class="olsidebar-pane" id="home">
+                    <h1 class="olsidebar-header">
+                        MiResiliencia (Herramienta para el Análisis del Riesgo de Desastres y Costo Beneficio de Medidas de Mitigación)
+                        <span class="olsidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+
+                    <div id="HeaderContent" class="olsidebar-content-inside">
+                        <!-- Allgemeine Infos -->
+                        @RenderBody()
+                    </div>
+
+                    <div id="header-loading-spinner" style="display:none; text-align:center; width:100%">
+                        Loading
+                        <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
+                    </div>
+                    <a id="HeaderUrl" class="interLink" href="" style="display:none;"></a>
+                </div>
+
+
+                <div class="olsidebar-pane" id="project">
+                    <h1 class="olsidebar-header" id="projectTitle">
+
+                        @Resources.Global.Project
+                        <span class="olsidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+                    <div id="ImmoContent" class="olsidebar-content-inside" ic-history-elt="true">
+                    </div>
+                    <div id="loading-spinner" style="display:none; text-align:center; width:100%">
+                        @Resources.Global.LoadingMessage
+                        <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
+                    </div>
+
+                    <a id="startPageUrl" class="interLink" href="#" style="display:none;"></a>
+
+
+                </div>
+
+
+
+                <div class="olsidebar-pane" id="print">
+                    <h1 class="olsidebar-header">
+                        @Resources.Global.Print
+                        <span class="olsidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+                    <div>
+                        <section>
+                            <div class="section-body">
+                                <p></p>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>@Resources.Global.PrintMap</h5>
+                                                </div>
+
+                                                <div class="card-body floating-label">
+                                                    <div class="form-group floating-label">
+                                                        <input id="printtitle" class="form-control text-box single-line static dirty" name="Printtitle" value="@Resources.Global.MapExport" type="text">
+                                                        <label class="" for="Printtitle">@Resources.Global.PrintHeading</label>
+                                                    </div>
+
+                                                    <div class="form-group floating-label">
+                                                        <label>@Resources.Global.PrintPageSize</label>
+                                                        <select id="format" class="form-control dirty">
+                                                            <option value="a0">A0 (@Resources.Global.slow)</option>
+                                                            <option value="a1">A1</option>
+                                                            <option value="a2">A2</option>
+                                                            <option value="a3">A3</option>
+                                                            <option value="a4" selected>A4</option>
+                                                            <option value="a5">A5 (@Resources.Global.fast)</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group floating-label">
+                                                        <label>@Resources.Global.dpi </label>
+                                                        <select id="resolution" class="form-control dirty">
+                                                            <option value="72">72 dpi (@Resources.Global.fast)</option>
+                                                            <option value="150">150 dpi</option>
+                                                            <option value="300">300 dpi (@Resources.Global.slow)</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="card-actionbar">
+                                                    <div class="card-actionbar-row">
+                                                        <button id="export-png" class="btn btn-flat btn-primary ink-reaction" download="map.png">@Resources.Global.ExportAsPDF</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    
+                </div>
+                
+                <div class="olsidebar-pane" id="profile">
+                    <h1 class="olsidebar-header">
+                        @Resources.Global.UserProfile
+                        <span class="olsidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+                    <div id="UserProfile" class="olsidebar-content-inside"></div>
+
+                    <a id="startPageUrlUserProfile" class="interLink" href="#" style="display:none;"></a>
+
+                    <div id="loading-spinner3" style="display:none; text-align:center; width:100%">
+                        @Resources.Global.LoadingMessage
+                        <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div id="map" class="olsidebar-map">
+            <div id="popup" class="ol-popup">
+                <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                <div id="popup-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="progress"></div>
+
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.14/proj4.js"></script>
+    <!-- ol-ext -->
+    <script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
+
+    <script src="~/lib/cookiesjs/cookies.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/js/sidebar/ol3-sidebar.js"></script>
+
+    <script src="~/js/geowebgis_lang.js"></script>
+    <script src="~/js/geowebgis.js"></script>
+    <script src="~/js/intercooler/intercooler.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js" integrity="sha512-f0VlzJbcEB6KiW8ZVtL+5HWPDyW1+nJEjguZ5IVnSQkvZbwBt2RfCBY0CBO1PsMAqxxrG4Di6TfsCPP3ZRwKpA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.11.3/sorting/datetime-moment.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
+    <script src="https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.6.0/jsts.min.js"></script>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    
+    <script type="text/javascript">
+        $(".alert-dismissible").fadeTo(8000, 500).slideUp(500, function () {
+            $(".alert-dismissible").alert('close');
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="~/js/sidebar-content-loader.js"></script>
+    <script src="~/lib/bootstrap4-dialog/js/bootstrap-dialog.min.js"></script>
+    <script>
+
+        GeoWebGIS.createMap();
+        @await Component.InvokeAsync("LayerStyle");
+
+        var mainbar = new ol.control.Bar();
+
+        GeoWebGIS.map.addControl(mainbar);
+        var gps = new ol.control.Toggle(
+            {
+                html: '<i class="fas fa-location-arrow"></i>',
+                className: "",
+                active: false,
+                title: "Positionierung",
+                onToggle: function (active) {
+                    GeoWebGIS.geolocation.setTracking(active);
+                    /*if (active) {
+                        setTarget();
+                    }
+                    else if (target) GeoWebGIS.map.removeControl(target);*/
+                }
+            });
+        mainbar.addControl(gps);
+
+        var projectedit = new ol.control.Button({
+            html: '<i class="fa fa-pencil-alt"></i>',
+            className: "",
+            handleClick: function() {openDrawWindow();}
+        });
+        mainbar.addControl(projectedit);
+
+        var projectlayers = new ol.control.Button({
+            html: '<i class="fa fa-layer-group"></i>',
+            className: "",
+            handleClick: function () { openProjectLayerWindow(); }
+        });
+        mainbar.addControl(projectlayers);
+
+        var importexport = new ol.control.Button({
+            html: '<i class="fa fa-upload"></i>',
+            className: "",
+            handleClick: function () { openshpWindow(); }
+        });
+        mainbar.addControl(importexport);
+
+        mainbar.setPosition('top-right');
+
+        var sidebar = new ol.control.Sidebar({ element: 'olsidebar', position: 'left' });
+
+        GeoWebGIS.map.addControl(sidebar);
+        $("#content").mCustomScrollbar({
+            theme: "minimal"
+        });
+
+        var olSavedWidth = Cookies.get('OlSidebarWidth');
+        // get old saved width. But if width is smaller than min-width save the minwidth
+        if ((olSavedWidth >= 0) && (olSavedWidth > $('#olsidebar').width())) $("#olsidebar").width(olSavedWidth);
+        else {
+            Cookies.set('OlSidebarWidth', $('#olsidebar').width());
+        }
+
+        sidebar.open("home");
+
+
+
+        $('#bing').change(function () {
+            if ($("#bing").prop('checked')) {
+                GeoWebGIS.map.addLayer(GeoWebGIS.bingmap);
+                Cookies.set('Bing', true);
+            }
+            else {
+                GeoWebGIS.map.removeLayer(GeoWebGIS.bingmap);
+                Cookies.set('Bing', false);
+
+            }
+        });
+
+
+
+
+        $("document").ready(function () {
+
+
+            var savedBing = Cookies.get('Bing');
+            if (savedBing == "false") {
+                $('#bing').prop('checked', false);
+            }
+            else {
+                $('#bing').prop('checked', true);
+            }
+            $('#bing').change();
+
+
+        });
+
+
+        $("#olsidebar").resizable({
+            handles: 'e',
+            minWidth: 150,
+            stop: function (event, ui) {
+                Cookies.set('OlSidebarWidth', ui.size.width);
+                var center = GeoWebGIS.map.getView().getCenter();
+                var resolution = GeoWebGIS.map.getView().getResolution();
+                var change = ui.size.width - ui.originalSize.width;
+
+                var newCoordinates = [center[0] - change * resolution, center[1] + 0 * resolution];
+                console.log(change);
+                console.log(newCoordinates);
+                GeoWebGIS.map.getView().setCenter(newCoordinates);
+            }
+        });
+
+        $(document).ready(function () {
+            //should we open an inside?
+            goToInsideUrl = "";
+
+            if (insideUrlFirst != "") {
+
+                if (insideUrlFirst.indexOf("/Project/Details/") >= 0) {
+                    var prNummer = insideUrlFirst.replace("/Project/Details/", "");
+                    prNummer = prNummer.replace("#Home", "");
+                    loadProject(prNummer);
+                }
+                else {
+
+                    goToInsideUrl = "https://" + window.location.hostname + ":" + window.location.port + "/" + insideUrlFirst;
+                    sidebar.open("project");
+
+                    insideLoadUrl(goToInsideUrl);
+                }
+            }
+            else {
+                $("#projects").change();
+            }
+
+
+            insideUserProfileLoadUrl("/Admin/Index");
+
+        });
+
+        var helpDialog = helpDialog || (function ($) {
+            'use strict';
+
+            var $bs_dialog;
+            // Creating modal dialog's DOM
+            var $dialog = $(
+                '<div class="modal right fade" data-backdrop="true" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="overflow-y:visible;z-index:10000000;">' +
+                '<div class="modal-dialog modal-m">' +
+                '<div class="modal-content">' +
+                '<div class="modal-header bg-info"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 style="margin:0;"></h3></div>' +
+                '<div class="modal-body" id="helpBody">' +
+                '<i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;width:100%"></i>El contenido esta cargando' +
+                '</div>' +
+                '</div></div></div>');
+
+            return {
+
+                show: function (url, options) {
+
+                    console.log("Showing Help");
+                    // Assigning defaults
+                    if (typeof options === 'undefined') {
+                        options = {};
+                    }
+                    var title = 'Ayuda';
+
+                    var settings = $.extend({
+                        dialogSize: 'lg',
+                        progressType: '',
+                        onHide: null // This callback runs after the dialog was hidden
+                    }, options);
+
+                    // Configuring dialog
+                    $dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
+
+                    $dialog.find('h3').text(title);
+                    // Adding callbacks
+                    if (typeof settings.onHide === 'function') {
+                        $dialog.off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+                            settings.onHide.call($dialog);
+                        });
+                    }
+
+
+
+
+                    $("#helpBody").html('<i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;width:100%"></i>El contenido esta cargando');
+
+
+                    // Opening dialog
+                    $bs_dialog = new bootstrap.Modal($dialog);
+                    $bs_dialog.show();
+
+                    $dialog.on('shown.bs.modal', function (e) {
+                        $.get({
+                            url: url,
+                            success: function (data) {
+
+                                var htmlraw = data;
+                                console.log(htmlraw);
+                                //alert(htmlraw)  /// should print the raw test.html
+                                $("#helpBody").html(htmlraw);
+                                $dialog.unbind("shown.bs.modal");
+                            }
+                        });
+                    });
+
+                },
+                /**
+                 * Closes dialog
+                 */
+                hide: function () {
+                    $bs_dialog.modal('hide');
+                }
+            };
+
+        })(jQuery);
+
+        var waitingDialog = waitingDialog || (function ($) {
+            'use strict';
+
+            var $bs_dialog;
+
+            // Creating modal dialog's DOM
+            var $dialog = $(
+                '<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible; z-index:10000000;">' +
+                '<div class="modal-dialog modal-m">' +
+                '<div class="modal-content">' +
+                '<div class="modal-header"><h3 style="margin:0;"></h3></div>' +
+                '<div class="modal-body">' +
+                '<i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;width:100%"></i>' +
+                '</div>' +
+                '</div></div></div>');
+
+            var $dialogConfirm = $(
+                '<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible; z-index:10000000;">' +
+                '<div class="modal-dialog modal-m">' +
+                '<div class="modal-content">' +
+                '<div class="modal-header"><h3 style="margin:0;"></h3></div>' +
+                '<div class="modal-footer">' +
+                '<button type="button" data-dismiss="modal" class="btn btn-primary" id="btnOK" > OK </button>' +
+                '</div >' +
+                '</div></div></div>');
+
+            return {
+
+                show: function (message, options) {
+                    // Assigning defaults
+                    if (typeof options === 'undefined') {
+                        options = {};
+                    }
+                    if (typeof message === 'undefined') {
+                        message = 'Loading';
+                    }
+                    var settings = $.extend({
+                        dialogSize: 'm',
+                        progressType: '',
+                        onHide: null // This callback runs after the dialog was hidden
+                    }, options);
+
+                    // Configuring dialog
+                    $dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
+
+                    $dialog.find('h3').text(message);
+                    // Adding callbacks
+                    if (typeof settings.onHide === 'function') {
+                        $dialog.off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+                            settings.onHide.call($dialog);
+                        });
+                    }
+                    
+                    // Opening dialog
+                    $bs_dialog = new bootstrap.Modal($dialog);
+                    $bs_dialog.show();
+                    console.log("Showing");
+                },
+                showConfirm: function (message, options) {
+                    // Assigning defaults
+                    if (typeof options === 'undefined') {
+                        options = {};
+                    }
+                    if (typeof message === 'undefined') {
+                        message = 'Loading';
+                    }
+                    var settings = $.extend({
+                        dialogSize: 'm',
+                        progressType: '',
+                        onHide: null // This callback runs after the dialog was hidden
+                    }, options);
+
+                    // Configuring dialog
+                    $dialogConfirm.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
+
+                    $dialogConfirm.find('h3').text(message);
+                    // Adding callbacks
+                    if (typeof settings.onHide === 'function') {
+                        $dialogConfirm.off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+                            settings.onHide.call($dialogConfirm);
+                        });
+                    }
+                    // Opening dialog
+                    $dialogConfirm.modal().one('click', '#btnOK', function (e) {
+                        $dialogConfirm.modal('hide');
+                    });;
+                },
+                /**
+                 * Closes dialog
+                 */
+                hide: function () {
+                    console.log("Hidding");
+                    console.log($bs_dialog);
+                    $bs_dialog.hide();
+                    $dialogConfirm.modal('hide');
+                }
+            };
+
+        })(jQuery);
+
+
+        //waitingDialog.show("Projekt wird geladen. Bitte warten...");
+
+        function makeIntercooler() {
+            $("#InfoContent").hide();
+        }
+
+        function makeIntercoolerSuccess() {
+            $("#InfoContent").show();
+        }
+
+        function insideLoadUrl(url) {
+            console.log("insideLoad: " + url);
+
+            $('#ImmoContent').html('');
+            goToInsideUrl = url;
+            $hidden = $('#startPageUrl');
+            $hidden.attr("ic-get-from", goToInsideUrl);
+            $hidden.attr("ic-src", goToInsideUrl);
+            $hidden.attr("ic-target", "#ImmoContent");
+            $hidden.attr("ic-push-url", "true");
+            $hidden.attr("ic-indicator", "#loading-spinner");
+            $hidden.attr("ic-on-beforeSend", "makeIntercooler()");
+            $hidden.attr("ic-on-complete", "makeIntercoolerSuccess()");
+            $hidden.click();
+        }
+
+        $("a[role='tab']").click(function () {
+            // Finalizar all open mappings
+            $('.endDrawButton:visible').each(function (e) {
+                $(this).click();
+            });
+        });
+
+        var insideUrlFirst = GeoWebGIS.getQueryParam("inside");
+
+        function insideUserProfileLoadUrl(url) {
+            $('#UserProfile').html('');
+            goToInsideUrl3 = url;
+            $hidden = $('#startPageUrlUserProfile');
+            $hidden.attr("ic-get-from", goToInsideUrl3);
+            $hidden.attr("ic-src", goToInsideUrl3);
+            $hidden.attr("ic-target", "#UserProfile");
+            $hidden.attr("ic-push-url", "false");
+            $hidden.attr("ic-indicator", "#loading-spinner3");
+            $hidden.click();
+        }
+
+        insideUserProfileLoadUrl("/Admin/Index");
+
+
+
+        
+
+        var projectt;
+
+        function backToProject() {
+            $('.project-edit-icon').show();
+            $('.project-layers-icon').show();
+        }
+
+        function showOverview() {
+            // Finalizar all open mappings
+            $('.endDrawButton:visible').each(function (e) {
+                $(this).click();
+            });
+            GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:EditableProjects&cql_filter=CompanyID={CompanyID}&outputFormat=application/json');
+            var plWindow = Ext.getCmp('pl-window');
+            if (plWindow != null) {
+                plWindow.close();
+                //plWindow.destroy();
+            }
+            $('.project-layers-icon').hide();
+
+            var dWindow = Ext.getCmp('draw-window');
+            if (dWindow != null) {
+                dWindow.close();
+                //dWindow.destroy();
+            }
+            $('.project-edit-icon').hide();
+
+            $('#projectTableDiv').load("/" + urlAddon + "Project/ProjectTable/");
+
+        }
+
+        var fileWindow;
+
+
+        var drawWindow;
+        function openDrawWindow() {
+
+            GeoWebGIS.progress.addLoading();
+
+            $.get('@Url.Action("GetWindowPosition", "Project", new { window = 2 })', function (data) {
+                drawWindow = Ext.getCmp('draw-window');
+                var myUserX = data.X;
+                if ((myUserX == 0) || (myUserX > Ext.getBody().getViewSize().width - 50)) myUserX = Ext.getBody().getViewSize().width - 500;
+                var myUserY = data.Y;
+                if ((myUserY == 0) || (myUserY > Ext.getBody().getViewSize().height - 50)) myUserY = 20;
+                var myUserWidth = data.Width;
+                var myUserHeight = data.Height;
+
+                if (drawWindow != null) {
+                    console.log("Show DW");
+                    drawWindow.show();
+
+                    //drawWindow.alignTo(Ext.getBody(), "tr-tr", [-10, 10]);
+                }
+                else if (!drawWindow) {
+                    drawWindow = null;
+                    drawWindow = Ext.create('GleamTech.UI.Window', {
+                        id: "draw-window",
+                        title: "@Resources.Global.Draw",
+                        minWidth: 350,
+                        minHeight: 100,
+                        constrain: true,
+                        width: myUserWidth,
+                        height: myUserHeight,
+                        x: myUserX,
+                        y: myUserY,
+                        layout: "fit",
+                        resizable: !0,
+                        maximizable: !0,
+                        minimizable: !0,
+                        closeAction: 'hide',
+                        items: [{
+                            xtype: "box",
+                            autoEl: {
+                                xtype: 'component',
+                                style: 'background-color:#fffff;',
+                                html: '<div id="drawContainer" style="height:100%; padding:10px; background:#ffffff;; overflow-y: scroll; overflow-x: hidden;"></div>',
+                                autoEl: {
+                                    tag: 'canvas',
+                                }
+
+                            }
+                        }],
+                        listeners: {
+                            'close': function (win) {
+                                $('.project-edit-icon').show();
+                            },
+                            'hide': function (win) {
+                                $('.project-edit-icon').show();
+                            },
+                            'show': function (win) {
+                                $('.project-edit-icon').hide();
+                                if ($("#drawContainer").html() == "") {
+                                    try {
+                                        loadPerimeterDraw();
+                                    }
+                                    catch (e) {
+
+                                    }
+                                }
+                            },
+                            'resize': function (win, width, height, opt) {
+                                $.ajax('@Url.Action("SaveWindowPosition","Project")?window=2&x=' + win.x + '&y=' + win.y + '&width=' + width + '&height=' + height);
+                            },
+                            'move': function (win) {
+                                $.ajax('@Url.Action("SaveWindowPosition","Project")?window=2&x=' + win.x + '&y=' + win.y + '&width=' + win.width + '&height=' + win.height);
+                            },
+
+                        }
+                    });
+                }
+                drawWindow.show();
+
+                GeoWebGIS.progress.addLoaded();
+
+            });
+        }
+
+        var projectLayerWindow;
+        function openProjectLayerWindow() {
+
+            GeoWebGIS.progress.addLoading();
+            projectLayerWindow = Ext.getCmp('pl-window');
+
+            $.get('@Url.Action("GetWindowPosition", "Project", new { window = 1 })', function (data) {
+
+                console.log(data);
+                var myUserX = data.X;
+                if ((myUserX == 0) || (myUserX > Ext.getBody().getViewSize().width - 50)) myUserX = Ext.getBody().getViewSize().width - 500;
+                var myUserY = data.Y;
+                if ((myUserY == 0) || (myUserY > Ext.getBody().getViewSize().height - 50)) myUserY = 20;
+                var myUserWidth = data.Width;
+                var myUserHeight = data.Height;
+
+                if (projectLayerWindow != null) {
+                    projectLayerWindow.show();
+
+                    //projectLayerWindow.alignTo(Ext.getBody(), "tr-tr", [-10, 10]);
+                }
+                else if (!projectLayerWindow) {
+                    projectLayerWindow = null;
+                    projectLayerWindow = Ext.create('Ext.window.Window', {
+                        id: "pl-window",
+                        title: '@Resources.Global.LayerDisplay <span class="tools" style="right:-10px;position: absolute;top: -2px;width: 40px;height: 40px;text-align: center;cursor: pointer;"><div class="btn-group"><a class="btn btn-icon-toggle" onclick="helpDialog.show(\'@Url.Action("ShowHelp", "Help", new { wikiname = "projectLayers" })\')"><i class="md md-help"></i></a></div></span>',
+                        minWidth: 350,
+                        constrain: true,
+                        minHeight: 100,
+                        closeAction: 'hide',
+                        width: myUserWidth,
+                        height: myUserHeight,
+                        x: myUserX,
+                        y: myUserY,
+                        layout: "fit",
+                        resizable: !0,
+                        maximizable: !0,
+                        minimizable: !0,
+                        items: [{
+                            xtype: "box",
+                            autoEl: {
+                                xtype: 'component',
+                                style: 'background-color:#fffff;',
+                                html: '<div id="plContainer" style="height:100%; padding:10px; background:#ffffff; overflow-y: scroll; overflow-x: hidden;"></div>',
+                                autoEl: {
+                                    tag: 'canvas',
+                                    autoscroll: true
+                                },
+                                autoscroll: true
+
+                            }
+                        }],
+                        autoscroll: true,
+                        listeners: {
+                            'close': function (win) {
+                                $('.project-layers-icon').show();
+                            },
+                            'hide': function (win) {
+                                $('.project-layers-icon').show();
+                            },
+                            'show': function (win) {
+                                if ($("#plContainer").html() == "") {
+                                    try {
+
+                                        GeoWebGIS.progress.addLoading();
+                                        $("#plContainer").load('@Url.Action("ProjectLayers","Layers")', function () {
+                                            GeoWebGIS.progress.addLoaded();
+                                        });
+                                    }
+                                    catch (e) {
+
+                                    }
+                                }
+                                $('.project-layers-icon').hide();
+                            },
+                            'resize': function (win, width, height, opt) {
+                                $.ajax('@Url.Action("SaveWindowPosition","Project")?window=1&x=' + win.x + '&y=' + win.y + '&width=' + width + '&height=' + height);
+                            },
+                            'move': function (win) {
+                                $.ajax('@Url.Action("SaveWindowPosition","Project")?window=1&x=' + win.x + '&y=' + win.y + '&width=' + win.width + '&height=' + win.height);
+                            },
+
+
+                        }
+                    });
+                }
+                projectLayerWindow.show();
+
+
+                GeoWebGIS.progress.addLoaded();
+
+            });
+
+
+
+
+        }
+
+
+
+
+        var shpWindow;
+        function openshpWindow() {
+            shpWindow = Ext.getCmp('shp-window');
+
+            $.get('@Url.Action("GetWindowPosition", "Project", new { window = 3 })', function (data) {
+
+                console.log(data);
+                var myUserX = data.X;
+                if ((myUserX == 0) || (myUserX > Ext.getBody().getViewSize().width - 50)) myUserX = Ext.getBody().getViewSize().width - 500;
+                var myUserY = data.Y;
+                if ((myUserY == 0) || (myUserY > Ext.getBody().getViewSize().height - 50)) myUserY = 20;
+                var myUserWidth = data.Width;
+                var myUserHeight = data.Height;
+
+                if (shpWindow != null) {
+                    shpWindow.show();
+
+                    //shpWindow.alignTo(Ext.getBody(), "tr-tr", [-10, 10]);
+                }
+                else if (!shpWindow) {
+                    shpWindow = null;
+                    shpWindow = Ext.create('Ext.window.Window', {
+                        id: "shp-window",
+                        constrain: true,
+                        title: '@Resources.Global.ImportShp <span class="tools" style="right:-10px;position: absolute;top: -2px;width: 40px;height: 40px;text-align: center;cursor: pointer;"><div class="btn-group"><a class="btn btn-icon-toggle" onclick="helpDialog.show(\'@Url.Action("ShowHelp", "Help", new { wikiname = "shpImport" })\')"><i class="md md-help"></i></a></div></span>',
+                        minWidth: 350,
+                        minHeight: 500,
+                        width: myUserWidth,
+                        height: myUserHeight,
+                        x: myUserX,
+                        y: myUserY,
+                        layout: "fit",
+                        resizable: !0,
+                        maximizable: !0,
+                        minimizable: !0,
+                        items: [{
+                            xtype: "box",
+                            autoEl: {
+                                xtype: 'component',
+                                style: 'background-color:#fffff;',
+                                html: '<div id="shpContainer" style="height:100%; padding:10px; background:#ffffff; overflow-y: scroll; overflow-x: hidden;"></div>',
+                                autoEl: {
+                                    tag: 'canvas',
+                                    autoscroll: true
+                                },
+                                autoscroll: true
+
+                            }
+                        }],
+                        autoscroll: true,
+                        listeners: {
+                            'close': function (win) {
+                                $('.shp-layers-icon').show();
+                            },
+                            'show': function (win) {
+                                $("#shpContainer").load('@Url.Action("Index","ImportExport")');
+                                $('.shp-layers-icon').hide();
+                            },
+                            'resize': function (win, width, height, opt) {
+                                $.ajax('@Url.Action("SaveWindowPosition","Project")?window=3&x=' + win.x + '&y=' + win.y + '&width=' + width + '&height=' + height);
+                            },
+                            'move': function (win) {
+                                $.ajax('@Url.Action("SaveWindowPosition","Project")?window=3&x=' + win.x + '&y=' + win.y + '&width=' + win.width + '&height=' + win.height);
+                            },
+
+
+                        }
+                    });
+                }
+                shpWindow.show();
+
+            });
+        }
+
+    </script>
+
+    <script type="text/javascript">
+
+
+
+
+        (function ($) {
+
+            $.fn.sizeChanged = function (handleFunction) {
+                var element = this;
+                var lastWidth = element.width();
+                var lastHeight = element.height();
+
+                setInterval(function () {
+                    if (lastWidth === element.width() && lastHeight === element.height())
+                        return;
+                    if (typeof (handleFunction) == 'function') {
+                        handleFunction({ width: lastWidth, height: lastHeight },
+                            { width: element.width(), height: element.height() });
+                        lastWidth = element.width();
+                        lastHeight = element.height();
+                    }
+                }, 100);
+
+
+                return element;
+            };
+
+        }(jQuery));
+        $.extend($.validator.messages, {
+            required: "Este campo es obligatorio.",
+            remote: "Por favor, rellena este campo.",
+            email: "Por favor, escribe una dirección de correo válida.",
+            url: "Por favor, escribe una URL válida.",
+            date: "Por favor, escribe una fecha válida.",
+            dateISO: "Por favor, escribe una fecha (ISO) válida.",
+            number: "Por favor, escribe un número válido.",
+            digits: "Por favor, escribe sólo dígitos.",
+            creditcard: "Por favor, escribe un número de tarjeta válido.",
+            equalTo: "Por favor, escribe el mismo valor de nuevo.",
+            extension: "Por favor, escribe un valor con una extensión aceptada.",
+            maxlength: $.validator.format("Por favor, no escribas más de {0} caracteres."),
+            minlength: $.validator.format("Por favor, no escribas menos de {0} caracteres."),
+            rangelength: $.validator.format("Por favor, escribe un valor entre {0} y {1} caracteres."),
+            range: $.validator.format("Por favor, escribe un valor entre {0} y {1}."),
+            max: $.validator.format("Por favor, escribe un valor menor o igual a {0}."),
+            min: $.validator.format("Por favor, escribe un valor mayor o igual a {0}."),
+            nifES: "Por favor, escribe un NIF válido.",
+            nieES: "Por favor, escribe un NIE válido.",
+            cifES: "Por favor, escribe un CIF válido."
+        });
+    </script>
+</body>
+</html>

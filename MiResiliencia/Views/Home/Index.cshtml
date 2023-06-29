@@ -1,0 +1,11 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="projectTableDiv">
+    @{
+        @await Component.InvokeAsync("ProjectTable");
+    }
+</div>
+

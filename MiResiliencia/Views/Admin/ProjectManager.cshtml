@@ -1,0 +1,184 @@
+﻿@model MiResiliencia.Models.ProjectManagerViewModel
+@{
+    if (Context.Request.Headers.Keys.Contains("x-ic-request"))
+    {
+        if (Context.Request.Headers["X-IC-Request"] == "true")
+        {
+            Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+
+<div class="row">
+    @if (ViewBag.TheResult != null)
+    {
+        if (ViewBag.TheResult == true)
+        {
+            <div class="alert alert-success">
+                @ViewBag.SuccessMessage
+            </div>
+        }
+        else if (ViewBag.TheResult == false)
+        {
+            <div class="alert alert-danger">
+                <strong>Error!</strong> @ViewBag.Error
+            </div>
+        }
+
+    }
+    <div class="col-xs-12">
+
+
+
+        @using (Html.BeginForm("UserManager", "Admin", FormMethod.Post, new { @id = "createNewProjectForm", @class = "form insideTab", ic_post_to = "/Admin/ProjectManager", ic_target = "#projectmanagercontent", ic_on_beforeSend = "validateProjectForm()" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form">
+
+                        
+
+                        <div class="card" style="margin-top:20px;">
+                            <div class="card-header">
+                                <h5>@Resources.Global.NewProject</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3" style="padding-top:10px;">@Resources.Global.Select @Resources.Global.Company</div>
+                                    <div class="col-md-9">
+                                        @Html.DropDownListFor(m => m.EditCompanyId,
+                                    new SelectList(Model.Rights.ProjectForCompanies.Distinct(),
+                                    "ID", "CompanyTitle"), new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group floating-label">
+                                    @Html.EditorFor(model => model.NewProject.Number, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                                    @Html.LabelFor(model => model.NewProject.Number, htmlAttributes: new { @class = "" })
+                                </div>
+                                <div class="form-group floating-label">
+                                    @Html.EditorFor(model => model.NewProject.Name, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                                    @Html.LabelFor(model => model.NewProject.Name, htmlAttributes: new { @class = "" })
+                                </div>
+                                
+                            <div class="card-actionbar">
+                                <div class="card-actionbar-row">
+                                    <button class="btn ink-reaction btn-raised btn-danger" type="submit">@Resources.Global.Create</button>
+                                </div>
+                            </div>
+
+                            </div>
+                        </div>
+            </div>
+        }
+
+        <div class="card panel expanded">
+            <div class="card-header" data-toggle="collapse" data-parent="#newUserPanel" data-target="#newUserPanel-2">
+                <h5>@Resources.Global.Project</h5>
+
+            </div>
+            <div id="newUserPanel-2" class="">
+                <div class="card-body">
+                    <div class="row">
+                    <table class="table" id="companylisttable">
+                        <thead>
+                            <tr>
+                                <th>@Resources.Global.ProjectName</th>
+                                <th>@Resources.Global.Company</th>
+                                <th>State</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (MiResiliencia.Models.Project p in Model.Projects)
+                            {
+                                <tr>
+                                    <td>
+                                        @p.Name
+                                    </td>
+                                    <td>
+                                        @p.Company.CompanyName
+                                    </td>
+                                    <td>
+                                        @p.ProjectState.Description
+                                    </td>
+                                    <td>
+                                        <button type="button" onclick="copyProject(@p.Id)" class="btn ink-reaction btn-raised btn-primary" style="word-wrap:break-word;">Copiar</button> &nbsp;
+                                        <button type="button" onclick="deleteProject(@p.Id)" class="btn ink-reaction btn-raised btn-primary" style="word-wrap:break-word;">Borrar</button> &nbsp;
+                                        @if (@p.ProjectState.ID == 3)
+                                        {
+                                            <text><button type="button" onclick="closeProject(@p.Id)" class="btn ink-reaction btn-raised btn-primary" style="word-wrap:break-word;">Finalizar</button> &nbsp;</text>
+                                        }
+                                        @if ((@p.ProjectState.ID == 3) || (@p.ProjectState.ID == 5))
+                                        {
+                                            <text><button type="button" onclick="reOpenProject(@p.Id)" class="btn ink-reaction btn-raised btn-primary" style="word-wrap:break-word;">Reanudar</button>&nbsp;</text>
+                                        }
+                                    </td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div><!--end .panel -->
+        </div></div>
+
+<script type="text/javascript">
+
+            function validateProjectForm() {
+                var f = $("#createNewProjectForm");
+                $.validator.unobtrusive.parse(f);
+    }
+
+            function deleteProject(id) {
+                BootstrapDialog.show({
+                                            type: BootstrapDialog.TYPE_DANGER,
+                                            title: 'Borrar el proyecto',
+                                            message: '¿Realmente quieres borrar el proyecto?',
+                                            buttons: [{
+                                                label: 'Sí',
+                                                action: function (dialogItself) {
+                                                    dialogItself.close();
+                                                    $.get('@Url.Action("Delete","Project")/' + id, function (data) {
+                                                        insideUserProfileTabLoadUrl('@Url.Action("ProjectManager","Admin")', '#projectmanagercontent', '#projectmanagercontentLinker');
+                                                    });
+                                                }
+                                            },
+                                            {
+                                                label: 'Abortar',
+                                                action: function (dialogItself) {
+                                                    dialogItself.close();
+
+                                                }
+                                            }
+                                            ]
+                                        });
+            }
+
+            function copyProject(id) {
+
+                $.get('@Url.Action("CopyProject","Project")/' + id, function (data) {
+                    insideUserProfileTabLoadUrl('@Url.Action("ProjectManager","Admin")', '#projectmanagercontent', '#projectmanagercontentLinker');
+                });
+
+
+            }
+            function closeProject(id) {
+                $.get('@Url.Action("Close","Project")/' + id, function (data) {
+                                                        insideUserProfileTabLoadUrl('@Url.Action("ProjectManager","Admin")', '#projectmanagercontent', '#projectmanagercontentLinker');
+                                                    });
+            }
+
+    function reOpenProject(id) {
+                $.get('@Url.Action("ReOpen","Project")/' + id, function (data) {
+                                                        insideUserProfileTabLoadUrl('@Url.Action("ProjectManager","Admin")', '#projectmanagercontent', '#projectmanagercontentLinker');
+                                                    });
+            }
+
+</script>

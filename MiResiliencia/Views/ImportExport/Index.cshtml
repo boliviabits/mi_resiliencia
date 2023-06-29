@@ -1,0 +1,47 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+}
+<div class="row" style="padding:10px;">
+    <button class="btn ink-reaction btn-raised btn-danger" type="button" onclick="exportProject();">@Resources.Global.ExportProject</button>
+</div>
+<div class="row" style="padding:10px;">
+    <form method="post" enctype="multipart/form-data" asp-action="Import">
+                    <div class="card-body">
+            <p>@Resources.Global.ImportMessage</p>
+                        <input type="file" name="file" />
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary" onclick="doImport();">@Resources.Global.Import</button>
+                    </div>
+                </form>
+</div>
+<script>
+    function exportProject() {
+        waitingDialog.show("Procesando. Por favor, espere...");
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("Export", "ImportExport")',
+            async: false,
+            cache: false,
+            dataType: 'JSON',
+            success: function (retData) {
+                waitingDialog.hide();
+
+                if (retData.Error != null) alert(retData.Error);
+                else location.href = '@Url.Action("Download","ImportExport")?filename=' + retData.Filename;
+            },
+            error: function (ex) {
+
+                waitingDialog.hide();
+                alert(ex);
+            }
+        });
+    }
+
+    function doImport() {
+        waitingDialog.show("Procesando. Por favor, espere...");
+    }
+
+
+</script>

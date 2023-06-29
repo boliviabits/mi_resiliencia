@@ -1,0 +1,73 @@
+﻿<section>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form">
+
+                        <div class="card">
+                            <div class="card-head style-primary">
+                                <header>@Resources.Global.DrawObject</header>
+                            </div>
+
+                            <div class="card-body floating-label">
+
+
+                                <div class="form-group">
+                                    <label class="control-labeL" for="katselector">@Resources.Global.Category</label>
+                                    <select class="form-control static dirty" id="katselector" name="landuseselector" onchange="KatSelectorChange();">
+                                        <option value="-">---</option>
+                                        <option value="0">Edificios</option>
+                                        <option value="1">Objetos especiales</option>
+                                        <option value="2">Agricultura</option>
+                                    </select>
+                                    <span class="field-validation-valid has-error form-control-feedback" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+
+                                <script type="text/javascript">
+                                    function KatSelectorChange() {
+                                        $.getJSON("/Tools/GetObjects/" + $('#katselector').find(":selected").val(), function (result) {
+                                            var options = $("#landuseselector");
+                                            options.find('option').remove().end()
+                                            //don't forget error handling!
+                                            $.each(result, function () {
+                                                options.append($("<option />").val(this.ID).text(this.Name));
+                                            });
+
+                                            $("#detailSelection").show();
+                                        });
+                                    }
+
+                                </script>
+
+                                <div class="form-group" id="detailSelection" style="display:none;">
+                                    <label class="control-labeL" for="landuseselector">@Resources.Global.Objekt</label>
+                                    <select class="form-control static dirty" id="landuseselector" name="landuseselector" onchange="">
+                                        
+                                    </select>
+                                    <span class="field-validation-valid has-error form-control-feedback" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+
+                                <script type="text/javascript">
+                                    function startDrawing() {
+                                        var drawStyle = 'Point';
+                                        if ($('#katselector').find(":selected").val() == 2) drawStyle = 'Polygon';
+                                        GeoWebGIS.addDrawInteraction(drawStyle);
+                                        $('#stopDraw').show();
+                                        $('#startDraw').hide();
+                                    }
+                                </script>
+
+                                <button class="btn ink-reaction btn-raised btn-danger" type="button" id="startDraw" onclick="startDrawing();">@Resources.Global.Draw</button>
+                                <button class="btn ink-reaction btn-raised btn-danger" type="button" id="stopDraw" style="display:none;" onclick="GeoWebGIS.endDrawInteraction();$('#startDraw').show();$('#stopDraw').hide();">@Resources.Global.Stop</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+<script type="text/javascript">
+</script>
+

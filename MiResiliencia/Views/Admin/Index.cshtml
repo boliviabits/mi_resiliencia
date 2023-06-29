@@ -1,0 +1,165 @@
+﻿@model MiResiliencia.Models.Project
+@using MiResiliencia.Helpers;
+@using MiResiliencia.Models
+@{
+    ViewBag.Title = "Admin";
+    if (Context.Request.Headers.Keys.Contains("x-ic-request"))
+    {
+        if (Context.Request.Headers["X-IC-Request"] == "true")
+        {
+            Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        if ($('#adminDiv').width() < 1111) {
+            $(".insideTab > h6").hide();
+        }
+        else {
+            $(".adminDiv > h6").show();
+        }
+
+
+        insideUserProfileTabLoadUrl('/Identity/Account/UserInformation', '#userprofilecontent', '#userprofilecontentLinker')
+
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+    });
+
+    function insideUserProfileTabLoadUrl(url, tab, hiddenlink) {
+        $(tab).html('');
+        $hidden = $(hiddenlink);
+        $hidden.attr("ic-get-from", url);
+        $hidden.attr("ic-src", url);
+        $hidden.attr("ic-target", tab);
+        $hidden.attr("ic-push-url", "false");
+        $hidden.attr("ic-indicator", "#loading-spinner3");
+        $hidden.click();
+    }
+
+    // change Tab Event
+    $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        
+        var target = $(e.target).attr("href") // activated tab
+        if (target == "#pUserprofile") {
+            //insideUserProfileTabLoadUrl('@Url.Action("UserInformation","Account")', '#userprofilecontent', '#userprofilecontentLinker')
+        }
+        else if (target == "#pProjectmanager") {
+            insideUserProfileTabLoadUrl('@Url.Action("ProjectManager","Admin")', '#projectmanagercontent', '#projectmanagercontentLinker')
+        }
+        else if (target == "#pUsermanager") {
+            insideUserProfileTabLoadUrl('@Url.Action("UserManager","Admin")', '#usermanagercontent', '#usermanagercontentLinker')
+        }
+        else if (target == "#pCompanymanager") {
+            insideUserProfileTabLoadUrl('@Url.Action("CompanyManager","Admin")', '#companymanagercontent', '#companymanagercontentLinker')
+        }
+    });
+</script>
+
+<p></p>
+<div class="row" id="adminDiv">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding-bottom:8px;">
+                <ul class="nav nav-theme nav-tabs card-header-tabs text-center" role="tablist">
+                    <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.UserProfile">
+                        <a style="padding-bottom:1rem;" class="nav-link active insideTab" id="pUserprofile-tab" data-bs-toggle="tab" data-bs-target="#pUserprofile" role="tab" aria-controls="pUserprofile" aria-selected="true" href="#pUserprofile"><i class="fa fa-lg fa-address-card"></i><br><h6>@Resources.Global.UserProfile<br></h6></a>
+                    </li>
+                    @if (((MiResiliencia.Controllers.Rights)ViewBag.Rights).CanCreateProjects)
+                    {
+                        <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.ProjectManager">
+                            <a style="padding-bottom:1rem;" class="nav-link insideTab" id="pProjectmanager-tab" data-bs-toggle="tab" data-bs-target="#pProjectmanager" role="tab" aria-controls="pProjectmanager" aria-selected="true" href="#pProjectmanager"><i class="fa fa-lg fa-notes-medical"></i><br><h6>@Resources.Global.ProjectManager<br></h6></a>
+                        </li>
+                    }
+                    @if (((MiResiliencia.Controllers.Rights)ViewBag.Rights).CanCreateUsers)
+                    {
+                        <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Usermanager">
+                            <a style="padding-bottom:1rem;" class="nav-link insideTab" id="pUsermanager-tab" data-bs-toggle="tab" data-bs-target="#pUsermanager" role="tab" aria-controls="pUsermanager" aria-selected="true" href="#pUsermanager"><i class="fa fa-lg fa-address-book"></i><br><h6>@Resources.Global.Usermanager<br></h6></a>
+                        </li>
+                    }
+                    @if (((MiResiliencia.Controllers.Rights)ViewBag.Rights).CanCreateCompany)
+                    {
+                        <li class="nav-item" role="presentation" data-toggle="tooltip" data-placement="bottom" title="@Resources.Global.Companymanager">
+                            <a style="padding-bottom:1rem;" class="nav-link insideTab" id="pCompanymanager-tab" data-bs-toggle="tab" data-bs-target="#pCompanymanager" role="tab" aria-controls="pCompanymanager" aria-selected="true" href="#pCompanymanager"><i class="fa fa-lg fa-building"></i><br><h6>@Resources.Global.Companymanager<br></h6></a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+
+
+
+            <div class="card-body tab-content style-default-bright">
+                <div class="tab-pane active" id="pUserprofile" role="tablist" aria-labelledby="pUserprofile-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>@Resources.Global.UserProfile</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div id="userprofilecontent"></div>
+                                <a id="userprofilecontentLinker" class="interLink" href="#" style="display:none;"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (((MiResiliencia.Controllers.Rights)ViewBag.Rights).CanCreateProjects)
+                {
+                    <div class="tab-pane" id="pProjectmanager" role="tablist" aria-labelledby="pProjectmanager-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>@Resources.Global.ProjectManager</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div id="projectmanagercontent"></div>
+                                    <a id="projectmanagercontentLinker" class="interLink" href="#" style="display:none;"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (((MiResiliencia.Controllers.Rights)ViewBag.Rights).CanCreateUsers)
+                {
+                    <div class="tab-pane" id="pUsermanager" role="tablist" aria-labelledby="pUsermanager-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>@Resources.Global.Usermanager</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div id="usermanagercontent"></div>
+                                    <a id="usermanagercontentLinker" class="interLink" href="#" style="display:none;"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (((MiResiliencia.Controllers.Rights)ViewBag.Rights).CanCreateCompany)
+                {
+                    <div class="tab-pane" id="pCompanymanager" role="tablist" aria-labelledby="pCompanymanager-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>@Resources.Global.Companymanager</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div id="companymanagercontent"></div>
+                                    <a id="companymanagercontentLinker" class="interLink" href="#" style="display:none;"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

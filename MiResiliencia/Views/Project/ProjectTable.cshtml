@@ -1,0 +1,74 @@
+﻿@model IEnumerable<MiResiliencia.Models.ProjectTableViewModel>
+<p>
+    <div class="card">
+        <div class="card-header">
+            <h5>@Resources.Global.Project</h5>
+        </div>
+        <div class="card-body">
+            <div class="row form">
+
+                <div class="form-group floating-label">
+                    <input class="form-control text-box single-line static dirty" id="TableSearch" type="text">
+                    <label class="" for="TableSearch">@Resources.Global.Search</label>
+                </div>
+
+            </div>
+
+
+
+            <div id="pthide">
+                <table class="table table-striped table-bordered" id="projectTable" style="width:100%;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>@Resources.Global.ProjectNumber</th>
+                            <th>@Resources.Global.ProjectName</th>
+                            <th>Compañía</th>
+                            <th>Editable</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (MiResiliencia.Models.ProjectTableViewModel ptvm in Model.OrderBy(m => m.CanUserEdit).ThenBy(m => m.Project))
+                        {
+                            <tr>
+                                <td>@ptvm.Project.Number</td>
+                                <td>@ptvm.Project.Name</td>
+                                <td>@ptvm.Project.Company.CompanyName</td>
+                                <td>
+                                    @if (ptvm.CanUserEdit)
+                                    {
+                                        <button type="button" onclick="loadProject(@ptvm.Project.Id)" class="btn ink-reaction btn-raised btn-primary" style="">@Resources.Global.ChooseProject</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</p>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+        projectt = $('#projectTable').DataTable({
+            "scrollX": true,
+            "order": [[3, 'desc'], [1, 'asc']],
+            //"language": GeoWebGIS.translator.get("table")
+        });
+        $('#TableSearch').on('keyup', function () {
+            $('#pthide').show();
+            projectt.search(this.value).draw();
+        });
+
+    @if (ViewBag.HideDiv)
+    {
+
+        <text>if ($('#TableSearch').val() == "") $('#pthide').hide(); </text>
+    }
+
+        });
+
+    
+</script>

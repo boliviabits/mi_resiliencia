@@ -1,0 +1,149 @@
+@using Microsoft.AspNetCore.Mvc.Razor
+@model MiResiliencia.Models.MultipleObjectparameterViewModel
+@using MiResiliencia.Helpers
+@{
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+    string id = string.Join("_", Model.MappedObjects.Select(m => m.ID));
+}
+
+@using (Html.BeginForm("ObjectParameterEdit", "Tools", FormMethod.Post, new { @id = "objectParameterEditForm", @class = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <table class="table">
+            <tr><td><b>@Resources.Global.Coordinates</b></td></tr>
+
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.Name, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.Description, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.Value, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.ChangeValue, Model)
+            <tr><td style="font-weight:bold;">Unidad</td><td>@Model.MergedObjectparameter.Unity</td></tr>
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.Floors, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.Personcount, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.Staff, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.ChangePersonCount, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.Presence, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.NumberOfVehicles, Model)
+            @Html.ObjetRowFor(x => x.MergedObjectparameter.Velocity, Model)
+
+        </table>
+
+        @if (ViewBag.ProjectWrite)
+        {
+        <button type="button" onclick="insideEdit('@id')" id="edit_button_999" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Modify</button>
+            <button type="submit" id="save_button_@id" style="display:none;" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Save</button>
+        }
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#objectParameterEditForm").validate({
+                    lang: 'es',
+                    submitHandler: function (form) {
+                        saveEdit('@id');
+                    }
+                });
+            });
+
+
+
+            function insideEdit(id) {
+                GeoWebGIS.checkProjectState(
+                    function () {
+                        $('.insideEditor').each(function () {
+                            if ($(this).attr("id").indexOf(id.toString() + "_") == 0) $(this).show();
+                            else $(this).hide();
+                        });
+                        $('.insideText').each(function () {
+                            if ($(this).attr("id").indexOf(id.toString() + "_") == 0) $(this).hide();
+                        });
+
+                        $('#edit_button_' + id).hide();
+                        $('#save_button_' + id).show();
+                    });
+            }
+
+
+            function saveEdit(id) {
+
+                if ($('#' + id + '_MergedObjectparameter_Presence').val() != null) {
+                    $('#' + id + '_MergedObjectparameter_Presence').val($('#' + id + '_MergedObjectparameter_Presence').val().replace(",", "."));
+                }
+
+                $.ajax({
+                    url: '@Url.Action("EditInside", "Tools")/' + id,
+                    data: {
+                        name: $('#' + id + '_MergedObjectparameter_Name').val(),
+                        description: $('#' + id + '_MergedObjectparameter_Description').val(),
+                        value: $('#' + id + '_MergedObjectparameter_Value').val(),
+                        ChangeValue: $('#' + id + '_MergedObjectparameter_ChangeValue').val(),
+                        unity: $('#' + id + '_MergedObjectparameter_Unity').val(),
+                        floors: $('#' + id + '_MergedObjectparameter_Floors').val(),
+                        Personcount: $('#' + id + '_MergedObjectparameter_Personcount').val(),
+                        Staff: $('#' + id + '_MergedObjectparameter_Staff').val(),
+                        ChangePersonCount: $('#' + id + '_MergedObjectparameter_ChangePersonCount').val(),
+                        Presence: $('#' + id + '_MergedObjectparameter_Presence').val(),
+                        NumberOfVehicles: $('#' + id + '_MergedObjectparameter_NumberOfVehicles').val(),
+                        Velocity: $('#' + id + '_MergedObjectparameter_Velocity').val()
+                    },
+                    success: function () {
+
+                        
+                            
+
+                        @{ 
+                            if (!ViewBag.inErrorView)
+                            {
+                                <text>
+                        reloadObjectParameter();
+                        GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectsView&cql_filter=ProjectId=@Model.MappedObjects.First().Project.Id&outputFormat=application/json');</text>
+                            }
+                            else
+                            {
+                                <text>
+                                console.log("InErrorView");
+                                reloadObjectParameter();
+                                </text>
+                            }
+                        }
+
+                            
+                            
+                        
+
+                       
+                    }
+                });
+
+            }
+
+        </script>
+
+    </div>
+
+}
+@{
+    var i = 1;
+}
+
+@{
+    HelperResult MakeRedStyle(MiResiliencia.Models.MappedObject m, string PropertyName)
+	    {
+	        var property = PropertyName.Split('.').Select(s => m.Objectparameter.GetType().GetProperty(s)).FirstOrDefault();
+	        if ((m.Objectparameter.IsStandard == false) && (m.Objectparameter.MotherOtbjectparameter != null))
+	        {
+	            if (property.GetValue(m.Objectparameter.MotherOtbjectparameter) != null)
+	            {
+	                if (!property.GetValue(m.Objectparameter.MotherOtbjectparameter).Equals(property.GetValue(m.Objectparameter)))
+	                {
+	                    <text>color:red;</text>
+	                }
+	            }
+	        }
+	
+		return new HelperResult(w => Task.CompletedTask);
+} }
+
+

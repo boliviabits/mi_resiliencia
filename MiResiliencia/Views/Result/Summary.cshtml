@@ -1,0 +1,480 @@
+﻿@using MiResiliencia.Helpers.API;
+@using MiResiliencia.Models.API;
+@using MiResiliencia.Models;
+@using MiResiliencia.Resources.API;
+@model MiResiliencia.Models.API.ProjectResult
+
+@{
+    ViewBag.Title = ResSummary.TXT_Summary;
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";  
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@Html.Raw(ResSummary.TXT_ProjectSummary)</title>
+    @if (ViewBag.attachCss ?? false)
+    {
+        @*
+            <link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+        <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    }
+    @if (ViewBag.attachCss ?? false)
+    {
+        <style>
+            .collapse {
+                display: block !important
+            }
+        </style>
+    }
+    @if (ViewBag.print ?? false)
+    {
+        <style>
+            html, body {
+                height: 297mm;
+                width: 210mm;
+            }
+        </style>
+
+
+    }
+    <script src="~/lib/Chart.min.js" type="text/javascript"></script>
+</head>
+<body>
+    @if (!(ViewBag.print ?? false))
+    {
+        @*<button id="export">Export to Word</button>*@
+    }
+
+    <div id="docx">
+        <div class="WordSection1">
+            <p><br /></p>
+            @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+            @* PROJECT SUMMARY *@
+            @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+
+            <div class="card card-bordered style-danger">
+                @*HEADER*@
+                <div class="card-header">
+                    <h5>
+                        @ResSummary.TXT_ProjectSummary
+                    </h5>
+                    <div class="tools">
+                        @if (!(ViewBag.print ?? false))
+                        {
+                            var urlPrint = Url.Action("Summary", "Result", new { id = Model.Project.Id, details = false, attachCss = true, print = true });
+                            //cut off the left hand part, because some path is added before Result/Summary sometimes
+                            int indexLeft = urlPrint.LastIndexOf("Result/Summary");
+                            if (indexLeft >= 0)
+                            {
+                                urlPrint = urlPrint.Substring(indexLeft);
+                            }
+                            //var requestUri = this.Request.Url;  //requestUri.Authority
+                            <button class="btn ink-reaction btn-raised btn-primary" type="button"
+                                    onclick="window.open('api/@Html.Raw(urlPrint)', '_blank')">
+                                @Html.Raw(ResSummary.TXT_Print)
+                            </button>
+
+                            @*<button id="export" class="btn ink-reaction btn-raised btn-primary" type="button">
+                                    @Html.Raw(ResSummary.TXT_ExportWord)
+                                </button>*@
+
+                            @*string urlPrint2 = Url.Action("Summary", "Result", new { id = Model.Project.Id, details = true, attachCss = true, print = true });
+                                <button class="btn ink-reaction btn-raised btn-primary" type="button"
+                                        onclick="window.open('@Html.Raw(urlPrint2)', '_blank')">
+                                    @Html.Raw(ResSummary.TXT_PrintDetail)
+                                </button>*@
+                        }
+                        @*<a class="btn btn-icon-toggle btn-collapse"><i class="fa fa-angle-down"></i></a>*@
+                    </div>
+                </div>
+                @*CONTENT*@
+                <div class="card-body style-default-bright" style="display: block;">
+                    <h2 class="bg-info">@ResSummary.TXT_Project</h2>
+                    <table class="table table-condensed table-bordered table-hover table-responsive">
+                        <tr>
+                            <th>
+                                @Html.Raw(ResSummary.TXT_Number)
+                            </th>
+                            <th>
+                                @Html.Raw(ResSummary.TXT_Name)
+                            </th>
+                            <th>
+                                @Html.Raw(ResModel.PM_Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CreationDate)
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => model.Project.Number)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Project.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Project.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.CreationDate)
+                            </td>
+                        </tr>
+                    </table>
+
+                    @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+                    <h2 class="bg-info">@ResSummary.TXT_BenefitCostRatio</h2>
+                    @Html.Raw(Model.ObjectToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
+                    <br />
+
+                    <div style="width:80%;min-width:800px">
+                        @Html.Partial("SummaryChart", Model)
+                    </div>
+
+                    @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+                    <h2 class="bg-info">@ResSummary.TXT_RiskPerProcess</h2>
+                    <h3 class="bg-info">@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_beforeMeasure</h3>
+                    <table class="table table-condensed table-bordered table-hover table-responsive">
+                        <tr>
+                            <th>@ResSummary.TXT_Process</th>
+                            <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Total</th>
+                            <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Person</th>
+                            <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Property</th>
+                            <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Indirect</th>
+                        </tr>
+
+                        @foreach (var process in Model.ProcessResultsSorted.Where(p => p.BeforeAction == true))
+                        {
+                            <tr>
+                                <td>
+                                    @process.NatHazard.Name
+                                </td>
+                                <td>
+                                    @process.CollectiveRiskTotal.Item1.ToString("C0") @Html.Raw(ResFormat.DF_PerYear)
+                                </td>
+                                <td>
+                                    @process.CollectiveRiskPerson.Item1.ToString("C0") @Html.Raw(ResFormat.DF_PerYear)
+                                </td>
+                                <td>
+                                    @process.CollectiveRiskProperty.Item1.ToString("C0") @Html.Raw(ResFormat.DF_PerYear)
+                                </td>
+                                <td>
+                                    @process.CollectiveRiskIndirect.Item1.ToString("C0") @Html.Raw(ResFormat.DF_PerYear)
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+
+                    @if (Model.ProcessResultsSorted.Where(p => p.BeforeAction == false).Any())
+                    {
+                        <h3 class="bg-info">@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_afterMeasure</h3>
+                        <table class="table table-condensed table-bordered table-hover table-responsive">
+                            <tr>
+                                <th>@ResSummary.TXT_Process</th>
+                                <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Total</th>
+                                <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Person</th>
+                                <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Property</th>
+                                <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Indirect</th>
+                            </tr>
+
+                            @foreach (var process in Model.ProcessResultsSorted.Where(p => p.BeforeAction == false))
+                            {
+                                <tr>
+                                    <td>
+                                        @process.NatHazard.ToString()
+                                    </td>
+                                    <td>
+                                        @process.CollectiveRiskTotal.Item1.ToString("C0") @Html.Raw(ResFormat.DF_PerYear)
+                                    </td>
+                                    <td>
+                                        @process.CollectiveRiskPerson.Item1.ToString("C0") @Html.Raw(ResFormat.DF_PerYear)
+                                    </td>
+                                    <td>
+                                        @process.CollectiveRiskProperty.Item1.ToString("C0") @Html.Raw(ResFormat.DF_PerYear)
+                                    </td>
+                                    <td>
+                                        @process.CollectiveRiskIndirect.Item1.ToString("C0") @Html.Raw(ResFormat.DF_PerYear)
+                                    </td>
+                                </tr>
+
+                            }
+                        </table>
+                    }
+                    <br />
+
+                    <div style="width:80%;min-width:800px" ;>
+                        @*@Html.Partial("ProjectChartStacked", Model)*@
+                        @Html.Partial("ProjectChartStacked2", Model)
+                    </div>
+
+                    @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+                    <h2 class="bg-info">@ResSummary.TXT_ProtectionMeasure</h2>
+                    @Html.Raw(Model.ProtectionMeasure.ObjectToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
+
+                </div>
+            </div>
+
+            @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+            @* PROCESSES IN DETAIL*@
+            @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+            @if (!(ViewBag.print ?? false) || Model.ShowDetails)
+            {
+                <hr />
+                <div class="card card-bordered style-danger">
+                    @*HEADER*@
+                    <div class="card-header">
+                        <h5>
+                            @ResSummary.TXT_ProcessesDetail
+                        </h5>
+                        <div class="tools">
+                            @*<a class="btn btn-icon-toggle btn-collapse"><i class="fa fa-angle-down"></i></a>*@
+                        </div>
+                    </div>
+                    @*CONTENT*@
+                    <div class="card-body style-default-bright" style="display: block;">
+
+                        @*PROCESSES PANEL GROUP*@
+                        <div class="panel-group" id="processes">
+
+                            @{int i = 0; }
+                            @foreach (NatHazard hazard in Model.NatHazards)
+                            {
+                                i++;
+
+                                <div class="card panel">
+                                    @*HEADER*@
+                                    <div class="card-header collapsed style-danger" data-toggle="collapse" data-parent="#processes" data-target="#processes-@i">
+                                        <h5>
+                                            @ResSummary.TXT_NatHazard @hazard.Name
+                                        </h5>
+                                        <div class="tools">
+                                            <a class="btn btn-icon-toggle"><i class="fa fa-angle-down"></i></a>
+                                        </div>
+                                    </div>
+                                    @*CONTENT*@
+                                    <div id="processes-@i" class="collapse">
+                                        <div class="card-body">
+
+                                            <h3 class="bg-info">@ResModel.PA_PrA</h3>
+                                            @Html.Raw(Model.Project.PrAs
+                                                .Where(p => p.NatHazard.ID == hazard.ID)
+                                                .OrderBy(p => p.IKClasses.Value)
+                                                .ToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
+
+                                            @{
+                                                List<ProcessResult>
+                                                          _processes = Model.ProcessResultsSorted.Where(p => p.NatHazard.ID == hazard.ID).ToList();
+                                                List<bool>
+                                                    beforeActions = _processes.Select(p => p.BeforeAction).Distinct().OrderByDescending(a => a).ToList();
+
+                                                foreach (bool beforeMeasure in beforeActions)
+                                                {
+                                                    if (beforeMeasure)
+                                                    {
+                                                        <h3 class="bg-info">@ResSummary.TXT_beforeMeasure</h3>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h3 class="bg-info">@ResSummary.TXT_afterMeasure</h3>
+                                                    }
+
+                                                    List<ProcessResult>
+                                                    _processesMeasure = _processes.Where(p => p.BeforeAction == beforeMeasure).ToList();
+
+                                                    foreach (ProcessResult process in _processesMeasure)
+                                                    {
+                                                        <h4 class="bg-success">@ResSummary.TXT_Scenarios </h4>
+                                                        @Html.Raw(process.ScenarioResults.ToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
+                                                        <br />
+
+                                                        <div style="width:80%;min-width:800px">
+                                                            @Html.Partial("ProcessScenarioChart", process.ScenarioResults)
+                                                        </div>
+
+                                                        <h4 class="bg-success">@ResSummary.TXT_Process @ResSummary.TXT_Summary </h4>
+                                                        @Html.Raw(process.ObjectToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
+                                                        <br />
+
+                                                        <div style="width:80%;min-width:800px">
+                                                            @Html.Partial("ProcessResultChart", process)
+                                                        </div>
+
+                                                        //Logs
+                                                        if (Model.ShowDetails)
+                                                        {
+                                                            <table class="table table-condensed table-bordered table-hover table-responsive">
+                                                                <tr>
+                                                                    <th></th>
+                                                                    <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Total</th>
+                                                                    <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Person</th>
+                                                                    <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Property</th>
+                                                                    <th>@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_Indirect</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>@ResSummary.TXT_Log</b>
+                                                                    </td>
+                                                                    <td>
+                                                                        @process.CollectiveRiskTotal.Item2
+                                                                    </td>
+                                                                    <td>
+                                                                        @process.CollectiveRiskPerson.Item2
+                                                                    </td>
+                                                                    <td>
+                                                                        @process.CollectiveRiskProperty.Item2
+                                                                    </td>
+                                                                    <td>
+                                                                        @process.CollectiveRiskIndirect.Item2
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        }
+
+                                                        if (Model.ShowDetails)
+                                                        {
+                                                            int sId = 0;
+                                                            sId += Convert.ToInt32(beforeMeasure) * 1;
+                                                            sId += hazard != null ? hazard.ID * 10 : 0;
+                                                            <div class="panel-group" id="scenarios-@sId">
+
+                                                                @foreach (ScenarioResult scenario in process.ScenarioResults)
+                                                                {
+                                                                    int j = scenario.getID();
+
+                                                                    //SCENARIO CARD
+                                                                    <div class="card panel">
+                                                                        @*HEADER*@
+                                                                        <div class="card-header collapsed style-default" data-toggle="collapse" data-parent="#scenarios-@sId" data-target="#scenario-@j">
+                                                                            <h5>
+                                                                                @ResSummary.TXT_Scenario: @scenario.NatHazard.Name - @scenario.BeforeActionString - @scenario.IkClass.Description
+                                                                            </h5>
+                                                                            <div class="tools">
+                                                                                <a class="btn btn-icon-toggle"><i class="fa fa-angle-down"></i></a>
+                                                                            </div>
+                                                                        </div>
+                                                                        @*CONTENT*@
+                                                                        <div id="scenario-@j" class="collapse">
+                                                                            <div class="card-body">
+
+                                                                                <p># @ResSummary.TXT_DamageExtent: @scenario.DamageExtents.Count</p>
+
+                                                                                @if (@scenario.DamageExtents.Any())
+                                                                                {
+                                                                                    @Html.Raw(scenario.DamageExtents.ToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
+                                                                                }
+
+                                                                            </div>
+                                                                        </div> @*END OF CONTENT*@
+                                                                    </div>
+                                                                } @*END OF FOREACH*@
+
+                                                            </div> @*END OF PANEL GROUP*@
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        </div> @*END OF CARD BODY*@
+
+                                    </div> @*END OF CONTENT*@
+                                </div> @*END OF PROCESS CARD*@
+
+                            }
+                        </div> @*END OF PROCESSES PANEL GROUP*@
+
+                    </div> @*END OF CONTENT*@
+                </div> @*END OF CARD*@
+            }
+            @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+            @* WARNINGS *@
+            @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+            <hr />
+
+            <div class="card card-bordered style-warning">
+                @*HEADER*@
+                <div class="card-header">
+                    <h5>
+                        @ResSummary.TXT_ErrorsWarning
+                    </h5>
+                    <div class="tools">
+                        @*<a class="btn btn-icon-toggle btn-collapse"><i class="fa fa-angle-down"></i></a>*@
+                    </div>
+                </div>
+                @*CONTENT*@
+                <div class="card-body style-default-bright" style="display: block;">
+                    @{
+                        int count = Model.DamageExtentErrors?.Count ?? 0;
+                    }
+                    <p>
+                        @ResSummary.TXT_NumberOf @ResSummary.TXT_ErrorsWarning.ToLower(): @count
+                    </p>
+                    @if (count > 0 && !(ViewBag.print ?? false))
+                    {
+                        string request = $"/proxy/restb/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=restb:ErrorView&cql_filter=Project_Id={Model.Project.Id}&outputFormat=application/json";
+                        //GeoWebGIS.showWFSLayer('/proxy/restb/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=restb:ErrorView&cql_filter=Project_Id=32&outputFormat=application/json');
+                        <div>
+                            <button class="btn ink-reaction btn-raised btn-primary" type="button" onclick="showCalcErrors()" ic-target="#ImmoContent" ic-indicator="#loading-spinner" ic-push-url="true" ic-on-beforesend="makeIntercooler()" ic-on-complete="makeIntercoolerSuccess()">@Html.Raw(ResSummary.TXT_ShowWarningsOnMap)</button>
+                            <script type="text/javascript">
+                        function showCalcErrors() {
+                            GeoWebGIS.showWFSLayer('@Html.Raw(request)');
+                        }
+                            </script>
+                        </div>
+                        <br>
+                    }
+
+                    @if (count > 0 && Model.ShowDetails)
+                    {
+                        @Html.Raw(Model.DamageExtentErrors.ToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
+                    }
+                    else
+                    {
+                        <br />
+                    }
+                </div>
+            </div>
+
+            @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+            @* FOOTER *@
+            @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
+            <p>
+                <hr />
+                WebApp Version @typeof(MiResiliencia.Controllers.API.ResultController).Assembly.GetName().Version
+                <br />
+                Built @System.IO.File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location).ToString()
+            </p>
+        </div>
+    </div>
+    @*<script type="text/javascript">
+            window.export.onclick = function () {
+                var html, link, blob, url, css;
+                css = (
+                    '<style>' +
+                    /**/
+                    '@@page WordSection1{size: portrait;}' +
+                    /**/
+                    'div.WordSection1 {page: WordSection1;}' +
+                    'table { border-collapse: collapse; } ' +
+                    'td {border: 1px gray solid; padding: 4px; } ' +
+                    '</style>'
+                );
+
+                html = window.docx.innerHTML;
+                blob = new Blob(['\ufeff', css + html], {
+                    type: 'application/msword'
+                });
+                url = URL.createObjectURL(blob);
+                link = document.createElement('A');
+                link.href = url;
+                link.download = 'Document';
+                document.body.appendChild(link);
+                if (navigator.msSaveOrOpenBlob) navigator.msSaveOrOpenBlob(blob, 'Document.doc'); // IE10-11
+                else link.click();  // other browsers
+                document.body.removeChild(link);
+            };
+        </script>*@
+</body>
+</html>

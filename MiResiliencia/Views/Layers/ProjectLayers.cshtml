@@ -1,0 +1,288 @@
+﻿@using Microsoft.AspNetCore.Mvc.Razor
+<h3 style="margin-top:-10px;">@Resources.Global.Project</h3>
+
+@{
+	MiResiliencia.Models.Layer perimetro = new MiResiliencia.Models.Layer();
+	perimetro.JavascriptID = "projectperimeter";
+	perimetro.OLCode = "new ol.layer.Vector({" +
+		"                source: new ol.source.Vector({" +
+		"                    format: new ol.format.GeoJSON()," +
+		"                    url: function (extent) {" +
+		"                        return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Project&featureID={ProjectID}&outputFormat=application/json';" +
+		"                    }," +
+		"					strategy: ol.loadingstrategy.bbox" +
+		"                })," +
+		"                style: new ol.style.Style({" +
+		"                    stroke: new ol.style.Stroke({" +
+		"                        color: 'rgba(0, 0, 255, 1.0)'," +
+		"                        width: 2" +
+		"                    })," +
+		"                    image: new ol.style.Circle({" +
+		"                        radius: 5," +
+		"                        fill: new ol.style.Fill({" +
+		"                            color: 'rgba(0,0,255, 0.0)'" +
+		"                        })," +
+		"                        stroke: new ol.style.Stroke({ color: 'rgba(0, 0, 255, 0.5)', width: 1 })" +
+		"                    })" +
+		"                })," +
+		"            });	";
+	perimetro.Title = Resources.Global.ProjectPerimeter;
+
+
+	MiResiliencia.Models.Layer intensities = new MiResiliencia.Models.Layer();
+	intensities.JavascriptID = "projectintensities";
+	intensities.OLCode = "new ol.layer.Vector({" +
+		"                source: new ol.source.Vector({" +
+		"                    format: new ol.format.GeoJSON()," +
+		"                    url: function (extent) {" +
+		"                        var featureIDs = '';" +
+		"                        $('.ikbefore').each(function (e) {" +
+		"           if ($(this).is (':checked')) featureIDs = featureIDs + $(this).attr('id') + ',';" +
+		"           });" +
+		"                        return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json&sortBy=IntensityDegree+D';" +
+		"                    }," +
+		"					strategy: ol.loadingstrategy.bbox" +
+		"                })})" +
+		"                	";
+	intensities.Title = Resources.Global.IntensityMaps + " (" + Resources.Global.BeforeChange + ")";
+
+
+
+	MiResiliencia.Models.Layer potential = new MiResiliencia.Models.Layer();
+	potential.JavascriptID = "projectpotential";
+	potential.OLCode = "new ol.layer.Vector({" +
+		"                source: new ol.source.Vector({" +
+		"                    format: new ol.format.GeoJSON()," +
+		"                    url: function (extent) {" +
+		"                        return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectsView&cql_filter=BBOX([geometry],\' + extent.join(\',\') + \')%20AND%20ProjectId={ProjectID}&outputFormat=application/json';" +
+		"                    }," +
+		"					strategy: ol.loadingstrategy.bbox" +
+		"                })," +
+		"                style: new ol.style.Style({" +
+		"                    stroke: new ol.style.Stroke({" +
+		"                        color: 'rgba(0, 0, 255, 1.0)'," +
+		"                        width: 2" +
+		"                    })," +
+		"                    image: new ol.style.Circle({" +
+		"                        radius: 5," +
+		"                        fill: new ol.style.Fill({" +
+		"                            color: 'rgba(0,0,255, 0.0)'" +
+		"                        })," +
+		"                        stroke: new ol.style.Stroke({ color: 'rgba(0, 0, 255, 0.5)', width: 1 })" +
+		"                    })" +
+		"                })," +
+		"            });	";
+	potential.Title = Resources.Global.Schadenpotential;
+
+
+	MiResiliencia.Models.Layer pm = new MiResiliencia.Models.Layer();
+	pm.JavascriptID = "projectprotection";
+	pm.OLCode = "new ol.layer.Vector({" +
+		"                source: new ol.source.Vector({" +
+		"                    format: new ol.format.GeoJSON()," +
+		"                    url: function (extent) {" +
+		"                        return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ProtectionMeasure&cql_filter=ProjectID={ProjectID}&outputFormat=application/json';" +
+		"                    }," +
+		"					strategy: ol.loadingstrategy.bbox" +
+		"                })," +
+		"                style: new ol.style.Style({" +
+		"                    stroke: new ol.style.Stroke({" +
+		"                        color: 'rgba(0, 0, 255, 1.0)'," +
+		"                        width: 2" +
+		"                    })," +
+		"                    image: new ol.style.Circle({" +
+		"                        radius: 5," +
+		"                        fill: new ol.style.Fill({" +
+		"                            color: 'rgba(0,0,255, 0.0)'" +
+		"                        })," +
+		"                        stroke: new ol.style.Stroke({ color: 'rgba(0, 0, 255, 0.5)', width: 1 })" +
+		"                    })" +
+		"                })," +
+		"            });	";
+	pm.Title = Resources.Global.Schutzmassnahme;
+
+
+
+
+
+	MiResiliencia.Models.Layer intensitiesAfter = new MiResiliencia.Models.Layer();
+	intensitiesAfter.JavascriptID = "projectintensitiesafter";
+	intensitiesAfter.OLCode = "new ol.layer.Vector({" +
+		"                source: new ol.source.Vector({" +
+		"                    format: new ol.format.GeoJSON()," +
+		"                    url: function (extent) {" +
+		"                        var featureIDs = '';" +
+		"                        $('.ikafter').each(function (e) {" +
+		"           if ($(this).is (':checked')) featureIDs = featureIDs + $(this).attr('id') + ',';" +
+		"           });" +
+		"                        return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Intensity&featureID=' + featureIDs + '&outputFormat=application/json&sortBy=IntensityDegree+D';" +
+		"                    }," +
+		"					strategy: ol.loadingstrategy.bbox" +
+		"                })})" +
+		"                	";
+	intensitiesAfter.Title = Resources.Global.IntensityMaps + " (" + Resources.Global.AfterChange + ")";
+
+
+
+	MiResiliencia.Models.Layer errorsView = new MiResiliencia.Models.Layer();
+	errorsView.JavascriptID = "projecterrorview";
+	errorsView.OLCode = "new ol.layer.Vector({" +
+		"                source: new ol.source.Vector({" +
+		"                    format: new ol.format.GeoJSON()," +
+		"                    url: function (extent) {" +
+		"                        return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ErrorView&cql_filter=ProjectId={ProjectID}&outputFormat=application/json';" +
+		"                    }," +
+		"					strategy: ol.loadingstrategy.bbox" +
+		"                })," +
+		"                style: new ol.style.Style({" +
+		"                    stroke: new ol.style.Stroke({" +
+		"                        color: 'rgb(237, 7, 45)'," +
+		"                        width: 2" +
+		"                    })," +
+		"                    image: new ol.style.Circle({" +
+		"                        radius: 5," +
+		"                        fill: new ol.style.Fill({" +
+		"                            color: 'rgba(186, 14, 43, 0.5)'" +
+		"                        })," +
+		"                        stroke: new ol.style.Stroke({ color: 'rgb(237, 7, 45)', width: 1 })" +
+		"                    })" +
+		"                })," +
+		"            });	" +
+		"                	";
+	errorsView.Title = Resources.Global.Warnings;
+
+
+
+
+
+	MiResiliencia.Models.Layer heatMap = new MiResiliencia.Models.Layer();
+	heatMap.JavascriptID = "projectheatmap";
+	heatMap.OLCode = "new ol.layer.Image({source: new ol.source.ImageWMS({ratio: 1, url: '/proxy/miresiliencia/wms',   params: {'FORMAT': 'image/png8',  'VERSION': '1.1.1', STYLES: '', LAYERS: 'miresiliencia:DamageView', FORMAT: 'image/png', CQL_Filter:'ProjectId={ProjectID}'  }})});   	";
+	heatMap.Title = "Heatmap";
+}
+
+@ShowLayer(perimetro)
+@ShowLayer(intensities)
+@ShowLayer(potential)
+@ShowLayer(pm)
+@ShowLayer(intensitiesAfter)
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		//window.materialadmin.AppForm._initRadioAndCheckbox();
+		loadIKSSmall();
+	});
+</script>
+
+@{
+	HelperResult ShowLayer(MiResiliencia.Models.Layer l)
+	{
+		<script type="text/javascript">
+			$(document).ready(function () {
+				var @l.JavascriptID = null;
+				var @l.JavascriptID = @Html.Raw(l.OLCode);
+
+
+				try {
+			@(l.JavascriptID).setStyle(styleFunction);
+				}
+				catch (Exception) {
+
+				}
+
+				var isAlreadyIn = $.grep(GeoWebGIS.customLayers, function (obj) { return obj.id == '@l.JavascriptID'; })
+
+				if (isAlreadyIn.length == 0) {
+					GeoWebGIS.customLayers.push({ id: '@l.JavascriptID', layer: @l.JavascriptID});
+				}
+				else {
+					isAlreadyIn.layer = @l.JavascriptID;
+					var la = GeoWebGIS.getLayer('@l.JavascriptID');
+					try {
+						la.getSource().clear();
+					}
+					catch (Exception) {
+
+					}
+				}
+				$('#@l.JavascriptID').change();
+
+
+			});
+
+		</script>
+		<div class="row">
+			<div class="col-sm-12">
+			
+
+
+			<div class="form-group">
+				<div class="col-sm-12">
+					<div class="form-group m-checkbox-inline mb-0">
+						<div class="checkbox checkbox-primary">
+							<input id="@l.JavascriptID" type="checkbox" @if (l.Enabled) {
+						<text> checked</text>
+						}>
+							<label for="@l.JavascriptID" class="mb-0">@l.Title</label>
+						</div>
+						<br />
+						@if (l.Title == Resources.Global.IntensityMaps + " (" + Resources.Global.BeforeChange + ")")
+						{
+							<div id="layerBeforCopyDiv" style="margin-left:10px; display:none;"></div>
+						}
+						@if (l.Title == Resources.Global.IntensityMaps + " (" + Resources.Global.AfterChange + ")")
+						{
+							<div id="layerAfterCopyDiv" style="margin-left:10px; display:none;"></div>
+						}
+
+						<div id="legende_@l.JavascriptID" style="display:none; margin-left:20px;">
+							@if (l.LegendID != null)
+							{
+								<img src="@Url.Action("Index","File",new { id = l.LegendID })" alt="Legende" />
+							}
+						</div>
+
+						<script type="text/javascript">
+							$('#@l.JavascriptID').change(function () {
+								if ($("#@l.JavascriptID").prop('checked')) {
+
+									GeoWebGIS.showLayer('@l.JavascriptID');
+							@if (l.Title == Resources.Global.IntensityMaps + " (" + Resources.Global.BeforeChange + ")")
+							{
+								<text>$('#layerBeforCopyDiv').show(); </text>
+							}
+							@if (l.Title == Resources.Global.IntensityMaps + " (" + Resources.Global.AfterChange + ")")
+							{
+								<text>$('#layerAfterCopyDiv').show(); </text>
+							}
+
+										$('#legende_@l.JavascriptID').show();
+
+								}
+								else {
+									GeoWebGIS.hideLayer('@l.JavascriptID');
+							@if (l.Title == Resources.Global.IntensityMaps + " (" + Resources.Global.BeforeChange + ")")
+							{
+								<text>$('#layerBeforCopyDiv').hide(); </text>
+							}
+							@if (l.Title == Resources.Global.IntensityMaps + " (" + Resources.Global.AfterChange + ")")
+							{
+								<text>$('#layerAfterCopyDiv').hide(); </text>
+							}
+
+										$('#legende_@l.JavascriptID').hide();
+
+								}
+							})
+
+						</script>
+					</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		return new HelperResult(w => Task.CompletedTask);
+	}
+}
