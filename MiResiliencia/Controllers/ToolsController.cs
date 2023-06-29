@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MiResiliencia.Models;
+using Newtonsoft.Json.Linq;
 using NuGet.ProjectModel;
 
 namespace MiResiliencia.Controllers
@@ -446,6 +447,41 @@ namespace MiResiliencia.Controllers
 
             return Json("OK");
 
+        }
+
+        public JsonResult DeleteInside(string id)
+        {
+            int id_toUpdate = 0;
+            if (Int32.TryParse(id, out id_toUpdate))
+            {
+                MappedObject m = db.MappedObjects.Where(m => m.ID == id_toUpdate).FirstOrDefault();
+                if (m != null)
+                {
+                    db.MappedObjects.Remove(m);
+                    db.Entry(m).State = EntityState.Deleted;
+                    db.SaveChanges();
+                }
+
+            }
+            else
+            {
+                string[] ids = id.Split("_");
+                foreach (string ids_one in ids)
+                {
+                    if (Int32.TryParse(ids_one, out id_toUpdate))
+                    {
+                        MappedObject m = db.MappedObjects.Where(m => m.ID == id_toUpdate).FirstOrDefault();
+                        if (m != null)
+                        {
+                            db.MappedObjects.Remove(m);
+                            db.Entry(m).State = EntityState.Deleted;
+                        }
+                    }
+                }
+
+                db.SaveChanges();
+            }
+            return Json("OK");
         }
 
 

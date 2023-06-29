@@ -34,6 +34,7 @@
         @if (ViewBag.ProjectWrite)
         {
         <button type="button" onclick="insideEdit('@id')" id="edit_button_999" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Modify</button>
+            <button type="button" onclick="insideDelete('@id')" id="delete_button_999" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Delete</button>
             <button type="submit" id="save_button_@id" style="display:none;" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Save</button>
         }
 
@@ -63,6 +64,20 @@
                         $('#edit_button_' + id).hide();
                         $('#save_button_' + id).show();
                     });
+            }
+
+            function insideDelete(id) {
+                GeoWebGIS.checkProjectState(
+                    function () {
+                        $.ajax({
+                            url: '@Url.Action("DeleteInside", "Tools")/' + id,
+                            success: function () {
+                                GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectsView&cql_filter=ProjectId=@Model.MappedObjects.First().Project.Id&outputFormat=application/json');
+                                $('#mappedObjectDiv').html('');
+                            }
+                        });
+                    }
+                );
             }
 
 
