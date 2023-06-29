@@ -14,7 +14,7 @@ MiResiliencia consists of three parts:
 
 In order to install the application, the database and the geoserver must be installed first.
 
-### Installation Datenbank
+### Installation database
 
 Download version 12 from; https://www.postgresql.org/download
 - Run the standard installation, including PostGIS package
