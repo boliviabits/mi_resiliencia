@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"
-    image: "your/image"
+    image: "geotestch/miresiliencia:latest"
     container_name: mires
     environment:
       "Environment:DBHost": "your.dbserver.com"
