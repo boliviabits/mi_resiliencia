@@ -21,6 +21,7 @@ Download version 12 from; https://www.postgresql.org/download
 - Login to the database using pqAdmin
 - Create the user miresiliencia (the password is used hereafter)
 - Create a database schema
+- Add PostGIS Extension to schema: Run "CREATE EXTENSION postgis;"
 - Execute the SQL miresiliencia_initial.sql inside the miresiliencia schema [MiResiliencia-initial.sql](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/miresiliencia-initial.sql)
 
 ### Geo-servidor (servidor cartográfico)
