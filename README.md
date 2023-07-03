@@ -28,7 +28,7 @@ Download version 12 from; https://www.postgresql.org/download
 Download GeoServer version 2.23 from http://geoserver.org/download/
 - Do the standard installation on port 8080
 - Overwrite the data_dir directory with the provided and extracted [data.zip](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/data.zip)
-- Login to Geoserver (http://localhost:8080) with standard Geoserver access (admin/geoserver). For both PostGISView and Projectperimeter database connections, reset the database URL and password.
+- Login to Geoserver (http://localhost:8080) with standard Geoserver access (admin/geoserver). Edit Datastore -> mireslienciadb and fill in the db, server and password to the database
 - In Security > Data, set the write permissions (*.w) to "Enable for each function".
 
 ### Use MiResiliencia Docker file to run MiResiliencia
