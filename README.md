@@ -46,4 +46,4 @@ Download GeoServer version 2.23 from http://geoserver.org/download/
 5. update container image(s)
 		docker compose pull
 
-The default Login-Credentials are: admin / MiResiliencia23!
+Login to http://localhost:80. The default Login-Credentials are: admin / MiResiliencia23!
