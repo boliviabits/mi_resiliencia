@@ -59,6 +59,10 @@ namespace MiResiliencia.Models
                 .AddEnvironmentVariables()
                 .Build();
 
+            Console.WriteLine("Context log");
+            Console.WriteLine(configuration.GetSection("Test").Value);
+            Console.WriteLine(configuration.GetSection("Environment").GetChildren().ToList().ToString());
+
             string dbname = configuration.GetSection("Environment").GetSection("DB").Value;
             string host = configuration.GetSection("Environment").GetSection("DBHost").Value;
 
