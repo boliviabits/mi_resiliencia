@@ -65,10 +65,35 @@ namespace MiResiliencia.Models
 
             string dbname = configuration.GetSection("Environment").GetSection("DB").Value;
             string host = configuration.GetSection("Environment").GetSection("DBHost").Value;
+            //bool splitBehavior = configuration.GetSection("Environment").GetSection("SplittingBehavior").Value.ToLower() == "true";
+            bool splitBehavior = true;
 
-            bool splitBehavior = configuration.GetSection("Environment").GetSection("SplittingBehavior").Value.ToLower() == "true";
+            if ((dbname == null) || (dbname == ""))
+            {
+                dbname = configuration.GetSection("DB").Value;
+                host = configuration.GetSection("DBHost").Value;
+                optionsBuilder
+                .UseLazyLoadingProxies()
+                //.ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.DetachedLazyLoadingWarning))
+                .UseNpgsql(
+                    "Host=" + configuration.GetSection("DBHost").Value + "; Database=" + configuration.GetSection("DB").Value + ";Username=" + configuration.GetSection("DBUser").Value + ";Password=" + configuration.GetSection("DBPassword").Value + ";Include Error Detail=true;",
+                    options =>
+                    {
+                        options.UseNetTopologySuite();
+                        options.EnableRetryOnFailure();     //TODO: needed? https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
 
-            optionsBuilder
+                        if (splitBehavior)
+                            options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+                        else
+                            options.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery);
+                    }
+                 )
+                .EnableSensitiveDataLogging()
+              ;
+            }
+            else
+            {
+                optionsBuilder
                 .UseLazyLoadingProxies()
                 //.ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.DetachedLazyLoadingWarning))
                 .UseNpgsql(
@@ -86,6 +111,11 @@ namespace MiResiliencia.Models
                  )
                 .EnableSensitiveDataLogging()
               ;
+            }
+            
+
+
+            
             base.OnConfiguring(optionsBuilder);
         }
 
