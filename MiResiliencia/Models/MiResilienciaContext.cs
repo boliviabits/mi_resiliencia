@@ -54,7 +54,7 @@ namespace MiResiliencia.Models
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", true)
+                //.AddJsonFile("appsettings.json", true)
                 //.AddUserSecrets(Assembly.GetEntryAssembly(), true)      // <--- take user secrets from startup project
                 .AddEnvironmentVariables()
                 .Build();
