@@ -44,7 +44,7 @@ namespace MiResiliencia.Controllers
 
 
             string geoserver = Configuration["Environment:Geoserver"];
-            if ((geoserver==null) || (geoserver == "")) geoserver = Configuration["Geoserver"];
+            if ((geoserver==null) || (geoserver == "") || (geoserver == "https://geoserver.yourserver.domain/geoserver/")) geoserver = Configuration["Geoserver"];
             //return Content()
             string content;
             string url = HttpContext.Request.Path.Value.Replace("/proxy", "");
