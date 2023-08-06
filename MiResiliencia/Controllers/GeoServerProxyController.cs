@@ -54,6 +54,9 @@ namespace MiResiliencia.Controllers
             url = geoserver + url + query;
             url = url.Replace("//geoserver/", "/geoserver/");
 
+            Console.WriteLine("Geoserver URL:");
+            Console.WriteLine(url);
+
             // replace Company
             if (url.Contains("{CompanyID}"))
             {
