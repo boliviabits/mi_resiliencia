@@ -60,12 +60,20 @@ namespace MiResiliencia.Controllers
             {
                 url = url.Replace("{CompanyID}", (await getMyCompanyID()).ToString());
             }
+            if (url.Contains("%7BCompanyID%7D"))
+            {
+                url = url.Replace("%7BCompanyID%7D", (await getMyCompanyID()).ToString());
+            }
             if (url.Contains("{ProjectID}"))
             {
                 url = url.Replace("{ProjectID}", HttpContext.Session.GetInt32("Project").ToString());
             }
+            if (url.Contains("%7BProjectID%7D"))
+            {
+                url = url.Replace("%7BProjectID%7D", HttpContext.Session.GetInt32("Project").ToString());
+            }
 
-
+            
             Console.WriteLine("Geoserver URL:");
             Console.WriteLine(url);
 
