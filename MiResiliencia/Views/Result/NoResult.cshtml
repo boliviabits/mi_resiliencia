@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = ResSummary.TXT_Summary;
 
-    if (Context.Request.Headers.Keys.Contains("x-ic-request"))
+    if (Context.Request.Headers.Keys.Contains("X-IC-Request"))
     {
         if (Context.Request.Headers["X-IC-Request"] == "true")
         {
