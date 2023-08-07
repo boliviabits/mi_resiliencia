@@ -3,17 +3,12 @@
 @using MiResiliencia.Models
 @{
     ViewBag.Title = "Admin";
-    if (Context.Request.Headers.Keys.Contains("x-ic-request"))
-    {
-        if (Context.Request.Headers["X-IC-Request"] == "true")
-        {
-            Layout = "~/Views/Shared/_LayoutSmall.cshtml";
-        }
-    }
-    else
-    {
-        Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+
+
+    Console.WriteLine("Header:");
+    Console.WriteLine(Context.Request.Headers["X-IC-Request"]);
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+
 }
 
 <script type="text/javascript">
