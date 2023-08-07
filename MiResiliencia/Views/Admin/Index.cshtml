@@ -4,14 +4,10 @@
 @{
     ViewBag.Title = "Admin";
 
-
-    Console.WriteLine("Header:");
-    Console.WriteLine(Context.Request.Headers["X-IC-Request"]);
     if (Context.Request.Headers.Keys.Contains("X-IC-Request"))
     {
         if (Context.Request.Headers["X-IC-Request"] == "true")
         {
-    Console.WriteLine("Bindrin");
             Layout = "~/Views/Shared/_LayoutSmall.cshtml";
         }
     }
