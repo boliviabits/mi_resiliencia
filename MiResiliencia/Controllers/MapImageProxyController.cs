@@ -30,8 +30,10 @@ namespace MiResiliencia.Controllers
             HttpRequest original = this.HttpContext.Request;
 
             original.EnableBuffering();
+            string geoserver = Configuration["Environment:Geoserver"];
+            if ((geoserver == null) || (geoserver == "") || (geoserver == "https://geoserver.yourserver.domain/geoserver/")) geoserver = Configuration["Geoserver"];
 
-            HttpWebRequest newRequest = (HttpWebRequest)WebRequest.Create(Configuration["Environment:Geoserver"] + workbench + "/ows?");
+            HttpWebRequest newRequest = (HttpWebRequest)WebRequest.Create(geoserver + workbench + "/ows?");
            
             newRequest.ContentType = original.ContentType;
             newRequest.Method = original.Method;

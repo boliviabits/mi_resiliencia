@@ -2,7 +2,7 @@
 @model UserInformationModel
 @{
     ViewData["Title"] = "User Information";
-    if (HttpContext.Request.Headers.Keys.Contains("x-ic-request"))
+    if (HttpContext.Request.Headers.Keys.Contains("X-IC-Request"))
     {
         if (HttpContext.Request.Headers["X-IC-Request"] == "true")
         {
