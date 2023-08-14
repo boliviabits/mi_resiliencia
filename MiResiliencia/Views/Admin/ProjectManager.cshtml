@@ -1,16 +1,6 @@
 ﻿@model MiResiliencia.Models.ProjectManagerViewModel
 @{
-    if (Context.Request.Headers.Keys.Contains("X-IC-Request"))
-    {
-        if (Context.Request.Headers["X-IC-Request"] == "true")
-        {
-            Layout = "~/Views/Shared/_LayoutSmall.cshtml";
-        }
-    }
-    else
-    {
-        Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
 }
 
 
