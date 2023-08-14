@@ -477,4 +477,13 @@
   <data name="Username" xml:space="preserve">
     <value>Benutzername</value>
   </data>
+  <data name="Vorname" xml:space="preserve">
+    <value>Vorname</value>
+  </data>
+  <data name="Nachname" xml:space="preserve">
+    <value>Nachname</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Passwort wiederholen</value>
+  </data>
 </root>
