@@ -133,29 +133,32 @@ namespace MiResiliencia.Controllers
         [HttpPost]
         public JsonResult PraEdit(int id, [Bind(Prefix = "pra.Value")] double[] values)
         {
-            Project p = _context.Projects.Include(m => m.Intesities).Include(m => m.ProtectionMeasure).Include(m => m.PrAs.Select(x => x.IKClasses)).Include(m => m.PrAs.Select(x => x.NatHazard)).Where(m => m.Id == id).FirstOrDefault();
-            var pralist = p.PrAs.OrderBy(m => m.IKClasses.Value).OrderBy(m => m.NatHazard).GroupBy(u => u.NatHazard)
-                            .Select(grp => grp.ToList()).ToList();
-            int i = 0;
-
-            foreach (List<MiResiliencia.Models.PrA> intPerPra in pralist)
+            if (id != 0)
             {
-                var intInHazard = intPerPra.GroupBy(u => u.IKClasses).Select(grp => grp.ToList()).ToList();
-                foreach (List<MiResiliencia.Models.PrA> intPerHazardPerIK in intInHazard)
-                {
+                Project p = _context.Projects.Include(m => m.Intesities).Include(m => m.ProtectionMeasure).Include(m => m.ProjectState).Include(m => m.PrAs).ThenInclude(m => m.IKClasses).Include(m => m.PrAs).ThenInclude(m => m.NatHazard).Where(m => m.Id == id).FirstOrDefault();
+                var pralist = p.PrAs.OrderBy(m => m.IKClasses.Value).OrderBy(m => m.NatHazard).GroupBy(u => u.NatHazard)
+                                .Select(grp => grp.ToList()).ToList();
+                int i = 0;
 
-                    foreach (MiResiliencia.Models.PrA pra in intPerHazardPerIK)
+                foreach (List<MiResiliencia.Models.PrA> intPerPra in pralist)
+                {
+                    var intInHazard = intPerPra.GroupBy(u => u.IKClasses).Select(grp => grp.ToList()).ToList();
+                    foreach (List<MiResiliencia.Models.PrA> intPerHazardPerIK in intInHazard)
                     {
-                        if (pra.Value != values[i])
+
+                        foreach (MiResiliencia.Models.PrA pra in intPerHazardPerIK)
                         {
-                            pra.Value = values[i];
-                            _context.Entry(pra).State = EntityState.Modified;
+                            if (pra.Value != values[i])
+                            {
+                                pra.Value = values[i];
+                                _context.Entry(pra).State = EntityState.Modified;
+                            }
+                            i++;
                         }
-                        i++;
                     }
                 }
+                _context.SaveChanges();
             }
-            _context.SaveChanges();
             return Json("ok");
         }
 

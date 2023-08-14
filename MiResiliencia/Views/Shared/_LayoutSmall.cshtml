@@ -79,7 +79,7 @@
         }
     )
 
-    $('#ImmoContent button').each(
+    $('#ImmoContent button').not('.insideTab').each(
         function () {
             var $this = $(this);
             if ($this.attr("ic-get-from") == null) {
@@ -126,7 +126,7 @@
         }
     )
 
-    $('#ImmoContent form').each(
+    $('#ImmoContent form').not('.insideTab').each(
         function () {
             var $this = $(this);
             if ($this.attr("ic-post-to") == null) {
