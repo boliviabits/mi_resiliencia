@@ -576,22 +576,36 @@
 
                     </div>
 
+                    <style>
+                        .pra-toogle[aria-expanded=false] .pra-expanded {
+                            display: none;
+                        }
+
+                        .pra-toogle[aria-expanded=true] .pra-collapsed {
+                            display: none;
+                        }
+                    </style>
+
                     <div class="card panel">
-                        <div class="card-header" data-toggle="collapse" data-target="#praPanel-1">
-                            <h5>@Resources.Global.Pra</h5>
+                        <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#praPanel-1">
+                            <h5><span data-bs-toggle="collapse" data-bs-target="#collapsePra" aria-expanded="false" aria-controls="collapsePra">@Resources.Global.Pra</span></h5>
                             <div class="tools">
                                 <div class="btn-group">
-                                    <a class="btn btn-icon-toggle"><i class="fa fa-angle-up"></i></a>
-                                    <a class="btn btn-icon-toggle" onclick="helpDialog.show('@Url.Action("ShowHelp", "Help", new { wikiname = "PrA" })')"><i class="md md-help"></i></a>
-                                </div>
+                                    <button class="btn btn-icon-toggle pra-toogle" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePra" aria-expanded="false" aria-controls="collapsePra">
+                                        <span class="pra-expanded"><i class="fa fa-angle-up"></i></span>
+                                        <span class="pra-collapsed"><i class="fa fa-angle-down"></i></span>
+                                    </button>
+                                    
+                                    </div>
                             </div>
                         </div>@using (Html.BeginForm("PraEdit", "Project", FormMethod.Post, new { @id = "praEditForm", @class = "form insideTab" }))
                         {
                             @Html.AntiForgeryToken()
-                            <div id="praPanel-1" class="collapse">
+                            <div id="collapsePra" class="collapse">
                                 <div class="card-body">
 
                                     <div class="row">
+                                        <div class="col-md-12">
                                         @{
                                             var pralist = Model.PrAs.OrderBy(m => m.IKClasses.Value).OrderBy(m => m.NatHazard).GroupBy(u => u.NatHazard)
                                             .Select(grp => grp.ToList()).ToList();
@@ -616,13 +630,13 @@
                                                             @Html.Raw("</table>")
                                                             ;
                                                         }
-                                                        @Html.Raw("<h3>" + pra.NatHazard.Name + "</h3><br /><table>")
+                                                        @Html.Raw("<h3 style='margin-top:10px;'>" + pra.NatHazard.Name + "</h3><table style='margin-left:20px;margin-right:20px;'>")
                                                         ;
                                                         isFirstNatHazard = false;
 
                                                     }
-
-                                                            //Html.MyPrAEditorRowFor(x => pra.Value, pra.IKClasses.Description, pra.NatHazardId + "_" + pra.IKClassesId)
+                                                    
+                                                    @Html.MyPrAEditorRowFor(x => pra.Value, pra.IKClasses.Description, pra.NatHazardId + "_" + pra.IKClassesId)
 
                                                             ;
                                                 }
@@ -633,19 +647,20 @@
                                         }
 
 
-
+                                        </div>
                                     </div>
-
-                                </div>
-                                <div class="card-actionbar">
-                                    <div class="card-actionbar-row">
+                                    <div class="row">
+                                        <div class="col-md-12">
                                         @if (Model.ProjectState.ID < 2)
                                         {
                                             <button type="button" onclick="insideEditPra()" id="edit_button_insidePra" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Modify</button>
-                                            <button type="submit" id="save_button_insidePra" style="display:none;" class="btn ink-reaction btn-raised btn-primary active">@Resources.Global.Save</button>
+                                            <button type="submit" id="save_button_insidePra" style="display:none;" class="btn ink-reaction btn-raised btn-primary active insideTab">@Resources.Global.Save</button>
                                         }
-                                    </div>
+                                        </div>
+                                        </div>
+
                                 </div>
+                                        
                             </div>
                         }
                         <script type="text/javascript">
@@ -665,7 +680,8 @@
                             $(document).ready(function () {
                                 $("#praEditForm").validate({
                                     lang: 'es',
-                                    submitHandler: function (form) {
+                                    submitHandler: function (form, event) {
+                                        event.preventDefault();
                                         savePraEdit('@Model.Id');
                                         $('.insidePraEditor').each(function () {
                                             $(this).hide();
@@ -682,7 +698,7 @@
 
 
                             function savePraEdit(id) {
-
+                                console.log("savePraEdit");
                                 $.ajax({
                                     url: '@Url.Action("PraEdit", "Project")/@Model.Id',
                                     method: 'POST',
