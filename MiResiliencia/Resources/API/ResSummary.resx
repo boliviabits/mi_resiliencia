@@ -190,4 +190,16 @@
   <data name="TXT_ReportTemplate" xml:space="preserve">
     <value>Report template</value>
   </data>
+  <data name="TXT_NPV" xml:space="preserve">
+    <value>Net Present Value</value>
+  </data>
+  <data name="TXT_IRR" xml:space="preserve">
+    <value>Internal Rate of Return</value>
+  </data>
+  <data name="TXT_DiscountRate" xml:space="preserve">
+    <value>Discount Rate</value>
+  </data>
+  <data name="TXT_NPV_TIR" xml:space="preserve">
+    <value>NPV / IRR module</value>
+  </data>
 </root>

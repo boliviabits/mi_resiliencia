@@ -128,12 +128,17 @@
                     @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
                     <h2 class="bg-info">@ResSummary.TXT_BenefitCostRatio</h2>
                     @Html.Raw(Model.ObjectToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
-                    <br />
+                    <br/>
 
                     <div style="width:80%;min-width:800px">
                         @Html.Partial("SummaryChart", Model)
                     </div>
 
+                    <h3 class="bg-info">@ResSummary.TXT_NPV_TIR</h3>
+                    @Html.Raw(Model.NIVM.ObjectToHtmlTable("table table-condensed table-bordered table-hover table-responsive", "header", "rowStyle", "alternate", Model.ShowDetails))
+                    <br/>
+
+                    
                     @*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*@
                     <h2 class="bg-info">@ResSummary.TXT_RiskPerProcess</h2>
                     <h3 class="bg-info">@ResSummary.TXT_CollectiveRisk @ResSummary.TXT_beforeMeasure</h3>

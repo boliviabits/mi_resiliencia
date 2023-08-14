@@ -13,6 +13,7 @@ namespace MiResiliencia.Models
     public class ProtectionMeasure
     {
         [Key]
+        [TableIgnore]
         public int ID { get; set; }
 
         [Display(ResourceType = typeof(Resources.Global), Name = "ConstructionCosts")]
@@ -30,8 +31,13 @@ namespace MiResiliencia.Models
         [Display(ResourceType = typeof(Resources.Global), Name = "ValueAddedTax")]
         public double ValueAddedTax { get; set; }
         public int ProjectID { get; set; }
+        [TableIgnore]
         public MultiPolygon? geometry { get; set; }
         public virtual Project Project { get; set; }
+
+        [Display(ResourceType = typeof(Resources.Global), Name = "DiscountRate")]
+        public double DiscountRate { get; set; }
+        
 
         //---------------------------------------------------------------------------------
         //not in db

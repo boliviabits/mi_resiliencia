@@ -443,7 +443,7 @@
     <value>Userprofile</value>
   </data>
   <data name="ValueAddedTax" xml:space="preserve">
-    <value>Value Added Tax</value>
+    <value>Value Added Tax [%]</value>
   </data>
   <data name="ValuePerUnity" xml:space="preserve">
     <value>Actual value / unit [Bs]</value>
@@ -475,5 +475,8 @@
   </data>
   <data name="Username" xml:space="preserve">
     <value>Username</value>
+  </data>
+  <data name="DiscountRate" xml:space="preserve">
+    <value>Discount Rate [%] for NPV</value>
   </data>
 </root>

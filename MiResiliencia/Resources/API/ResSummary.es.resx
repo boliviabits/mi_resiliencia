@@ -210,4 +210,16 @@
   <data name="TXT_ReportTemplate" xml:space="preserve">
     <value>Modelo de informe</value>
   </data>
+  <data name="TXT_NPV" xml:space="preserve">
+    <value>Valor actual neto</value>
+  </data>
+  <data name="TXT_IRR" xml:space="preserve">
+    <value>Tasa interna de rentabilidad</value>
+  </data>
+  <data name="TXT_DiscountRate" xml:space="preserve">
+    <value>Tasa de descuento</value>
+  </data>
+  <data name="TXT_NPV_TIR" xml:space="preserve">
+    <value>Módulo VAN / TIR</value>
+  </data>
 </root>
