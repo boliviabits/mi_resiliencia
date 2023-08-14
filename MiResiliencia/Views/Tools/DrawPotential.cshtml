@@ -4,7 +4,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             drawWindow = Ext.getCmp('draw-window');
-            drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.Schadenpotential)');
+            drawWindow.setTitle('@Resources.Global.Draw (@Html.Raw(@Resources.Global.Schadenpotential))');
             GeoWebGIS.progress.addLoading();
             GeoWebGIS.workingNamespace = 'MappedObject';
             GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectsView&cql_filter=ProjectId=@Model&outputFormat=application/json&count=5000');

@@ -3,7 +3,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         drawWindow = Ext.getCmp('draw-window');
-        drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.ProjectPerimeter)');
+        drawWindow.setTitle('@Resources.Global.Draw (@Html.Raw(Resources.Global.ProjectPerimeter))');
         GeoWebGIS.progress.addLoading();
         GeoWebGIS.workingNamespace = 'Project';
         GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:Project&featureID=@Model&outputFormat=application/json');
