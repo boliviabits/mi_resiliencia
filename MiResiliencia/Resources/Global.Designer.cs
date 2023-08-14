@@ -196,6 +196,15 @@ namespace MiResiliencia.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Confirm password ähnelt.
+        /// </summary>
+        public static string ConfirmPassword {
+            get {
+                return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Construction Costs ähnelt.
         /// </summary>
         public static string Construction_Costs {
@@ -642,6 +651,15 @@ namespace MiResiliencia.Resources {
         public static string Move_logo_here {
             get {
                 return ResourceManager.GetString("Move logo here", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Surname ähnelt.
+        /// </summary>
+        public static string Nachname {
+            get {
+                return ResourceManager.GetString("Nachname", resourceCulture);
             }
         }
         
@@ -1164,6 +1182,15 @@ namespace MiResiliencia.Resources {
         public static string Velocity {
             get {
                 return ResourceManager.GetString("Velocity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Firstname ähnelt.
+        /// </summary>
+        public static string Vorname {
+            get {
+                return ResourceManager.GetString("Vorname", resourceCulture);
             }
         }
         
