@@ -1,0 +1,181 @@
+﻿@using MiResiliencia
+<div>
+    @{
+
+    }
+
+
+
+    @RenderBody()
+    
+</div>
+<script type="text/javascript">
+    $('#ImmoContent a').not('.insideTab').each(
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-get-from") == null) {
+                $this.attr("ic-get-from", $this.attr("href"));
+                $this.attr("ic-target", "#ImmoContent");
+                $this.attr("ic-push-url", "true");
+                $this.attr("ic-indicator", "#loading-spinner");
+                $this.attr("ic-on-beforeSend", "makeIntercooler()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccess()");
+                $this.removeAttr("href");
+            }
+        }
+    )
+
+    $('#SearchContent a').not('.openInObject').each(
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-get-from") == null) {
+                $this.attr("ic-get-from", $this.attr("href"));
+                $this.attr("ic-target", "#SearchContent");
+                $this.attr("ic-indicator", "#loading-spinner2");
+                $this.attr("ic-push-url", "false");
+                $this.attr("ic-on-beforeSend", "makeIntercoolerSearch()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccessSearch()");
+                $this.removeAttr("href");
+            }
+
+        }
+
+    )
+
+    $('.openInObject').each(
+
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-get-from") == null) {
+                $this.attr("ic-get-from", $this.attr("href"));
+                $this.attr("ic-target", "#ImmoContent");
+                $this.attr("ic-push-url", "true");
+                $this.attr("ic-indicator", "#loading-spinner");
+                $this.attr("ic-on-beforeSend", "makeIntercooler()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccess()");
+                $this.removeAttr("href");
+            }
+
+
+            $this.click(function () {
+                sidebar.open("immo");
+            })
+        }
+    )
+
+
+
+
+    $('#UserProfile a').not('.insideTab').each(
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-get-from") == null) {
+                $this.attr("ic-get-from", $this.attr("href"));
+                $this.attr("ic-target", "#UserProfile");
+                $this.attr("ic-indicator", "#loading-spinner3");
+                $this.attr("ic-push-url", "false");
+                $this.removeAttr("href");
+            }
+        }
+    )
+
+    $('#ImmoContent button').each(
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-get-from") == null) {
+                $this.attr("ic-get-from", $this.attr("link"));
+                $this.attr("ic-target", "#ImmoContent");
+                $this.attr("ic-indicator", "#loading-spinner");
+                $this.attr("ic-push-url", "true");
+                $this.attr("ic-on-beforeSend", "makeIntercooler()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccess()");
+                $this.removeAttr("link");
+            }
+        }
+    )
+
+    $('#SearchContent button').each(
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-get-from") == null) {
+                $this.attr("ic-get-from", $this.attr("link"));
+                $this.attr("ic-target", "#SearchContent");
+                $this.attr("ic-indicator", "#loading-spinner2");
+                $this.attr("ic-push-url", "false");
+                $this.removeAttr("link");
+                $this.attr("ic-on-beforeSend", "makeIntercoolerSearch()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccessSearch()");
+            }
+        }
+    )
+
+    $('#UserProfile button').not('.insideTab').each(
+        function () {
+            var $this = $(this);
+
+
+            if ($this.attr("ic-get-from") == null) {
+                $this.attr("ic-get-from", $this.attr("link"));
+                $this.attr("ic-target", "#UserProfile");
+                $this.attr("ic-indicator", "#loading-spinner3");
+                $this.attr("ic-push-url", "false");
+                $this.removeAttr("link");
+                $this.attr("ic-on-beforeSend", "makeIntercoolerUP()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccessUP()");
+            }
+        }
+    )
+
+    $('#ImmoContent form').each(
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-post-to") == null) {
+                $this.attr("ic-post-to", $this.attr("action"));
+                $this.attr("ic-target", "#ImmoContent");
+                $this.attr("ic-indicator", "#loading-spinner");
+                $this.attr("ic-push-url", "true");
+                $this.attr("ic-on-beforeSend", "makeIntercooler()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccess()");
+                $this.removeAttr("action");
+            }
+        }
+    )
+
+    $('#SearchContent form').each(
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-post-to") == null) {
+                $this.attr("ic-post-to", $this.attr("action"));
+                $this.attr("ic-target", "#SearchContent");
+                $this.attr("ic-indicator", "#loading-spinner2");
+                $this.attr("ic-push-url", "false");
+                $this.removeAttr("action");
+                $this.attr("ic-on-beforeSend", "makeIntercoolerSearch()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccessSearch()");
+            }
+        }
+    )
+
+    $('#UserProfile form').not('.insideTab').each(
+        function () {
+            var $this = $(this);
+            if ($this.attr("ic-post-to") == null) {
+                $this.attr("ic-post-to", $this.attr("action"));
+                $this.attr("ic-target", "#UserProfile");
+                $this.attr("ic-indicator", "#loading-spinner3");
+                $this.attr("ic-push-url", "false");
+                $this.removeAttr("action");
+                $this.attr("ic-on-beforeSend", "makeIntercoolerUP()");
+                $this.attr("ic-on-complete", "makeIntercoolerSuccessUP()");
+            }
+        }
+    )
+    if (window.materialadmin) {
+        //window.materialadmin.App.initialize();
+        //window.materialadmin.AppCard.initialize();
+        //window.materialadmin.AppForm.initialize();
+    }
+
+</script>
+@RenderSection("scripts", required: false)
+
