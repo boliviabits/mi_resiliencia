@@ -106,6 +106,15 @@ namespace MiResiliencia.Resources.API {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Discount Rate.
+        /// </summary>
+        public static string TXT_DiscountRate {
+            get {
+                return ResourceManager.GetString("TXT_DiscountRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warnings.
         /// </summary>
         public static string TXT_ErrorsWarning {
@@ -129,6 +138,15 @@ namespace MiResiliencia.Resources.API {
         public static string TXT_Indirect {
             get {
                 return ResourceManager.GetString("TXT_Indirect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal Rate of Return.
+        /// </summary>
+        public static string TXT_IRR {
+            get {
+                return ResourceManager.GetString("TXT_IRR", resourceCulture);
             }
         }
         
@@ -165,6 +183,24 @@ namespace MiResiliencia.Resources.API {
         public static string TXT_NatHazard {
             get {
                 return ResourceManager.GetString("TXT_NatHazard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Net Present Value.
+        /// </summary>
+        public static string TXT_NPV {
+            get {
+                return ResourceManager.GetString("TXT_NPV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NPV / IRR calculations.
+        /// </summary>
+        public static string TXT_NPV_TIR {
+            get {
+                return ResourceManager.GetString("TXT_NPV_TIR", resourceCulture);
             }
         }
         

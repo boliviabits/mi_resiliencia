@@ -532,7 +532,7 @@ namespace MiResiliencia.Controllers
             return PartialView(p);
         }
 
-        public IActionResult EditInsidePM(int id, int costs, int lifespan, int operatingcosts, int maintenancecosts, double rateofreturn, double valueaddedtax, string description)
+        public IActionResult EditInsidePM(int id, int costs, int lifespan, int operatingcosts, int maintenancecosts, double rateofreturn, double valueaddedtax, string description, double discountrate)
         {
             ProtectionMeasure p = db.ProtectionMeasurements.Find(id);
             if (p == null) return NotFound();
@@ -543,6 +543,7 @@ namespace MiResiliencia.Controllers
             p.RateOfReturn = rateofreturn;
             p.ValueAddedTax = valueaddedtax;
             p.Description = description;
+            p.DiscountRate = discountrate;
 
             db.Entry(p).State = EntityState.Modified;
 

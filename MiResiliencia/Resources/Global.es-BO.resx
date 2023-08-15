@@ -166,7 +166,7 @@
     <value>Costos de construcción</value>
   </data>
   <data name="ConstructionCosts" xml:space="preserve">
-    <value>Costos de construcción [L.]</value>
+    <value>Costos de construcción [Bs]</value>
   </data>
   <data name="Coordinates" xml:space="preserve">
     <value>Coordenada</value>
@@ -274,7 +274,7 @@
     <value>Log out</value>
   </data>
   <data name="MaintenanceCosts" xml:space="preserve">
-    <value>Costos de mantención [L./año]</value>
+    <value>Costos de mantención [Bs/año]</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Mapa</value>
@@ -322,7 +322,7 @@
     <value>Objeto</value>
   </data>
   <data name="OperatingCosts" xml:space="preserve">
-    <value>Costos operacionales [L./año]</value>
+    <value>Costos operacionales [Bs/año]</value>
   </data>
   <data name="Operational Costs" xml:space="preserve">
     <value>Costos operacionales</value>
@@ -463,10 +463,10 @@
     <value>Perfil de usuario</value>
   </data>
   <data name="ValueAddedTax" xml:space="preserve">
-    <value>VAT</value>
+    <value>VAT [%]</value>
   </data>
   <data name="ValuePerUnity" xml:space="preserve">
-    <value>Valor real por unidad [L]</value>
+    <value>Valor real por unidad [Bs]</value>
   </data>
   <data name="Velocity" xml:space="preserve">
     <value>Velocidad media [km/h]</value>
@@ -494,6 +494,9 @@
   </data>
   <data name="Username" xml:space="preserve">
     <value>Nombre de usuario </value>
+  </data>
+  <data name="DiscountRate" xml:space="preserve">
+    <value>Tasa de descuento [%] para el VAN</value>
   </data>
   <data name="Vorname" xml:space="preserve">
     <value>Nombre</value>

@@ -10,6 +10,7 @@
         @Html.MyEditorRowFor(x => x.MaintenanceCosts, "PM")
         @Html.MyEditorRowFor(x => x.RateOfReturn, "PM")
         @Html.MyEditorRowFor(x => x.Description, "PM")
+        @Html.MyEditorRowFor(x => x.DiscountRate, "PM")
 
     </table>
     @if (ViewBag.ProjectWrite)
@@ -37,23 +38,24 @@
             }
 
 
-            function savePMEdit(id) {
-                $.ajax({
+        function savePMEdit(id) {
+            $.ajax({
                 url: '@Url.Action("EditInsidePM", "Tools")/' + @Model.ID,
-                    data: {
+                data: {
 
-                        costs: $('#' + id + '_Costs').val().replace(",","."),
-                        lifespan: $('#' + id + '_LifeSpan').val().replace(",", "."),
-                        operatingcosts: $('#' + id + '_OperatingCosts').val().replace(",", "."),
-                        maintenancecosts: $('#' + id + '_MaintenanceCosts').val().replace(",", "."),
-                        rateofreturn: $('#' + id + '_RateOfReturn').val().replace(",", "."),
-                        valueaddedtax: '0',
-                        description: $('#' + id + '_Description').val()
-                    },
-                    success: function () { reloadPMid(@Model.ID); }
-                });
+                    costs: $('#' + id + '_Costs').val().replace(",", "."),
+                    lifespan: $('#' + id + '_LifeSpan').val().replace(",", "."),
+                    operatingcosts: $('#' + id + '_OperatingCosts').val().replace(",", "."),
+                    maintenancecosts: $('#' + id + '_MaintenanceCosts').val().replace(",", "."),
+                    rateofreturn: $('#' + id + '_RateOfReturn').val().replace(",", "."),
+                    valueaddedtax: '0',
+                    description: $('#' + id + '_Description').val(),
+                    discountrate: $('#' + id + '_DiscountRate').val().replace(",", "."),
+                },
+                success: function () { reloadPMid(@Model.ID); }
+            });
 
-            }
+        }
 
         </script>
 
