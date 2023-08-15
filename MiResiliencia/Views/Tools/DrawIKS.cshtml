@@ -137,6 +137,8 @@
             if ($(this).is(":checked")) featureIDs.push($(this).attr('id'));
         });
         // check if we have a new intensity layer. Add it to the checked layers
+        console.log("My new layer");
+        console.log(GeoWebGIS.lastInsertedFeatureId);
         if (GeoWebGIS.lastInsertedFeatureId != null) {
             featureIDs.push(GeoWebGIS.lastInsertedFeatureId);
         }
