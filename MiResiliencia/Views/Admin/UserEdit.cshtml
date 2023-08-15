@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "UserEdit";
-    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+    Layout = "~/Views/Shared/_LayoutInsideBox.cshtml";
 }
 <div class="card-body floating-label">
     @using (Html.BeginForm("UserEdit", "Admin", FormMethod.Post, new { @id = "editUserForm", @class = "form insideTab", ic_post_to = "/Admin/UserEdit", ic_target = "#usermanagercontent", ic_on_beforeSend = "validateUserFormUserEdit()" }))
@@ -45,15 +45,14 @@
             </div>
 
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.isAdmin, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        @Html.EditorFor(model => model.isAdmin)
-                        @Html.ValidationMessageFor(model => model.isAdmin, "", new { @class = "text-danger" })
-                    </div>
+            <div class="form-group m-checkbox-inline mb-0">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.isAdmin)
+                    @Html.LabelFor(model => model.isAdmin, htmlAttributes: new { @class = "control-label col-md-2" })
                 </div>
+                @Html.ValidationMessageFor(model => model.isAdmin, "", new { @class = "text-danger" })
             </div>
+
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">

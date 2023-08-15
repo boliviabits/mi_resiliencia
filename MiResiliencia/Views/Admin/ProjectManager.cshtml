@@ -1,6 +1,6 @@
 ﻿@model MiResiliencia.Models.ProjectManagerViewModel
 @{
-    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+    Layout = "~/Views/Shared/_LayoutInsideBox.cshtml";
 }
 
 
@@ -54,14 +54,13 @@
                                     @Html.LabelFor(model => model.NewProject.Name, htmlAttributes: new { @class = "" })
                                     @Html.EditorFor(model => model.NewProject.Name, new { htmlAttributes = new { @class = "form-control", required = "required" } })
                                 </div>
-                                
-                            <div class="card-actionbar">
-                                <div class="card-actionbar-row">
-                                    <button class="btn ink-reaction btn-raised btn-danger" type="submit">@Resources.Global.Create</button>
-                                </div>
-                            </div>
 
-                            </div>
+
+
+                    </div>
+                    <div class="card-footer" style="padding-right:20px;">
+                            <button class="btn ink-reaction btn-raised btn-danger" type="submit">@Resources.Global.Create</button>
+                        </div>
                         </div>
             </div>
         }
@@ -76,7 +75,8 @@
                     <div class="row">
                     <table class="table" id="companylisttable">
                         <thead>
-                            <tr>
+                                <tr>
+                                    <th>@Resources.Global.ProjectNumber</th>
                                 <th>@Resources.Global.ProjectName</th>
                                 <th>@Resources.Global.Company</th>
                                 <th>State</th>
@@ -87,6 +87,9 @@
                             @foreach (MiResiliencia.Models.Project p in Model.Projects)
                             {
                                 <tr>
+                                    <td>
+                                        @p.Number
+                                    </td>
                                     <td>
                                         @p.Name
                                     </td>

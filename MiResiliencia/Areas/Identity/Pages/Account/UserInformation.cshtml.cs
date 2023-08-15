@@ -56,6 +56,15 @@ namespace MiResiliencia.Areas.Identity.Pages.Account
         public string ReturnUrl { get; set; }
 
         /// <summary>
+        ///     True if everything worked
+        /// </summary>
+        public bool TheResult { get; set; } 
+
+        /// <summary>
+        ///     The success message
+        /// </summary>
+        public string SuccessMessage { get; set; }
+        /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
@@ -123,7 +132,8 @@ namespace MiResiliencia.Areas.Identity.Pages.Account
                 await _userManager.RemovePasswordAsync(applicationUser);
                 await _userManager.AddPasswordAsync(applicationUser, Input.Password);
             }
-
+            TheResult = true;
+            SuccessMessage = "Clave cambiada con éxito";
             // If we got this far, something failed, redisplay form
             return Page();
         }
