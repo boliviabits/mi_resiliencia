@@ -4,7 +4,7 @@
     $(document).ready(function () {
         
         drawWindow = Ext.getCmp('draw-window');
-        drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.IntensityMaps)');
+        drawWindow.setTitle('@Resources.Global.Draw (@Html.Raw(@Resources.Global.IntensityMaps))');
 
 
         GeoWebGIS.progress.addLoading();

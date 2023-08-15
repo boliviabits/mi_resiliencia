@@ -3,7 +3,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         drawWindow = Ext.getCmp('draw-window');
-        drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.Schutzmassnahme)');
+        drawWindow.setTitle('@Resources.Global.Draw (@Html.Raw(@Resources.Global.Schutzmassnahme))');
         GeoWebGIS.progress.addLoading();
         GeoWebGIS.workingNamespace = 'ProtectionMeasure';
             GeoWebGIS.showWFSLayer('/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ProtectionMeasure&cql_filter=ProjectID=@Model.Id&outputFormat=application/json');

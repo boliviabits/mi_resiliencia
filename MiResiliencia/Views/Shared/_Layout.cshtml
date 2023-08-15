@@ -64,7 +64,7 @@
         }
 
         .ui-resizable-e {
-            width: 20px !important;
+            width: 8px !important;
         }
 
         .btn-clipboard {
@@ -237,8 +237,8 @@
 
                                                 <div class="card-body floating-label">
                                                     <div class="form-group floating-label">
-                                                        <input id="printtitle" class="form-control text-box single-line static dirty" name="Printtitle" value="@Resources.Global.MapExport" type="text">
                                                         <label class="" for="Printtitle">@Resources.Global.PrintHeading</label>
+                                                        <input id="printtitle" class="form-control text-box single-line static dirty" name="Printtitle" value="@Resources.Global.MapExport" type="text">
                                                     </div>
 
                                                     <div class="form-group floating-label">
@@ -361,7 +361,7 @@
                 html: '<i class="fas fa-location-arrow"></i>',
                 className: "",
                 active: false,
-                title: "Positionierung",
+                title: "Localización",
                 onToggle: function (active) {
                     GeoWebGIS.geolocation.setTracking(active);
                     /*if (active) {
@@ -497,7 +497,7 @@
                 '<div class="modal right fade" data-backdrop="true" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="overflow-y:visible;z-index:10000000;">' +
                 '<div class="modal-dialog modal-m">' +
                 '<div class="modal-content">' +
-                '<div class="modal-header bg-info"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 style="margin:0;"></h3></div>' +
+                '<div class="modal-header bg-info"><h3 style="margin:0;"></h3><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>' +
                 '<div class="modal-body" id="helpBody">' +
                 '<i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;width:100%"></i>El contenido esta cargando' +
                 '</div>' +
@@ -530,8 +530,6 @@
                             settings.onHide.call($dialog);
                         });
                     }
-
-
 
 
                     $("#helpBody").html('<i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;width:100%"></i>El contenido esta cargando');

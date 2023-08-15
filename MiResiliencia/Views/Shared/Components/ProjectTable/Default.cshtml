@@ -8,8 +8,8 @@
             <div class="row form">
 
                 <div class="form-group floating-label">
-                    <input class="form-control text-box single-line static dirty" id="TableSearch" type="text">
                     <label class="" for="TableSearch">@Resources.Global.Search</label>
+                    <input class="form-control text-box single-line static dirty" id="TableSearch" type="text">
                 </div>
 
             </div>
@@ -48,6 +48,9 @@
         </div>
     </div>
 </p>
+<style>
+    #projectTable_filter {display:none !important;}
+</style>
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -55,12 +58,16 @@
         projectt = $('#projectTable').DataTable({
             "scrollX": true,
             "order": [[3, 'desc'], [1, 'asc']],
+            "language": {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+            },
             //"language": GeoWebGIS.translator.get("table")
         });
         $('#TableSearch').on('keyup', function () {
             $('#pthide').show();
             projectt.search(this.value).draw();
         });
+
 
     @if (ViewBag.HideDiv)
     {

@@ -465,7 +465,9 @@
                     if (firstfeature.length == 1) {
                         var feature = firstfeature[0];
                         var layer = feature.getLayer(self.map);
-                        var currentwfsurl = layer.getSource().getUrl();
+
+                        var currentwfsurl = null;
+                        if (layer != null) currentwfsurl = layer.getSource().getUrl();
                         if (currentwfsurl == null) currentwfsurl = "";
                         if (GeoWebGIS.wfsurl == null) GeoWebGIS.wfsurl = "";
                         // show popup?
@@ -1111,9 +1113,12 @@
                     contentType: 'json',
                     data: payload,
                     success: function (data) {
+                        console.log("Datatata");
+                        console.log(data);
                         // parse data
                         if (data.length > 0) {
                             if (data[0].indexOf("Intensity.") == 0) {
+                                
                                 GeoWebGIS.lastInsertedFeatureId = data[0].replace("Intensity.", "");
                                 $('#stopIKDrawAfter').click();
                                 $('#stopIKDrawBefore').click();

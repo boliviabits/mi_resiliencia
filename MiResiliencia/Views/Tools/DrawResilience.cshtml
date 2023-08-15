@@ -3,7 +3,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         drawWindow = Ext.getCmp('draw-window');
-        drawWindow.setTitle('@Resources.Global.Draw (@Resources.Global.Resilienz)');
+        drawWindow.setTitle('@Resources.Global.Draw (@Html.Raw(@Resources.Global.Resilienz))');
         GeoWebGIS.workingNamespace = 'Resilience';
     });
 

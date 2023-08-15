@@ -108,7 +108,7 @@ namespace MiResiliencia.Controllers
                     }
                 }*/
 
-                return Json(myxml);
+                return Json(newObjects);
             }
         }
     }

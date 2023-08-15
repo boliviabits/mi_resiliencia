@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "UserEdit";
-    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+    Layout = "~/Views/Shared/_LayoutInsideBox.cshtml";
 }
 <div class="card-body floating-label">
     @using (Html.BeginForm("UserEdit", "Admin", FormMethod.Post, new { @id = "editUserForm", @class = "form insideTab", ic_post_to = "/Admin/UserEdit", ic_target = "#usermanagercontent", ic_on_beforeSend = "validateUserFormUserEdit()" }))
@@ -14,46 +14,45 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             <div class="form-group floating-label">
-                @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "" })
+                @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger  " })
             </div>
             <div class="form-group floating-label">
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "" })
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger  " })
             </div>
             <div class="form-group floating-label">
-                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger  " })
             </div>
             <div class="form-group floating-label">
-                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger  " })
             </div>
             <div class="form-group floating-label">
-                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "" })
+                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger  " })
             </div>
             <div class="form-group floating-label">
-                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "" })
+                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger  " })
             </div>
 
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.isAdmin, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        @Html.EditorFor(model => model.isAdmin)
-                        @Html.ValidationMessageFor(model => model.isAdmin, "", new { @class = "text-danger" })
-                    </div>
+            <div class="form-group m-checkbox-inline mb-0">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.isAdmin)
+                    @Html.LabelFor(model => model.isAdmin, htmlAttributes: new { @class = "control-label col-md-2" })
                 </div>
+                @Html.ValidationMessageFor(model => model.isAdmin, "", new { @class = "text-danger" })
             </div>
+
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">

@@ -107,7 +107,56 @@ namespace MiResiliencia.Helpers
 
         }
 
+        public static HtmlString MyPrAEditorRowFor<TModel, TProperty>(
+    this IHtmlHelper<TModel> htmlHelper,
+    Expression<Func<TModel, TProperty>> expression, string ikclass, string id)
+        {
+            var memberExpression = expression.Body as MemberExpression;
+            if (memberExpression == null)
+                throw new InvalidOperationException("Expression must be a member expression");
 
+            string name = memberExpression.Member.Name;
+
+
+            IHtmlContent display = HtmlHelperDisplayExtensions.DisplayFor(htmlHelper, expression);
+
+            TagBuilder row = new TagBuilder("tr");
+            TagBuilder desc = new TagBuilder("td");
+            desc.Attributes["style"] = "font-weight:bold; font-size:1em;";
+            desc.InnerHtml.Append(ikclass); ;
+            row.InnerHtml.AppendHtml(desc);
+            TagBuilder space = new TagBuilder("td");
+            space.InnerHtml.AppendHtml("&nbsp;&nbsp;");
+            row.InnerHtml.AppendHtml(space);
+
+            TagBuilder editorrow = new TagBuilder("td");
+
+            TagBuilder div = new TagBuilder("div");
+            div.Attributes["id"] = id.ToString() + "_" + name + "_edit";
+            div.Attributes["style"] = "display:none;";
+            div.Attributes["class"] = "form-group insidePraEditor";
+            TagBuilder divsub = new TagBuilder("div");
+            divsub.Attributes["class"] = "col-md-12";
+
+            IHtmlContent editor = HtmlHelperEditorExtensions.EditorFor(htmlHelper, expression);
+            string e = editor.GetString();
+
+            divsub.InnerHtml.AppendHtml(e.Replace("class=\"text-box single-line\"", "class=\"text-box single-line form-control\"").Replace("id=\"", "id=\"" + id + "_"));
+            div.InnerHtml.AppendHtml(divsub.GetString());
+
+            TagBuilder div2 = new TagBuilder("div");
+            div2.Attributes["id"] = id.ToString() + "_" + name + "_text";
+            div2.Attributes["class"] = "insidePraText";
+            div2.InnerHtml.AppendHtml(display.GetString().Replace("id=\"a_", "id=\"" + id + "_showtext_"));
+            editorrow.Attributes["style"] = "width:90px;";
+            editorrow.InnerHtml.AppendHtml(div.GetString() + " " + div2.GetString());
+
+            row.InnerHtml.AppendHtml(editorrow);
+
+            return new HtmlString(row.GetString());
+
+
+        }
 
         public static HtmlString ObjetRowFor<TModel, TProperty>(
     this IHtmlHelper<TModel> htmlHelper,

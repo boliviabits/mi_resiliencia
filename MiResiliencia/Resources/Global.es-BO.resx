@@ -498,4 +498,13 @@
   <data name="DiscountRate" xml:space="preserve">
     <value>Tasa de descuento [%] para el VAN</value>
   </data>
+  <data name="Vorname" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Nachname" xml:space="preserve">
+    <value>Apellido</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Repetir la clave</value>
+  </data>
 </root>

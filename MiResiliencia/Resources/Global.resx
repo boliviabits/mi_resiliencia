@@ -479,4 +479,13 @@
   <data name="DiscountRate" xml:space="preserve">
     <value>Discount Rate [%] for NPV</value>
   </data>
+  <data name="Vorname" xml:space="preserve">
+    <value>Firstname</value>
+  </data>
+  <data name="Nachname" xml:space="preserve">
+    <value>Surname</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
 </root>

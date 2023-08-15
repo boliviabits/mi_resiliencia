@@ -1,5 +1,5 @@
 ﻿@using MiResiliencia
-<div class="container body-content" style="width:94%">
+<div>
     @{
 
     }
@@ -79,7 +79,7 @@
         }
     )
 
-    $('#ImmoContent button').not('.insideTab').each(
+    $('#ImmoContent button').each(
         function () {
             var $this = $(this);
             if ($this.attr("ic-get-from") == null) {
@@ -126,7 +126,7 @@
         }
     )
 
-    $('#ImmoContent form').not('.insideTab').each(
+    $('#ImmoContent form').each(
         function () {
             var $this = $(this);
             if ($this.attr("ic-post-to") == null) {

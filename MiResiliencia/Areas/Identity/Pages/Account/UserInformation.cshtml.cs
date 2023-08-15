@@ -56,6 +56,15 @@ namespace MiResiliencia.Areas.Identity.Pages.Account
         public string ReturnUrl { get; set; }
 
         /// <summary>
+        ///     True if everything worked
+        /// </summary>
+        public bool TheResult { get; set; } 
+
+        /// <summary>
+        ///     The success message
+        /// </summary>
+        public string SuccessMessage { get; set; }
+        /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
@@ -66,17 +75,14 @@ namespace MiResiliencia.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
+            [Display(ResourceType = typeof(MiResiliencia.Resources.Global), Name = "Email")]
             public string Email { get; set; }
 
             [Required]
-            [EmailAddress]
-            [Display(Name = "Vorname")]
+            [Display(ResourceType = typeof(MiResiliencia.Resources.Global), Name = "Vorname")]
             public string FirstName { get; set; }
             [Required]
-            [EmailAddress]
-            [Display(Name = "Nachname")]
+            [Display(ResourceType = typeof(MiResiliencia.Resources.Global), Name = "Nachname")]
             public string LastName { get; set; }
 
             /// <summary>
@@ -84,9 +90,9 @@ namespace MiResiliencia.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "El {0} debe tener al menos {2} y como máximo {1} caracteres.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(ResourceType = typeof(MiResiliencia.Resources.Global), Name = "PasswortLabel")]
             public string Password { get; set; }
 
             /// <summary>
@@ -94,8 +100,8 @@ namespace MiResiliencia.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(ResourceType = typeof(MiResiliencia.Resources.Global), Name = "ConfirmPassword")]
+            [Compare("Password", ErrorMessage = "La clave de acceso y la clave de confirmación no coinciden.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -126,7 +132,8 @@ namespace MiResiliencia.Areas.Identity.Pages.Account
                 await _userManager.RemovePasswordAsync(applicationUser);
                 await _userManager.AddPasswordAsync(applicationUser, Input.Password);
             }
-
+            TheResult = true;
+            SuccessMessage = "Clave cambiada con éxito";
             // If we got this far, something failed, redisplay form
             return Page();
         }

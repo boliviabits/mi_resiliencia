@@ -5,7 +5,7 @@
   width: 95vw;
   overflow: hidden;
   min-height:95vh;
-  z-index: 2000; }
+  z-index: 20; }
   .olsidebar.collapsed {
     width: 40px !important; }
   @media (min-width: 768px) {

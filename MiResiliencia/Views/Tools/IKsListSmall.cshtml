@@ -31,7 +31,7 @@
                         <div class="form-group m-checkbox-inline mb-0">
                             <div class="checkbox checkbox-primary">
                                 <input id="small_@i.ID" class="ikbeforesmall" onchange="showIKsbeforeSmall()" type="checkbox">
-                                <label for="small_@i.ID" class="mb-0">@i.IntensityDegree.ToString()</label>
+                                <label for="small_@i.ID" class="mb-0">@i.NatHazard.Name @i.IKClasses.Description @i.IntensityDegree.ToString()</label>
                             </div>
                         </div>
 
@@ -42,7 +42,7 @@
                         <div class="form-group m-checkbox-inline mb-0">
                             <div class="checkbox checkbox-primary">
                                 <input id="small_@i.ID" class="ikaftersmall" onchange="showIKsafterSmall()" type="checkbox">
-                                <label for="small_@i.ID" class="mb-0">@i.IntensityDegree.ToString()</label>
+                                <label for="small_@i.ID" class="mb-0">@i.NatHazard.Name @i.IKClasses.Description @i.IntensityDegree.ToString()</label>
                             </div>
                         </div>
 
