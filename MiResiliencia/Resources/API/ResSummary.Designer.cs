@@ -196,7 +196,7 @@ namespace MiResiliencia.Resources.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NPV / IRR module.
+        ///   Looks up a localized string similar to NPV / IRR calculations.
         /// </summary>
         public static string TXT_NPV_TIR {
             get {

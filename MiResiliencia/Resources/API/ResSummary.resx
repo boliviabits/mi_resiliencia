@@ -200,6 +200,6 @@
     <value>Discount Rate</value>
   </data>
   <data name="TXT_NPV_TIR" xml:space="preserve">
-    <value>NPV / IRR module</value>
+    <value>NPV / IRR calculations</value>
   </data>
 </root>

@@ -1,5 +1,7 @@
-﻿using MiResiliencia.Helpers.API;
+﻿using Microsoft.Extensions.Hosting;
+using MiResiliencia.Helpers.API;
 using MiResiliencia.Resources.API;
+using System;
 
 namespace MiResiliencia.Models.API
 {
@@ -173,12 +175,43 @@ namespace MiResiliencia.Models.API
             }
         }
 
+        public string LogCashFlows
+        {
+            get
+            {
+                if (ProtectionMeasure == null)
+                {
+                    return $"ERROR: Protection Measure not defined";
+                }
+
+                string _result =
+                    $"startCosts = -ProtectionMeasure.Costs ; \n" +
+                    $"yearlyBenefit = (CollectiveRiskTotalBefore - CollectiveRiskTotalAfter) " +
+                    $" - ProtectionMeasure.OperatingCosts " +
+                    $" - ProtectionMeasure.MaintenanceCosts; ";
+
+                _result +=
+                    $"startCosts = {-ProtectionMeasure?.Costs:C0}; \n" +
+                    $"yearlyBenefit = ({CollectiveRiskTotalBefore:C0} - {CollectiveRiskTotalAfter:C0}) " +
+                    $"- {ProtectionMeasure?.OperatingCosts:C0} " +
+                    $"- {ProtectionMeasure?.MaintenanceCosts:C0}; ";
+
+                return _result;
+            }
+        }
+
         [TableIgnore]
         public NpvIrrViewModel NIVM
         {
             get
             {
-                return new NpvIrrViewModel(DiscountRatePercent, IRR, NPV, ShowDetails);
+                return new NpvIrrViewModel()
+                {
+                    DiscountRatePercent = DiscountRatePercent,
+                    IRRPercent = IRR,
+                    NPV = NPV,
+                    LogCashflow = LogCashFlows + "\n" + string.Join(", ", CashFlows.Select(c => c.ToString("C2")))
+                };
             }
         }
 
@@ -268,53 +301,31 @@ namespace MiResiliencia.Models.API
     /// </summary>
     public class NpvIrrViewModel
     {
-        private readonly double discountRatePercent;
-        private readonly double irrPercent;
-        private readonly double npv;
-        private readonly bool showDetails;
 
-        public NpvIrrViewModel(double discountRatePercent, double irrPercent, double npv, bool showDetails)
+        public NpvIrrViewModel()
         {
-            this.discountRatePercent = discountRatePercent;
-            this.irrPercent = irrPercent;
-            this.npv = npv;
-            this.showDetails = showDetails;
         }
 
         [LocalizedDisplayName(nameof(ResSummary.TXT_DiscountRate), typeof(ResSummary))]
         [LocalizedDisplayFormat(nameof(ResFormat.DF_PercentF3), typeof(ResFormat))]
-        public double DiscountRatePercent
-        {
-            get
-            {
-                return discountRatePercent;
-            }
-        }
+        public double DiscountRatePercent { get; set; }
 
         [LocalizedDisplayName(nameof(ResSummary.TXT_NPV), typeof(ResSummary))]
         [LocalizedDisplayFormat(nameof(ResFormat.DF_Currency), typeof(ResFormat))]
-        public double NPV
-        {
-            get
-            {
-                return npv;
-            }
-        }
+        public double NPV { get; set; }
 
         [LocalizedDisplayName(nameof(ResSummary.TXT_IRR), typeof(ResSummary))]
         [LocalizedDisplayFormat(nameof(ResFormat.DF_PercentF3), typeof(ResFormat))]
-        public double IRR
-        {
-            get
-            {
-                return irrPercent;
-            }
-        }
+        public double IRRPercent { get; set; }
 
-               
+        [ShowInDetail]
+        public string NPVLog { get; set; }
 
+        [ShowInDetail]
+        public string IRRLog { get; set; }
 
-
+        [ShowInDetail]
+        public string LogCashflow { get; set; }
 
     }
 }

@@ -220,6 +220,6 @@
     <value>Tasa de descuento</value>
   </data>
   <data name="TXT_NPV_TIR" xml:space="preserve">
-    <value>Módulo VAN / TIR</value>
+    <value>Cálculos VAN / TIR</value>
   </data>
 </root>
