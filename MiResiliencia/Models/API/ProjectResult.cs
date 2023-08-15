@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using MiResiliencia.Helpers.API;
+using MiResiliencia.Migrations;
 using MiResiliencia.Resources.API;
 using System;
 
@@ -123,8 +124,8 @@ namespace MiResiliencia.Models.API
             {
                 try
                 {
-                    double irr = CalculateIRR(CashFlows) * 100.0d;
-                    //double irr = CalculateIRR_Newton(CashFlows) * 100.0d; //using more robust calculation
+                    double irr = CalculateIRR(CashFlows) * 100.0d;              //bisection method
+                    //double irr = CalculateIRR_Newton(CashFlows) * 100.0d;     //using more robust calculation
                     return irr;
                 }
                 catch (Exception ex)
@@ -175,6 +176,38 @@ namespace MiResiliencia.Models.API
             }
         }
 
+        [TableIgnore]
+        public string LogNPV
+        {
+            get
+            {
+                if (ProtectionMeasure == null)
+                {
+                    return $"ERROR: Protection Measure not defined";
+                }
+                string _result = "NPV = ";
+                string _result2 = "NPV = ";
+
+                var cashFlows = CashFlows;
+                var discountRate = DiscountRate;
+                for (int i = 0; i < cashFlows.Length; i++)
+                {
+                    if (i > 0)
+                    {
+                        _result += "+";
+                        _result2 += "+";
+                    }
+                    _result += $" cashFlows[{i}] / (1 + discountRate)^{i} ";
+                    _result2 += $" {cashFlows[i]:C0} / (1 + {discountRate})^{i} ";
+                }
+
+                _result += "; \n" + _result2;
+
+                return _result;
+            }
+        }
+
+        [TableIgnore]
         public string LogCashFlows
         {
             get
@@ -186,12 +219,14 @@ namespace MiResiliencia.Models.API
 
                 string _result =
                     $"startCosts = -ProtectionMeasure.Costs ; \n" +
+                    $"lifeSpan = ProtectionMeasure.LifeSpan; \n" +
                     $"yearlyBenefit = (CollectiveRiskTotalBefore - CollectiveRiskTotalAfter) " +
                     $" - ProtectionMeasure.OperatingCosts " +
                     $" - ProtectionMeasure.MaintenanceCosts; ";
 
                 _result +=
                     $"startCosts = {-ProtectionMeasure?.Costs:C0}; \n" +
+                    $"lifeSpan = {ProtectionMeasure?.LifeSpan}; \n" +
                     $"yearlyBenefit = ({CollectiveRiskTotalBefore:C0} - {CollectiveRiskTotalAfter:C0}) " +
                     $"- {ProtectionMeasure?.OperatingCosts:C0} " +
                     $"- {ProtectionMeasure?.MaintenanceCosts:C0}; ";
@@ -201,7 +236,7 @@ namespace MiResiliencia.Models.API
         }
 
         [TableIgnore]
-        public NpvIrrViewModel NIVM
+        public NpvIrrViewModel NpvIrrVM
         {
             get
             {
@@ -210,7 +245,8 @@ namespace MiResiliencia.Models.API
                     DiscountRatePercent = DiscountRatePercent,
                     IRRPercent = IRR,
                     NPV = NPV,
-                    LogCashflow = LogCashFlows + "\n" + string.Join(", ", CashFlows.Select(c => c.ToString("C2")))
+                    LogCashflow = LogCashFlows + "\nArray = " + string.Join(", ", CashFlows.Select(c => c.ToString("C0"))),
+                    LogNPV = LogNPV
                 };
             }
         }
@@ -319,10 +355,10 @@ namespace MiResiliencia.Models.API
         public double IRRPercent { get; set; }
 
         [ShowInDetail]
-        public string NPVLog { get; set; }
+        public string LogNPV { get; set; }
 
-        [ShowInDetail]
-        public string IRRLog { get; set; }
+        //[ShowInDetail]
+        //public string LogIRR { get; set; }
 
         [ShowInDetail]
         public string LogCashflow { get; set; }
