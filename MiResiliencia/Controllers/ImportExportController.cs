@@ -398,6 +398,14 @@ namespace MiResiliencia.Controllers
             string dbuser = _configuration["Environment:DBUSer"];
             string dbpassword = _configuration["Environment:DBPassword"];
 
+            if ((db==null) || (db==""))
+            {
+                db = _configuration["DB"];
+                host = _configuration["DBHost"];
+                dbuser = _configuration["DBUSer"];
+                dbpassword = _configuration["DBPassword"];
+            }
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 psi.FileName = @"C:\Program Files\GDAL\ogr2ogr.exe";
@@ -423,6 +431,9 @@ namespace MiResiliencia.Controllers
             try
             {
                 psi.Arguments = "-f GPKG " + exportfilename + pgstring + " \"Export_Perimeter\" -where \"\\\"Id\\\" = " + projectId.Value + "\" -nln \"perimeter\"";
+                Console.WriteLine("GPKG Export Parameter list:");
+                Console.WriteLine(psi.Arguments);
+                
                 ExecuteProzess(psi);
             }
             catch (Exception ex)
