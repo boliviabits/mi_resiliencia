@@ -59,13 +59,13 @@
             <div class="card card-bordered style-danger">
                 @*HEADER*@
                 <div class="card-header">
-                    <h5>
+                    <h1>
                         @ResSummary.TXT_ProjectSummary
-                    </h5>
+                    </h1>
                     <div class="tools">
                         @if (!(ViewBag.print ?? false))
                         {
-                            var urlPrint = Url.Action("Summary", "Result", new { id = Model.Project.Id, details = false, attachCss = true, print = true });
+                            var urlPrint = Url.Action("Summary", "Result", new { id = Model.Project.Id, details = false, attachCss = true, print = false });
                             //cut off the left hand part, because some path is added before Result/Summary sometimes
                             int indexLeft = urlPrint.LastIndexOf("Result/Summary");
                             if (indexLeft >= 0)
@@ -75,18 +75,20 @@
                             //var requestUri = this.Request.Url;  //requestUri.Authority
                             <button class="btn ink-reaction btn-raised btn-primary" type="button"
                                     onclick="window.open('api/@Html.Raw(urlPrint)', '_blank')">
-                                @Html.Raw(ResSummary.TXT_Print)
+                                @Html.Raw(ResSummary.TXT_Open)
                             </button>
 
-                            @*<button id="export" class="btn ink-reaction btn-raised btn-primary" type="button">
-                                    @Html.Raw(ResSummary.TXT_ExportWord)
-                                </button>*@
-
-                            @*string urlPrint2 = Url.Action("Summary", "Result", new { id = Model.Project.Id, details = true, attachCss = true, print = true });
-                                <button class="btn ink-reaction btn-raised btn-primary" type="button"
-                                        onclick="window.open('@Html.Raw(urlPrint2)', '_blank')">
-                                    @Html.Raw(ResSummary.TXT_PrintDetail)
-                                </button>*@
+                            string urlPrint2 = Url.Action("Summary", "Result", new { id = Model.Project.Id, details = true, attachCss = true, print = false });
+                            //cut off the left hand part, because some path is added before Result/Summary sometimes
+                            int indexLeft2 = urlPrint2.LastIndexOf("Result/Summary");
+                            if (indexLeft2 >= 0)
+                            {
+                                urlPrint2 = urlPrint2.Substring(indexLeft2);
+                            }
+                            <button class="btn ink-reaction btn-raised btn-primary" type="button"
+                                    onclick="window.open('api/@Html.Raw(urlPrint2)', '_blank')">
+                                @Html.Raw(ResSummary.TXT_OpenDetails)
+                            </button>
                         }
                         @*<a class="btn btn-icon-toggle btn-collapse"><i class="fa fa-angle-down"></i></a>*@
                     </div>
@@ -262,7 +264,7 @@
                                     </div>
                                     @*CONTENT*@
                                     <div id="processes-@i" class="collapse">
-                                        <div class="card-body">
+                                        <div class="card-body card">
 
                                             <h3 class="bg-info">@ResModel.PA_PrA</h3>
                                             @Html.Raw(Model.Project.PrAs

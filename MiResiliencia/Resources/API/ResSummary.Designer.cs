@@ -223,6 +223,24 @@ namespace MiResiliencia.Resources.API {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open calculation.
+        /// </summary>
+        public static string TXT_Open {
+            get {
+                return ResourceManager.GetString("TXT_Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open calculation details.
+        /// </summary>
+        public static string TXT_OpenDetails {
+            get {
+                return ResourceManager.GetString("TXT_OpenDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Person.
         /// </summary>
         public static string TXT_Person {
