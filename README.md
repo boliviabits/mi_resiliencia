@@ -34,7 +34,7 @@ Download GeoServer version 2.23 from http://geoserver.org/download/
 
 ### Use MiResiliencia Docker file to run MiResiliencia
 
-1. copy [MiResiliencia/docker-compose.yml](https://github.com/GEOTEST-AG/MiResiliencia/docker-compose.yml) to server (e.g. user dir  $HOME) and change to this directory (e.g. cd )
+1. copy [MiResiliencia/docker-compose.yml](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/MiResiliencia/docker-compose.yml) to server (e.g. user dir  $HOME) and change to this directory (e.g. cd )
 2. Edit the DB and Geoserver host inside docker-compose.yml
 
 3. start container(s) with
