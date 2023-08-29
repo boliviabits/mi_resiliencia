@@ -252,13 +252,14 @@
 
                                 <div class="card panel">
                                     @*HEADER*@
-                                    <div class="card-header collapsed style-danger" data-toggle="collapse" data-parent="#processes" data-target="#processes-@i">
-                                        <h5>
+                                    <div class="card-header  style-danger" data-toggle="collapse" data-parent="#processes" data-target="#processes-@i">
+                                        <h5 data-bs-toggle="collapse" data-bs-target="#processes-@i" aria-expanded="false" aria-controls="processes-@i">
                                             @ResSummary.TXT_NatHazard @hazard.Name
                                         </h5>
-                                        <div class="tools">
-                                            <a class="btn btn-icon-toggle"><i class="fa fa-angle-down"></i></a>
-                                        </div>
+                                        <button class="btn btn-icon-toggle pra-toogle" type="button" data-bs-toggle="collapse" data-bs-target="#processes-@i" aria-expanded="false" aria-controls="processes-@i">
+                                            <span class="pra-expanded"><i class="fa fa-angle-up"></i></span>
+                                            <span class="pra-collapsed"><i class="fa fa-angle-down"></i></span>
+                                        </button>
                                     </div>
                                     @*CONTENT*@
                                     <div id="processes-@i" class="collapse">

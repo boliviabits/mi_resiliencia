@@ -17,24 +17,39 @@ namespace MiResiliencia.Models
         public int ID { get; set; }
 
         [Display(ResourceType = typeof(Resources.Global), Name = "ConstructionCosts")]
+        [LocalizedDisplayName(nameof(ResModel.PM_Costs), typeof(ResModel))]
+        [LocalizedDisplayFormat(nameof(ResFormat.DF_Currency), typeof(ResFormat))]
         public int Costs { get; set; }
         [Display(ResourceType = typeof(Resources.Global), Name = "LifeSpan")]
+        [LocalizedDisplayName(nameof(ResModel.PM_LifeSpan), typeof(ResModel))]
         public int LifeSpan { get; set; }
         [Display(ResourceType = typeof(Resources.Global), Name = "OperatingCosts")]
+        [LocalizedDisplayName(nameof(ResModel.PM_OperatingCosts), typeof(ResModel))]
+        [LocalizedDisplayFormat(nameof(ResFormat.DF_CurrencyPerYear), typeof(ResFormat))]
         public int OperatingCosts { get; set; }
         [Display(ResourceType = typeof(Resources.Global), Name = "MaintenanceCosts")]
+        [LocalizedDisplayName(nameof(ResModel.PM_MaintenanceCosts), typeof(ResModel))]
+        [LocalizedDisplayFormat(nameof(ResFormat.DF_CurrencyPerYear), typeof(ResFormat))]
         public int MaintenanceCosts { get; set; }
         [Display(ResourceType = typeof(Resources.Global), Name = "RateofReturn")]
+        [LocalizedDisplayName(nameof(ResModel.PM_RateOfReturn), typeof(ResModel))]
+        [LocalizedDisplayFormat(nameof(ResFormat.DF_PercentF3), typeof(ResFormat))]
         public double RateOfReturn { get; set; }
         [Display(ResourceType = typeof(Resources.Global), Name = "Description")]
+        [LocalizedDisplayName(nameof(ResModel.PM_Description), typeof(ResModel))]
         public string? Description { get; set; }
         [Display(ResourceType = typeof(Resources.Global), Name = "ValueAddedTax")]
+        [LocalizedDisplayName(nameof(ResModel.PM_ValueAddedTax), typeof(ResModel))]
+        [LocalizedDisplayFormat(nameof(ResFormat.DF_PercentF3), typeof(ResFormat))]
+        [TableIgnore]
         public double ValueAddedTax { get; set; }
+        [TableIgnore]
         public int ProjectID { get; set; }
         [TableIgnore]
         public MultiPolygon? geometry { get; set; }
+        [TableIgnore]
         public virtual Project Project { get; set; }
-
+        [TableIgnore]
         [Display(ResourceType = typeof(Resources.Global), Name = "DiscountRate")]
         public double DiscountRate { get; set; }
         
