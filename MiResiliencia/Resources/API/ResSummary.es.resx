@@ -190,7 +190,7 @@
     <value>Nombre</value>
   </data>
   <data name="TXT_Number" xml:space="preserve">
-    <value>Número </value>
+    <value>Número</value>
   </data>
   <data name="TXT_Print" xml:space="preserve">
     <value>Imprimir</value>
@@ -221,5 +221,11 @@
   </data>
   <data name="TXT_NPV_TIR" xml:space="preserve">
     <value>Cálculos VAN / TIR</value>
+  </data>
+  <data name="TXT_Open" xml:space="preserve">
+    <value>Abrir cálculo</value>
+  </data>
+  <data name="TXT_OpenDetails" xml:space="preserve">
+    <value>Abrir detalles de cálculo</value>
   </data>
 </root>

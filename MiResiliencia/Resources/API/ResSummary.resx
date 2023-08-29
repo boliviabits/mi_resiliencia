@@ -202,4 +202,10 @@
   <data name="TXT_NPV_TIR" xml:space="preserve">
     <value>NPV / IRR calculations</value>
   </data>
+  <data name="TXT_Open" xml:space="preserve">
+    <value>Open calculation</value>
+  </data>
+  <data name="TXT_OpenDetails" xml:space="preserve">
+    <value>Open calculation details</value>
+  </data>
 </root>
