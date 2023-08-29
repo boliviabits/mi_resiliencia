@@ -419,10 +419,9 @@
                     <p>
                         @ResSummary.TXT_NumberOf @ResSummary.TXT_ErrorsWarning.ToLower(): @count
                     </p>
-                    @if (count > 0 && !(ViewBag.print ?? false))
+                    @if (count > 0 && !(ViewBag.attachCss ?? false))
                     {
-                        string request = $"/proxy/restb/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=restb:ErrorView&cql_filter=Project_Id={Model.Project.Id}&outputFormat=application/json";
-                        //GeoWebGIS.showWFSLayer('/proxy/restb/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=restb:ErrorView&cql_filter=Project_Id=32&outputFormat=application/json');
+                        string request = $"/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:ErrorView&cql_filter=ProjectId={Model.Project.Id}&outputFormat=application/json";
                         <div>
                             <button class="btn ink-reaction btn-raised btn-primary" type="button" onclick="showCalcErrors()" ic-target="#ImmoContent" ic-indicator="#loading-spinner" ic-push-url="true" ic-on-beforesend="makeIntercooler()" ic-on-complete="makeIntercoolerSuccess()">@Html.Raw(ResSummary.TXT_ShowWarningsOnMap)</button>
                             <script type="text/javascript">

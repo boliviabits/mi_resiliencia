@@ -6,7 +6,9 @@ namespace MiResiliencia.Models
 {
     public class DamageExtent
     {
+        [TableIgnore]
         public int MappedObjectId { get; set; }
+        [TableIgnore]
         public int IntensityId { get; set; }
 
         [LocalizedDisplayName(nameof(ResModel.DE_MappedObject), typeof(ResModel))]

@@ -405,7 +405,7 @@
                 this.map = new ol.Map({
                     layers: [this.backgroudmap, this.backgroudmap2],
                     target: 'map',
-                    
+
                     view: myView,
                     controls: ol.control.defaults({
                         attributionOptions: ({
@@ -444,7 +444,7 @@
                     GeoWebGIS.clusterselect.getFeatures().clear();
                 }
                 GeoWebGIS.map.forEachFeatureAtPixel(e.pixel, function (f) {
-                    
+
                     GeoWebGIS.clusterselect.getFeatures().push(f);
                     GeoWebGIS.clusterselect.dispatchEvent({
                         type: 'select',
@@ -486,7 +486,8 @@
                                 'placement': 'top',
                                 'animation': false,
                                 'html': true,
-                                'content': '<p>' + GeoWebGIS.translator.get("errorwas") + ':</p><b>' + firstfeature[0].getProperties()["Log"] + '</b></p><a href="#" onclick="reloadErrorViewMappedObject(' + firstfeature[0].getProperties()["ID"] + ', coord[0], coord[1]);">' + GeoWebGIS.translator.get("change") + '</a><div id="mappedObjectDivErrorView"></div>'
+                                'content': '<p>' + GeoWebGIS.translator.get("errorwas") + ':</p><b>' + firstfeature[0].getProperties()["Log"] + '</b></p>'
+                                    //+ '<a href="#" onclick="reloadErrorViewMappedObject(' + firstfeature[0].getProperties()["ID"] + ', ' + coord[0] + ', ' + coord[1] + '); ">' + GeoWebGIS.translator.get("change") + '</a><div id="mappedObjectDivErrorView"></div>'
                             });
                             $(element).popover('show');
                         }
@@ -519,7 +520,7 @@
                             var coord = ol.proj.transform(middlepint, 'EPSG:900913', 'EPSG:4326');
 
                             reloadMappedObject(firstfeature[0].getProperties()["ID"], coord[0], coord[1]);
-                            
+
                         }
                         else if (GeoWebGIS.workingNamespace == 'Resilience') {
                             reloadRMid(firstfeature[0].getProperties()["mappedObjectID"]);
@@ -564,7 +565,7 @@
 
 
                     e.selected.forEach(function (feature) {
-                        
+
 
 
 
@@ -1079,11 +1080,11 @@
 
                 var formatGML;
 
-                    formatGML = new ol.format.GML({
-                        featureNS: 'miresiliencia',
-                        featureType: GeoWebGIS.workingNamespace,
-                        srsName: 'EPSG:3857'
-                    });
+                formatGML = new ol.format.GML({
+                    featureNS: 'miresiliencia',
+                    featureType: GeoWebGIS.workingNamespace,
+                    srsName: 'EPSG:3857'
+                });
 
                 var xs = new XMLSerializer();
                 //var newFeature = this.drawlayer.getSource().getFeatures()[0];
@@ -1118,7 +1119,7 @@
                         // parse data
                         if (data.length > 0) {
                             if (data[0].indexOf("Intensity.") == 0) {
-                                
+
                                 GeoWebGIS.lastInsertedFeatureId = data[0].replace("Intensity.", "");
                                 $('#stopIKDrawAfter').click();
                                 $('#stopIKDrawBefore').click();
@@ -1137,7 +1138,7 @@
                         self.wfslayer.setSource(new ol.source.Vector());
                         self.wfssource.refresh();
                         self.wfslayer.setSource(self.wfssource);
-                        
+
                         GeoWebGIS.map.addLayer(self.wfslayer);
 
 
@@ -1754,32 +1755,32 @@ exportPNGElement.addEventListener('click', function () {
             exportOptions.height = height;
             console.log($('canvas').get(0));
 
-                //var canvas = $('canvas').get(0);
+            //var canvas = $('canvas').get(0);
             //if (legend_loaded >= legend_loading) {
 
-                html2canvas(GeoWebGIS.map.getViewport(), exportOptions).then(function (canvas) {
-                    var data = canvas.toDataURL('image/jpeg');
-                    var pdf = new jsPDF({
-                        orientation: 'landscape', unit: 'mm',
-                        format: [297, 210]
-                    });
-                    pdf.addImage(data, 'JPEG', 5, 20, dim[0] - 10, dim[1] - 30);
-                    pdf.rect(5, 20, dim[0] - 10, dim[1] - 30);
-                    pdf.text($('#printtitle').val(), 8, 13);
-                    pdf.setFontSize(6);
-                    pdf.text("(C) MiResiliencia (https://www.mi-resiliencia.org) ", 10, dim[1] - 5);
-                    pdf.save('map.pdf');
-
-                    source.un('tileloadstart', tileLoadStart);
-                    source.un('tileloadend', tileLoadEnd, canvas);
-                    source.un('tileloaderror', tileLoadEnd, canvas);
-                    GeoWebGIS.map.setSize(size);
-                    //GeoWebGIS.map.getView().fit(extent, size);
-                    GeoWebGIS.map.getView().fit(extent, { size: size, constrainResolution: false });
-                    GeoWebGIS.map.renderSync();
-                    document.body.style.cursor = 'auto';
-                    $(document).unbind("legendLoaded");
+            html2canvas(GeoWebGIS.map.getViewport(), exportOptions).then(function (canvas) {
+                var data = canvas.toDataURL('image/jpeg');
+                var pdf = new jsPDF({
+                    orientation: 'landscape', unit: 'mm',
+                    format: [297, 210]
                 });
+                pdf.addImage(data, 'JPEG', 5, 20, dim[0] - 10, dim[1] - 30);
+                pdf.rect(5, 20, dim[0] - 10, dim[1] - 30);
+                pdf.text($('#printtitle').val(), 8, 13);
+                pdf.setFontSize(6);
+                pdf.text("(C) MiResiliencia (https://www.mi-resiliencia.org) ", 10, dim[1] - 5);
+                pdf.save('map.pdf');
+
+                source.un('tileloadstart', tileLoadStart);
+                source.un('tileloadend', tileLoadEnd, canvas);
+                source.un('tileloaderror', tileLoadEnd, canvas);
+                GeoWebGIS.map.setSize(size);
+                //GeoWebGIS.map.getView().fit(extent, size);
+                GeoWebGIS.map.getView().fit(extent, { size: size, constrainResolution: false });
+                GeoWebGIS.map.renderSync();
+                document.body.style.cursor = 'auto';
+                $(document).unbind("legendLoaded");
+            });
             //};
         }, 5000);
     }

@@ -241,6 +241,24 @@ namespace MiResiliencia.Resources.API {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log Cash Flows.
+        /// </summary>
+        public static string PR_LogCashFlows {
+            get {
+                return ResourceManager.GetString("PR_LogCashFlows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log Net Present Value.
+        /// </summary>
+        public static string PR_LogNPV {
+            get {
+                return ResourceManager.GetString("PR_LogNPV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Natural Hazard.
         /// </summary>
         public static string PR_NatHazard {

@@ -216,4 +216,7 @@
   <data name="DE_Staff" xml:space="preserve">
     <value>employees</value>
   </data>
+  <data name="DE_Issue" xml:space="preserve">
+    <value>Issue</value>
+  </data>
 </root>

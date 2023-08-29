@@ -244,7 +244,7 @@ namespace MiResiliencia.Models.API
                     DiscountRatePercent = DiscountRatePercent,
                     IRRPercent = IRR,
                     NPV = NPV,
-                    LogCashflow = LogCashFlows + "\nArray = " + string.Join(", ", CashFlows.Select(c => c.ToString("C0"))),
+                    LogCashflow = LogCashFlows + "\nCashFlows = " + string.Join(", ", CashFlows.Select(c => c.ToString("C0"))),
                     LogNPV = LogNPV
                 };
             }
@@ -354,12 +354,14 @@ namespace MiResiliencia.Models.API
         public double IRRPercent { get; set; }
 
         [ShowInDetail]
+        [LocalizedDisplayName(nameof(ResResult.PR_LogNPV), typeof(ResResult))]
         public string LogNPV { get; set; }
 
         //[ShowInDetail]
         //public string LogIRR { get; set; }
 
         [ShowInDetail]
+        [LocalizedDisplayName(nameof(ResResult.PR_LogCashFlows), typeof(ResResult))]
         public string LogCashflow { get; set; }
 
     }

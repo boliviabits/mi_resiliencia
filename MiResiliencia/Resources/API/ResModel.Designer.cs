@@ -124,6 +124,15 @@ namespace MiResiliencia.Resources.API {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Issue.
+        /// </summary>
+        public static string DE_Issue {
+            get {
+                return ResourceManager.GetString("DE_Issue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Length.
         /// </summary>
         public static string DE_Length {

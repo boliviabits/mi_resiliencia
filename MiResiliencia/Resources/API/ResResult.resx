@@ -204,4 +204,10 @@
   <data name="PR_YearlyCosts" xml:space="preserve">
     <value>Yearly Costs</value>
   </data>
+  <data name="PR_LogCashFlows" xml:space="preserve">
+    <value>Log Cash Flows</value>
+  </data>
+  <data name="PR_LogNPV" xml:space="preserve">
+    <value>Log Net Present Value</value>
+  </data>
 </root>

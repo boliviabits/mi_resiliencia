@@ -222,4 +222,10 @@
   <data name="PR_YearlyCosts" xml:space="preserve">
     <value>Costos anuales</value>
   </data>
+  <data name="PR_LogCashFlows" xml:space="preserve">
+    <value>Log Flujos de caja</value>
+  </data>
+  <data name="PR_LogNPV" xml:space="preserve">
+    <value>Log Valor actual neto</value>
+  </data>
 </root>
