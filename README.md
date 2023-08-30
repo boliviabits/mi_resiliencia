@@ -17,7 +17,7 @@ In order to install the application, the database and the geoserver must be inst
 ### Installation database
 
 Download and install PostgreSQL from: https://www.postgresql.org/download
-- Run the standard installation, including PostGIS package (https://postgis.net/documentation/getting_started/)
+- Run the standard installation, including PostGIS package
 - Login to the database using psql in the CLI
 	```
  	sudo -i
@@ -46,7 +46,7 @@ Download and install PostgreSQL from: https://www.postgresql.org/download
 	GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO miresiliencia;
 	ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON tables TO miresiliencia;
 	``` 
-- Add PostGIS Extension to schema: Run "CREATE EXTENSION postgis;"
+- Add PostGIS Extension to schema: 
 	```
  	SET SCHEMA 'public';
 	CREATE EXTENSION postgis;
@@ -57,6 +57,7 @@ Download and install PostgreSQL from: https://www.postgresql.org/download
  
  	cd /tmp
 	wget https://raw.githubusercontent.com/GEOTEST-AG/MiResiliencia/master/Setup/miresiliencia-initial.sql
+
 
  	-- back in psql
  
@@ -86,10 +87,10 @@ Download GeoServer version 2.23 from http://geoserver.org/download/
 		```docker compose down```
 
 5. update container image(s)
-		```
-		docker compose down
-		docker compose pull
-		docker compose up -d
-		```
+	```
+	docker compose down
+	docker compose pull
+	docker compose up -d
+	```
 
 Login to http://localhost:80. The default Login-Credentials are: ```admin / MiResiliencia23!```
