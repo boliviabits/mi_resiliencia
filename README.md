@@ -69,9 +69,9 @@ Otherwise, install PostgreSQL on a server.
 	
  	```
 
-### Geo-servidor (servidor cartográfico)
+### Geoserver (servidor cartográfico)
 
-Download GeoServer stable version (e.g. 2.23.2 for the moment) from http://geoserver.org/download/
+Download GeoServer stable version (e.g. 2.23.2 for the moment) from http://geoserver.org/download/, https://docs.geoserver.org/main/en/user/installation/linux.html
 - Do the standard installation on port 8080
 - Overwrite the data_dir directory with the provided and extracted [data.zip](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/data.zip)
 - Login to Geoserver (http://localhost:8080) with standard Geoserver access (admin/geoserver). Edit Datastore -> miresilienciadb and fill in the db, server and password to the database
@@ -86,7 +86,7 @@ Download GeoServer stable version (e.g. 2.23.2 for the moment) from http://geose
  	cd 
 	wget https://github.com/GEOTEST-AG/MiResiliencia/blob/master/MiResiliencia/docker-compose.yml
 	```
-3. Edit the DB (DBHost = `your.postgresdb.url`, DB = `miresilienciadb`, DBUser = `miresiliencia`, DBPassword = `yourpassword`) and Geoserver host inside `docker-compose.yml`
+3. Edit the DB (DBHost, DB = "`miresilienciadb`", DBUser = "`miresiliencia`", DBPassword) and Geoserver host inside `docker-compose.yml`
 
 3. start container(s) with
 		```docker compose up -d ```
