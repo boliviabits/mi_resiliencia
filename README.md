@@ -14,13 +14,15 @@ MiResiliencia consists of three parts:
 
 In order to install the application, the database and the geoserver must be installed first.
 
-### Installation database
-
-Download and install PostgreSQL from: https://www.postgresql.org/download
+### Spatial database
+In the best case you use your own PostgreSQL installation and add a new database. 
+Otherwise, install PostgreSQL on a server.
+- Download and install PostgreSQL from: https://www.postgresql.org/download
 - Run the standard installation, including PostGIS package
-- Login to the database using psql in the CLI
+ 
+#### Setup database ####
+- Login to postgresql using psql in the CLI
 	```
- 	sudo -i
  	sudo su postgres
  	psql
  	```
@@ -69,7 +71,7 @@ Download and install PostgreSQL from: https://www.postgresql.org/download
 
 ### Geo-servidor (servidor cartográfico)
 
-Download GeoServer version 2.23 from http://geoserver.org/download/
+Download GeoServer stable version (e.g. 2.23.2 for the moment) from http://geoserver.org/download/
 - Do the standard installation on port 8080
 - Overwrite the data_dir directory with the provided and extracted [data.zip](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/data.zip)
 - Login to Geoserver (http://localhost:8080) with standard Geoserver access (admin/geoserver). Edit Datastore -> miresilienciadb and fill in the db, server and password to the database
@@ -77,8 +79,14 @@ Download GeoServer version 2.23 from http://geoserver.org/download/
 
 ### Use MiResiliencia Docker file to run MiResiliencia
 
-1. copy [MiResiliencia/docker-compose.yml](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/MiResiliencia/docker-compose.yml) to server (e.g. user dir  $HOME) and change to this directory (e.g. cd )
-2. Edit the DB (DBHost, DB, DBUser, DBPassword) and Geoserver host inside docker-compose.yml
+1. Install docker https://docs.docker.com/engine/install/
+
+2. copy [MiResiliencia/docker-compose.yml](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/MiResiliencia/docker-compose.yml) to server (e.g. user dir  $HOME) and change to this directory (e.g. cd )
+	```
+ 	cd 
+	wget https://github.com/GEOTEST-AG/MiResiliencia/blob/master/MiResiliencia/docker-compose.yml
+	```
+3. Edit the DB (DBHost = `your.postgresdb.url`, DB = `miresilienciadb`, DBUser = `miresiliencia`, DBPassword = `yourpassword`) and Geoserver host inside `docker-compose.yml`
 
 3. start container(s) with
 		```docker compose up -d ```
@@ -93,4 +101,4 @@ Download GeoServer version 2.23 from http://geoserver.org/download/
 	docker compose up -d
 	```
 
-Login to http://localhost:80. The default Login-Credentials are: ```admin / MiResiliencia23!```
+Login to http://localhost:8080. The default Login-Credentials are: ```admin / MiResiliencia23!```
