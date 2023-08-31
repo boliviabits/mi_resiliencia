@@ -716,7 +716,7 @@
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: GeoWebGIS.translator.get("wrongPolyTitle"),
-                                        message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/Content/themes/invalid_polygon.png" width="560" />',
+                                        message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/content/themes/invalid_polygon.png" width="560" />',
                                         buttons: [{
                                             label: 'OK',
                                             action: function (dialogItself) {
@@ -743,7 +743,7 @@
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: GeoWebGIS.translator.get("wrongPolyTitle"),
-                                        message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/Content/themes/invalid_polygon.png" width="560" />',
+                                        message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/content/themes/invalid_polygon.png" width="560" />',
                                         buttons: [{
                                             label: 'OK',
                                             action: function (dialogItself) {
@@ -772,7 +772,7 @@
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
                                             title: GeoWebGIS.translator.get("wrongPolyTitle"),
-                                            message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/Content/themes/invalid_polygon.png" width="560" />',
+                                            message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/content/themes/invalid_polygon.png" width="560" />',
                                             buttons: [{
                                                 label: 'OK',
                                                 action: function (dialogItself) {
@@ -802,7 +802,7 @@
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
                                             title: GeoWebGIS.translator.get("wrongPolyTitle"),
-                                            message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/Content/themes/invalid_polygon.png" width="560" />',
+                                            message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/content/themes/invalid_polygon.png" width="560" />',
                                             buttons: [{
                                                 label: 'OK',
                                                 action: function (dialogItself) {
@@ -831,7 +831,7 @@
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
                                             title: GeoWebGIS.translator.get("wrongPolyTitle"),
-                                            message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/Content/themes/invalid_polygon.png" width="560" />',
+                                            message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/content/themes/invalid_polygon.png" width="560" />',
                                             buttons: [{
                                                 label: 'OK', action: function (dialogItself) {
                                                     dialogItself.close();
@@ -962,7 +962,7 @@
                                 BootstrapDialog.show({
                                     type: BootstrapDialog.TYPE_DANGER,
                                     title: GeoWebGIS.translator.get("wrongPolyTitle"),
-                                    message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/Content/themes/invalid_polygon.png" width="560" />',
+                                    message: GeoWebGIS.translator.get("wrongPolyText") + '<img src="/content/themes/invalid_polygon.png" width="560" />',
                                     buttons: [{
                                         label: 'OK',
                                         action: function (dialogItself) {
@@ -1561,7 +1561,7 @@ exportPNGElement.addEventListener('click', function () {
         var self = this;
 
         var na = new Image();
-        na.src = "/Content/themes/northarrow.png";
+        na.src = "/content/themes/northarrow.png";
         self.legend_loading++;
 
         ctx.drawImage(na, 10, height - 200 / 150 * dpi, 62 / 150 * dpi, 100 / 150 * dpi);
