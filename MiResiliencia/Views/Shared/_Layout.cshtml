@@ -168,12 +168,12 @@
                 <ul role="tablist">
                     <li><a href="#home" role="tab" data-toggle="tooltip" data-placement="top" title="MiResiliencia" onclick="showOverview();"><i class="icon miresiliencia-font-resilience-tb-title" style="padding-left:5px;"></i></a></li>
                     <li>
-                        <a href="#project" role="tab" onclick="backToProject();">
+                        <a href="#project" role="tab" onclick="backToProject();" title="Proyecto">
                             <i class="fa fa-tasks"></i>
                         </a>
                     </li>
-                    <li><a href="#print" role="tab"><i class="fa fa-print"></i></a></li>
-                    <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li>
+                    <li><a href="#print" role="tab"><i class="fa fa-print" title="Imprimir"></i></a></li>
+                    <li><a href="#profile" role="tab"><i class="fa fa-user" title="Administración"></i></a></li>
                 </ul>
             </div>
 
@@ -372,6 +372,7 @@
 
         var projectedit = new ol.control.Button({
             html: '<i class="fa fa-pencil-alt"></i>',
+            title: "Capture",
             className: "",
             handleClick: function() {openDrawWindow();}
         });
@@ -379,6 +380,7 @@
 
         var projectlayers = new ol.control.Button({
             html: '<i class="fa fa-layer-group"></i>',
+            title: "Seleccionar capa",
             className: "",
             handleClick: function () { openProjectLayerWindow(); }
         });
@@ -386,6 +388,7 @@
 
         var importexport = new ol.control.Button({
             html: '<i class="fa fa-upload"></i>',
+            title: "Exportación e importación",
             className: "",
             handleClick: function () { openshpWindow(); }
         });

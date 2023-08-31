@@ -196,7 +196,7 @@ namespace MiResiliencia.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Confirm password ähnelt.
+        ///   Looks up a localized string similar to Confirm password.
         /// </summary>
         public static string ConfirmPassword {
             get {
@@ -205,7 +205,7 @@ namespace MiResiliencia.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Construction Costs ähnelt.
+        ///   Looks up a localized string similar to Construction Costs.
         /// </summary>
         public static string Construction_Costs {
             get {
@@ -664,7 +664,7 @@ namespace MiResiliencia.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Surname ähnelt.
+        ///   Looks up a localized string similar to Surname.
         /// </summary>
         public static string Nachname {
             get {
@@ -673,7 +673,7 @@ namespace MiResiliencia.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Natural hazard ähnelt.
+        ///   Looks up a localized string similar to Natural hazard.
         /// </summary>
         public static string NatHaz {
             get {
@@ -1195,7 +1195,7 @@ namespace MiResiliencia.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Firstname ähnelt.
+        ///   Looks up a localized string similar to Firstname.
         /// </summary>
         public static string Vorname {
             get {
@@ -1204,7 +1204,7 @@ namespace MiResiliencia.Resources {
         }
         
         /// <summary>
-        ///  Looks up a localized string similar to Warnings.
+        ///   Looks up a localized string similar to Warnings.
         /// </summary>
         public static string Warnings {
             get {
