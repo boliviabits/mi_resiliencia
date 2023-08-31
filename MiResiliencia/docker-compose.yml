@@ -8,8 +8,8 @@ services:
     container_name: mires
     environment:
       "Environment:DBHost": "your.dbserver.com"
-      "Environment:DB": "yourdb"
-      "Environment:DBUser": "dbuser"
-      "Environment:DBPassword": "dbpassword"
+      "Environment:DB": "miresilienciadb"
+      "Environment:DBUser": "miresiliencia"
+      "Environment:DBPassword": "yourpassword"
       "Environment:SplittingBehavior": "true"
       "Environment:Geoserver": "your.geoserver.com"

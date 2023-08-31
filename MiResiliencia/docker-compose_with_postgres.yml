@@ -1,0 +1,50 @@
+﻿
+
+services:
+  miresiliencia:
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    image: "geotestch/miresiliencia:latest"
+    container_name: mires
+#    cpus: 2
+#    mem_limit: 4000M
+    environment:
+      "Environment:DBHost": db
+      "Environment:DB": "miresilienciadb"
+      "Environment:DBUser": "miresiliencia"
+      "Environment:DBPassword": "yourpassword"
+      "Environment:SplittingBehavior": "true"
+      "Environment:Geoserver": "your.geoserver.com"
+#      "Environment:Geoserver": "http://localhost:7070/geoserver"
+
+  db:
+    image: postgis/postgis:15-3.4
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - /miresdb/data:/var/lib/postgresql/data
+      - /miresdb/tmp:/tmp
+
+# not working 
+#  geoserver:
+#    image: docker.osgeo.org/geoserver:2.24.x
+#    container_name: geoserver
+#    cpus: 2
+#    mem_limit: 4000M
+#    restart: unless-stopped
+#    environment:
+#      - ROOT_WEBAPP_REDIRECT=true
+#      - SKIP_DEMO_DATA=true
+#    ports:
+#      - '7070:8080'
+#    volumes:
+#      - /miresdb/geoserver_data:/opt/geoserver_data
+
+
+
