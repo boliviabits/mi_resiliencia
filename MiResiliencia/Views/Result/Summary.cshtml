@@ -108,7 +108,7 @@
                                 @Html.Raw(ResModel.PM_Description)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.CreationDate)
+                                @Html.DisplayNameFor(model => model.CreationDate) 
                             </th>
                         </tr>
                         <tr>
@@ -451,7 +451,7 @@
                 <hr />
                 WebApp Version @typeof(MiResiliencia.Controllers.API.ResultController).Assembly.GetName().Version
                 <br />
-                Built @System.IO.File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location).ToString()
+                Built @System.IO.File.GetLastWriteTimeUtc(System.Reflection.Assembly.GetExecutingAssembly().Location).ToString() (UTC)
             </p>
         </div>
     </div>

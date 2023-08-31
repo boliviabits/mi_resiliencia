@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-MiResiliencia-9651665a-7afb-470d-aa1b-38660d76daf5</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -72,58 +73,58 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\051ebe65.png">
+    <Content Update="wwwroot\content\helpfiles\051ebe65.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\1d61081f.png">
+    <Content Update="wwwroot\content\helpfiles\1d61081f.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\26e65e95.png">
+    <Content Update="wwwroot\content\helpfiles\26e65e95.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\3b10f0cd.png">
+    <Content Update="wwwroot\content\helpfiles\3b10f0cd.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\44ca7224.png">
+    <Content Update="wwwroot\content\helpfiles\44ca7224.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\47c74ad1.png">
+    <Content Update="wwwroot\content\helpfiles\47c74ad1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\5756000f.png">
+    <Content Update="wwwroot\content\helpfiles\5756000f.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\64e67e37.png">
+    <Content Update="wwwroot\content\helpfiles\64e67e37.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\7f947673.png">
+    <Content Update="wwwroot\content\helpfiles\7f947673.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\983fec34.png">
+    <Content Update="wwwroot\content\helpfiles\983fec34.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\a405bc43.png">
+    <Content Update="wwwroot\content\helpfiles\a405bc43.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\b82e30b9.png">
+    <Content Update="wwwroot\content\helpfiles\b82e30b9.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\dc2c2ef0.png">
+    <Content Update="wwwroot\content\helpfiles\dc2c2ef0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\e53e24c9.png">
+    <Content Update="wwwroot\content\helpfiles\e53e24c9.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\e5dbf611.png">
+    <Content Update="wwwroot\content\helpfiles\e5dbf611.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\ef4a42c7.png">
+    <Content Update="wwwroot\content\helpfiles\ef4a42c7.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\f0c27340.png">
+    <Content Update="wwwroot\content\helpfiles\f0c27340.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\Content\HelpFiles\f612a500.png">
+    <Content Update="wwwroot\content\helpfiles\f612a500.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\fonts\resilience-toolbox-font.eot">
