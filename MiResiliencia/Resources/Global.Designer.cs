@@ -475,7 +475,7 @@ namespace MiResiliencia.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import SHP.
+        ///   Looks up a localized string similar to Import / Export GeoPackage.
         /// </summary>
         public static string ImportShp {
             get {

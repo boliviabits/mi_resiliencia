@@ -151,7 +151,7 @@
     <value>Activar aqui para cargar shapefiles</value>
   </data>
   <data name="ClickOnAnObject" xml:space="preserve">
-    <value>Seleccione un objeto para obtener más informacón</value>
+    <value>Seleccione un objeto para obtener más información</value>
   </data>
   <data name="Close Project" xml:space="preserve">
     <value>Finalizar el proyecto</value>
@@ -238,7 +238,7 @@
     <value>Período de retorno</value>
   </data>
   <data name="ImportShp" xml:space="preserve">
-    <value>Importar SHP</value>
+    <value>Importar / Exportar GeoPackage</value>
   </data>
   <data name="Index" xml:space="preserve">
     <value>Índice</value>

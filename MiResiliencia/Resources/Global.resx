@@ -218,7 +218,7 @@
     <value>Intensity class</value>
   </data>
   <data name="ImportShp" xml:space="preserve">
-    <value>Import SHP</value>
+    <value>Import / Export GeoPackage</value>
   </data>
   <data name="Index" xml:space="preserve">
     <value>Index</value>

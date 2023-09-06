@@ -193,10 +193,10 @@
     <value>Costos operacionales</value>
   </data>
   <data name="PM_MaintenanceCosts" xml:space="preserve">
-    <value>Costos de mantención</value>
+    <value>Costos de Mantenimiento</value>
   </data>
   <data name="PM_RateOfReturn" xml:space="preserve">
-    <value>Tasa de Interès bancaria</value>
+    <value>Tasa de interés bancaria</value>
   </data>
   <data name="PM_ValueAddedTax" xml:space="preserve">
     <value>IVA</value>

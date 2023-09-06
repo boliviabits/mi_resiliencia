@@ -18,8 +18,7 @@
             attributions: null,
             applicationdefinition: null,
             satmap: null,
-            backgroudmap: null,
-            backgroudmap2: null,
+            backgroudosm: null,
             bingmap: null,
             geojsonlayer: null,
             geologielayer: null,
@@ -87,23 +86,14 @@
             var urlAddon = '';
             this.projection = ol.proj.get('EPSG:3857');
 
-
-
-            var osmSource = new ol.source.OSM();
-
-            this.backgroudmap = new ol.layer.Tile({
-                source: new ol.source.XYZ({
-                    url: 'https://atlas.microsoft.com/map/tile?subscription-key=z-ehgM0XS8-dfBEeY1guLd4YiO02xNyZ6n7Ni5I5FNo&api-version=2.0&tilesetId=microsoft.imagery&zoom={z}&x={x}&y={y}&tileSize=256&language=en-US',
-                    attributions: '© 2023 TomTom, Microsoft'
-                })
-            });
-
-            this.backgroudmap2 = new ol.layer.Tile({
-                source: new ol.source.XYZ({
-                    url: 'https://atlas.microsoft.com/map/tile?subscription-key=z-ehgM0XS8-dfBEeY1guLd4YiO02xNyZ6n7Ni5I5FNo&api-version=2.0&tilesetId=microsoft.base.hybrid.road&zoom={z}&x={x}&y={y}&tileSize=256&language=en-US',
-
+            this.backgroudosm = new ol.layer.Tile({
+                //source: new ol.source.XYZ({
+                //    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                //    attributions: '© OpenStreetMap contributors'
+                //}),
+                source: new ol.source.OSM({
                 }),
-                opacity: 0.8
+                opacity: 0.6
             });
 
             // create a vector layer used for editing
@@ -382,7 +372,7 @@
                 var scaleLineControl = new ol.control.ScaleLine();
 
                 this.map = new ol.Map({
-                    layers: [this.backgroudmap, this.backgroudmap2, this.wfslayer, this.positionLayer, this.drawlayer],
+                    layers: [this.backgroudosm, this.wfslayer, this.positionLayer, this.drawlayer],
                     target: 'map',
 
                     view: myView,
@@ -403,7 +393,7 @@
             // Not logged in, show standard map
             else {
                 this.map = new ol.Map({
-                    layers: [this.backgroudmap, this.backgroudmap2],
+                    layers: [this.backgroudosm],
                     target: 'map',
 
                     view: myView,
@@ -1699,7 +1689,7 @@ exportPNGElement.addEventListener('click', function () {
 
 
     }
-    var source = GeoWebGIS.backgroudmap.getSource();
+    var source = GeoWebGIS.backgroudosm.getSource();
 
     var tileLoadStart = function () {
         //console.log("Loading");
