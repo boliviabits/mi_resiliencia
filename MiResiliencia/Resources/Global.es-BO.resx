@@ -394,7 +394,7 @@
     <value>Estado del proyecto</value>
   </data>
   <data name="RateofReturn" xml:space="preserve">
-    <value>Tasa di Interès bancaria [%]</value>
+    <value>Tasa de interés bancaria [%]</value>
   </data>
   <data name="Recalculate" xml:space="preserve">
     <value>(Re)calcular</value>
