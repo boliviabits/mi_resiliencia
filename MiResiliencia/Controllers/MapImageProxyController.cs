@@ -81,32 +81,6 @@ namespace MiResiliencia.Controllers
                         }
                     }
                 }
-                /*if (workbench == "miresiliencia")
-                {
-                    // and save it with current values to db
-                    foreach (string newObjectID in newObjects)
-                    {
-                        PostGISHatObjektparameter p = new PostGISHatObjektparameter();
-                        Objektparameter op = db.Objektparameter.Find(Int32.Parse(param));
-                        p.Objektparameter = op;
-                        p.PostGISID = Int32.Parse(newObjectID.Replace("postgislandus.", ""));
-                        db.Entry(p).State = System.Data.Entity.EntityState.Added;
-                        db.SaveChanges();
-                    }
-                }
-                else if (workbench == "mobitechnik")
-                {
-                    // and save it with current values to db
-                    foreach (string newObjectID in newObjects)
-                    {
-                        MobiObjekt m = new MobiObjekt();
-                        m.ID = newObjectID.Replace("immobilie.", "");
-
-                        db.Entry(m).State = System.Data.Entity.EntityState.Added;
-                        db.SaveChanges();
-                        return Json(m.ID, JsonRequestBehavior.AllowGet);
-                    }
-                }*/
 
                 return Json(newObjects);
             }

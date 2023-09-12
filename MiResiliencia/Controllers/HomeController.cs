@@ -95,7 +95,6 @@ namespace MiResiliencia.Controllers
                     rootWebConfig.ConnectionStrings.ConnectionStrings["DefaultConnection"];
                 if (connString != null)
                 {
-                    // server=geobrowser.ch;Port=5432;Database=miresiliencia;User Id=postgres;Password=sleepless
                     string server = connString.ConnectionString.Substring(connString.ConnectionString.IndexOf("server=") + 7);
                     server = server.Substring(0, server.IndexOf(";"));
 
