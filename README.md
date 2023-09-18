@@ -47,6 +47,8 @@ Otherwise, install PostgreSQL on a server.
 
 	GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO miresiliencia;
 	ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON tables TO miresiliencia;
+	GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO miresiliencia;
+	ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON sequences TO miresiliencia;
 	``` 
 - Add PostGIS Extension to schema: 
 	```
