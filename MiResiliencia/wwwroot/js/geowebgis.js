@@ -18,6 +18,7 @@
             attributions: null,
             applicationdefinition: null,
             satmap: null,
+            backgroudimagery: null,
             backgroudosm: null,
             bingmap: null,
             geojsonlayer: null,
@@ -86,14 +87,27 @@
             var urlAddon = '';
             this.projection = ol.proj.get('EPSG:3857');
 
+            //this.backgroudosm = new ol.layer.Tile({
+            //    source: new ol.source.OSM({
+            //    }),
+            //    opacity: 0.6
+            //});
+
+            //temporary fix 19.09.2023
             this.backgroudosm = new ol.layer.Tile({
-                //source: new ol.source.XYZ({
-                //    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                //    attributions: '© OpenStreetMap contributors'
-                //}),
-                source: new ol.source.OSM({
+                source: new ol.source.XYZ({
+                    url: 'https://atlas.microsoft.com/map/tile?subscription-key=z-ehgM0XS8-dfBEeY1guLd4YiO02xNyZ6n7Ni5I5FNo&api-version=2.0&tilesetId=microsoft.base.hybrid.road&zoom={z}&x={x}&y={y}&tileSize=256&language=en-US',
+                    attributions: '© 2023 TomTom, Microsoft'
                 }),
                 opacity: 0.6
+            });
+
+            this.backgroudimagery = new ol.layer.Tile({
+                source: new ol.source.XYZ({
+                    url: 'https://atlas.microsoft.com/map/tile?subscription-key=z-ehgM0XS8-dfBEeY1guLd4YiO02xNyZ6n7Ni5I5FNo&api-version=2.0&tilesetId=microsoft.imagery&zoom={z}&x={x}&y={y}&tileSize=256&language=en-US',
+                    attributions: '© 2023 TomTom, Microsoft'
+                }),
+                opacity: 0.8
             });
 
             // create a vector layer used for editing
@@ -372,7 +386,7 @@
                 var scaleLineControl = new ol.control.ScaleLine();
 
                 this.map = new ol.Map({
-                    layers: [this.backgroudosm, this.wfslayer, this.positionLayer, this.drawlayer],
+                    layers: [this.backgroudimagery, this.backgroudosm, this.wfslayer, this.positionLayer, this.drawlayer],
                     target: 'map',
 
                     view: myView,
