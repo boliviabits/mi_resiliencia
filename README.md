@@ -73,6 +73,9 @@ Otherwise, install PostgreSQL on a server.
 
 ### Geoserver (servidor cartográfico)
 
+If you already have a Geoserver instance, please follow the instructions here: [Setup/geoserver_setup.md](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/geoserver_setup.md)
+
+#### New installation geoserver
 Download GeoServer stable version (e.g. 2.23.2 for the moment) from http://geoserver.org/download/, https://docs.geoserver.org/main/en/user/installation/linux.html
 - Do the standard installation on port 8080
 - Overwrite the data_dir directory with the provided and extracted [data.zip](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/data.zip)
