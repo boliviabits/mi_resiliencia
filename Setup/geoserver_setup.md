@@ -18,18 +18,32 @@
 
     ![grafik](https://github.com/GEOTEST-AG/MiResiliencia/assets/68429061/d6f75f3e-45f0-4cbf-afed-7ffaad5fdf78)
 
-5. Set rights for workspace miresiliencia for all roles to *.w (under Security -> Data)
+4. Set rights for workspace miresiliencia for all roles to *.w (under Security -> Data)
+    - workspace: ``miresiliencia``
+    - Layer and groups: ``*``
+    - Access mode: ``Write``
+    - Selected Roles: ``[select all]``
 
     ![grafik](https://github.com/GEOTEST-AG/MiResiliencia/assets/68429061/4dea89e0-9970-4330-9bd3-e815bf08903c)
-
+    
     ![grafik](https://github.com/GEOTEST-AG/MiResiliencia/assets/68429061/65a7aee5-81ce-4abc-8e11-c28f883e57e2)
 
-6. Create a new layer, select miresilienciadb as source and select the view EditableProjects
+6. Create a new layer, select miresilienciadb as source and select the view ``EditableProjects``
+    - Native and Declared SRS:  ``EPSG:3857``
 
     ![grafik](https://github.com/GEOTEST-AG/MiResiliencia/assets/68429061/12aa3ac5-a9dc-4128-89a7-116a56b9b337)
 
     ![grafik](https://github.com/GEOTEST-AG/MiResiliencia/assets/68429061/93350513-07b9-4803-ae3b-49773983e19f)
 
 7. Repeat the last step for the following views
-
+    - (EditableProjects)
+    - ErrorView 			
+    - Intensity 			
+    - MappedObject 				
+    - MappedObjectWithResilience 	
+    - MappedObjectsView 			
+    - Project 					
+    - ProtectionMeasure 
+  
+   
     ![grafik](https://github.com/GEOTEST-AG/MiResiliencia/assets/68429061/2640c5a5-0afb-415a-a54d-39248b6c4dae)
