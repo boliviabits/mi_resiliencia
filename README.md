@@ -76,7 +76,7 @@ Otherwise, install PostgreSQL on a server.
 #### Existing geoserver
 
 > [!IMPORTANT] 
-> If you already have a Geoserver instance, please follow the instructions here: [Setup existing geoserver](Setup/geoserver_setup.md)
+> If you already have a Geoserver instance, please follow the instructions here: [Setup existing geoserver](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/geoserver_setup.md)
 
 
 #### New installation geoserver
