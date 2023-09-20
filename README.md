@@ -73,8 +73,10 @@ Otherwise, install PostgreSQL on a server.
 
 ### Geoserver (servidor cartográfico)
 
-If you already have a Geoserver instance, please follow the instructions here: 
-[Setup existing geoserver](Setup/geoserver_setup.md)
+#### Existing geoserver
+
+> [!IMPORTANT] 
+> If you already have a Geoserver instance, please follow the instructions here: [Setup existing geoserver](Setup/geoserver_setup.md)
 
 
 #### New installation geoserver
