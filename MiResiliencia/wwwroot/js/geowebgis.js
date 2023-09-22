@@ -1232,7 +1232,7 @@
                         self.wfssource.set('myownurl', GeoWebGIS.wfsurl);
                         var proj = projection.getCode();
                         var url = GeoWebGIS.wfsurl;
-                        url = url.replace("cql_filter=", "cql_filter=BBOX([geometry]," + extent.join(',') + ")%20AND%20");
+                        url = url.replace("cql_filter=", "cql_filter=BBOX%28%5Bgeometry%5D," + extent.join(',') + "%29%20AND%20");
                         //if (GeoWebGIS.wfsurl.indexOf("featureID") < 0) url = GeoWebGIS.wfsurl + '&bbox=' + extent.join(',');
 
 
