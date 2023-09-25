@@ -85,6 +85,7 @@ Download GeoServer stable version (e.g. 2.23.2 for the moment) from http://geose
 - Overwrite the data_dir directory with the provided and extracted [data.zip](https://github.com/GEOTEST-AG/MiResiliencia/blob/master/Setup/data.zip)
 - Login to Geoserver (http://localhost:8080) with standard Geoserver access (admin/geoserver). Edit Datastore -> miresilienciadb and fill in the db, server and password to the database
 - In Security > Data, set the write permissions (*.w) for the workspace ```miresiliencia``` to "Enable for each function".
+	![grafik](https://github.com/GEOTEST-AG/MiResiliencia/assets/68429061/d8dc095f-faca-4e8c-9e62-affaa46eaa7c)
 
 ### Use MiResiliencia Docker file to run MiResiliencia
 
