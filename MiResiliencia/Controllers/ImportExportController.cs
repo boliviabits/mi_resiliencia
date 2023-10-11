@@ -467,7 +467,7 @@ namespace MiResiliencia.Controllers
         /// Exports the project from v1 db to gpkg
         /// </summary>
         /// <returns></returns>
-        public IActionResult ExportFromV1(int projectId)
+        public IActionResult ExportFromV1(int? projectId)
         {
             string exportf = Path.GetRandomFileName();
             string[] fname = exportf.Split(".");
@@ -483,14 +483,14 @@ namespace MiResiliencia.Controllers
 
             string db = _configuration["Environment:DBV1"];
             string host = _configuration["Environment:DBHostV1"];
-            string dbuser = _configuration["Environment:DBUSerV1"];
+            string dbuser = _configuration["Environment:DBUserV1"];
             string dbpassword = _configuration["Environment:DBPasswordV1"];
 
             if ((db == null) || (db == ""))
             {
                 db = _configuration["DBV1"];
                 host = _configuration["DBHostV1"];
-                dbuser = _configuration["DBUSerV1"];
+                dbuser = _configuration["DBUserV1"];
                 dbpassword = _configuration["DBPasswordV1"];
             }
 
