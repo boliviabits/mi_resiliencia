@@ -365,3 +365,5 @@ FodyWeavers.xsd
 /MiResiliencia/appsettings_donotpublish.json
 /MiResiliencia/appsettings_donotpublish.Development.json
 /MiResiliencia/Migrations
+/MiResiliencia/App_Data/Import
+/MiResiliencia/App_Data/Export

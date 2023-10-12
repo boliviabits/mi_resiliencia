@@ -65,28 +65,15 @@
                     <div class="tools">
                         @if (!(ViewBag.print ?? false))
                         {
-                            var urlPrint = Url.Action("Summary", "Result", new { id = Model.Project.Id, details = false, attachCss = true, print = false });
-                            //cut off the left hand part, because some path is added before Result/Summary sometimes
-                            int indexLeft = urlPrint.LastIndexOf("Result/Summary");
-                            if (indexLeft >= 0)
-                            {
-                                urlPrint = urlPrint.Substring(indexLeft);
-                            }
-                            //var requestUri = this.Request.Url;  //requestUri.Authority
+                            var urlPrint = Url.ActionLink("Summary", "Result", new { id = Model.Project.Id, details = false, attachCss = true, print = false });
                             <button class="btn ink-reaction btn-raised btn-primary" type="button"
-                                    onclick="window.open('api/@Html.Raw(urlPrint)', '_blank')">
+                                    onclick="window.open('@urlPrint', '_blank')">
                                 @Html.Raw(ResSummary.TXT_Open)
                             </button>
 
-                            string urlPrint2 = Url.Action("Summary", "Result", new { id = Model.Project.Id, details = true, attachCss = true, print = false });
-                            //cut off the left hand part, because some path is added before Result/Summary sometimes
-                            int indexLeft2 = urlPrint2.LastIndexOf("Result/Summary");
-                            if (indexLeft2 >= 0)
-                            {
-                                urlPrint2 = urlPrint2.Substring(indexLeft2);
-                            }
+                            string urlPrint2 = Url.ActionLink("Summary", "Result", new { id = Model.Project.Id, details = true, attachCss = true, print = false });
                             <button class="btn ink-reaction btn-raised btn-primary" type="button"
-                                    onclick="window.open('api/@Html.Raw(urlPrint2)', '_blank')">
+                                    onclick="window.open('@urlPrint2', '_blank')">
                                 @Html.Raw(ResSummary.TXT_OpenDetails)
                             </button>
                         }
