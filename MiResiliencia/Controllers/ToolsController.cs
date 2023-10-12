@@ -317,7 +317,7 @@ namespace MiResiliencia.Controllers
 
         }
 
-        private void SaveChanges(int id, string name, string description, int? value, string ChangeValue, string unity, int? floors, int? Personcount, int? Staff, string ChangePersonCount, double? Presence, int? NumberOfVehicles, int? Velocity)
+        public void SaveChanges(int id, string name, string description, int? value, string ChangeValue, string unity, int? floors, int? Personcount, int? Staff, string ChangePersonCount, double? Presence, int? NumberOfVehicles, int? Velocity)
         {
             //MappedObject o = db.MappedObjects.Include(m => m.Objectparameter.MotherOtbjectparameter.HasProperties).Include(m => m.Objectparameter.HasProperties).Include(m => m.FreeFillParameter).Include(m => m.Objectparameter.ObjectClass).Where(m => m.ID == id).FirstOrDefault();
             MappedObject o = db.MappedObjects.Include(m => m.Objectparameter).ThenInclude(m => m.MotherOtbjectparameter).ThenInclude(m => m.HasProperties)
