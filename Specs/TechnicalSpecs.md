@@ -10,7 +10,6 @@ Microsoft .NET 6.0
 | Microsoft.VisualStudio.Web.CodeGeneration.Design       | https://licenses.nuget.org/Apache-2.0  |
 | Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite | https://licenses.nuget.org/PostgreSQL  |
 | Microsoft.EntityFrameworkCore.SqlServer                | https://licenses.nuget.org/MIT         |
-| Microsoft.VisualStudio.Azure.Containers.Tools.Targets  | https://aka.ms/deprecateLicenseUrl     |
 | EFCore.NamingConventions                               | https://licenses.nuget.org/Apache-2.0  |
 | Microsoft.AspNetCore.Identity.EntityFrameworkCore      | https://licenses.nuget.org/MIT         |
 | Microsoft.EntityFrameworkCore.Relational               | https://licenses.nuget.org/MIT         |
