@@ -65,13 +65,21 @@
                     <div class="tools">
                         @if (!(ViewBag.print ?? false))
                         {
-                            var urlPrint = Url.ActionLink("Summary", "Result", new { id = Model.Project.Id, details = false, attachCss = true, print = false });
+                            var urlPrint = Url.ActionLink("Summary", "Result",
+                                new { id = Model.Project.Id, details = false, attachCss = true, print = false },
+                                null,
+                                (string)ViewBag.hostname
+                                );
                             <button class="btn ink-reaction btn-raised btn-primary" type="button"
                                     onclick="window.open('@urlPrint', '_blank')">
                                 @Html.Raw(ResSummary.TXT_Open)
                             </button>
 
-                            string urlPrint2 = Url.ActionLink("Summary", "Result", new { id = Model.Project.Id, details = true, attachCss = true, print = false });
+                            string urlPrint2 = Url.ActionLink("Summary", "Result",
+                                new { id = Model.Project.Id, details = true, attachCss = true, print = false },
+                                null,
+                                (string)ViewBag.hostname
+                                );
                             <button class="btn ink-reaction btn-raised btn-primary" type="button"
                                     onclick="window.open('@urlPrint2', '_blank')">
                                 @Html.Raw(ResSummary.TXT_OpenDetails)

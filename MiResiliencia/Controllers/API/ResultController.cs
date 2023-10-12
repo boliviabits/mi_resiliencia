@@ -51,6 +51,8 @@ namespace MiResiliencia.Controllers.API
             ViewBag.attachCss = attachCss;
             ViewBag.print = print;
 
+            ViewBag.hostname = $"{HttpContext.Request.Host}";
+
             if (_result.ProcessResults.Any())
             {
                 return View(_result);
