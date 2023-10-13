@@ -108,7 +108,7 @@ namespace MiResiliencia.Controllers
             {
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_intensities\" \"" + filePath + "\" -sql \"select * from intensities\"";
                 ExecuteProzess(psi);
-                changes += updateIntensities(prefix + "_intensities", p);
+                changes += await updateIntensities(prefix + "_intensities", p);
 
                 await _context.SaveChangesAsync();
             }
@@ -121,7 +121,7 @@ namespace MiResiliencia.Controllers
             {
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_potentials\" \"" + filePath + "\" -sql \"select * from potentials\"";
                 ExecuteProzess(psi);
-                changes += updatePotentials(prefix + "_potentials", p);
+                changes += await updatePotentials(prefix + "_potentials", p);
 
                 await _context.SaveChangesAsync();
             }
@@ -218,7 +218,7 @@ namespace MiResiliencia.Controllers
                                     bool before = result.GetBoolean("BeforeAction");
                                     int intensity = result.GetInt32("IntensityDegree");
 
-                                    Intensity existingIntensity = p.Intesities.Where(m => m.IKClassesID == ikclass && m.IntensityDegree == (IntensityDegree)intensity && m.NatHazardID == nathaz).FirstOrDefault();
+                                    Intensity existingIntensity = p.Intesities.Where(m => m.IKClassesID == ikclass && m.IntensityDegree == (IntensityDegree)intensity && m.NatHazardID == nathaz && m.BeforeAction == before).FirstOrDefault();
 
                                     WKTReader reader = new WKTReader();
                                     reader.IsOldNtsCoordinateSyntaxAllowed = false;
