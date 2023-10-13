@@ -17,9 +17,12 @@
             matrixIds: [],
             attributions: null,
             applicationdefinition: null,
+            backgroudmap: null,
             satmap: null,
             backgroudimagery: null,
             backgroudosm: null,
+            backgroundesri: null,
+            backgroundesriImage: null,
             bingmap: null,
             geojsonlayer: null,
             geologielayer: null,
@@ -87,28 +90,53 @@
             var urlAddon = '';
             this.projection = ol.proj.get('EPSG:3857');
 
-            //this.backgroudosm = new ol.layer.Tile({
-            //    source: new ol.source.OSM({
-            //    }),
-            //    opacity: 0.6
-            //});
-
-            //temporary fix 19.09.2023
             this.backgroudosm = new ol.layer.Tile({
-                source: new ol.source.XYZ({
-                    url: 'https://atlas.microsoft.com/map/tile?subscription-key=z-ehgM0XS8-dfBEeY1guLd4YiO02xNyZ6n7Ni5I5FNo&api-version=2.0&tilesetId=microsoft.base.hybrid.road&zoom={z}&x={x}&y={y}&tileSize=256&language=en-US',
-                    attributions: '© 2023 TomTom, Microsoft'
+                source: new ol.source.OSM({
                 }),
                 opacity: 0.6
             });
 
-            this.backgroudimagery = new ol.layer.Tile({
+            /*this.backgroudimagery = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     url: 'https://atlas.microsoft.com/map/tile?subscription-key=z-ehgM0XS8-dfBEeY1guLd4YiO02xNyZ6n7Ni5I5FNo&api-version=2.0&tilesetId=microsoft.imagery&zoom={z}&x={x}&y={y}&tileSize=256&language=en-US',
-                    attributions: '© 2023 TomTom, Microsoft'
+                    attributions: ''
                 }),
                 opacity: 0.8
-            });
+            });*/
+
+            this.backgroudimagery = new ol.layer.Tile({
+                source: new ol.source.BingMaps({
+                    key: 'AimcXg9FM3tvlLlm3DJlO7kw_8QRFCJI5BkRA0IWJQP-Y5wtZJGJw81C-YuTcMMF',
+                    imagerySet: 'AerialWithLabels',
+                    maxZoom: 19
+                }),
+                opacity: 0.8
+            }); 
+
+            this.backgroundesri = new ol.layer.Tile({
+                source: new ol.source.XYZ({
+                    attributions:
+                        'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
+                        'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
+                    url:
+                        'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+                        'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+                }),
+                opacity: 0.8
+            }); 
+
+            this.backgroundesriImage = new ol.layer.Tile({
+                source: new ol.source.XYZ({
+                    attributions:
+                        'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
+                        'rest/services/World_Imagery/MapServer">ArcGIS</a>',
+                    url:
+                        'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+                        'World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                }),
+                opacity: 0.8
+            }); 
+            
 
             // create a vector layer used for editing
             this.drawlayer = new ol.layer.Vector({
@@ -386,7 +414,7 @@
                 var scaleLineControl = new ol.control.ScaleLine();
 
                 this.map = new ol.Map({
-                    layers: [this.backgroudimagery, this.backgroudosm, this.wfslayer, this.positionLayer, this.drawlayer],
+                    layers: [this.backgroudimagery, this.backgroudosm, this.backgroundesri, this.backgroundesriImage, this.wfslayer, this.positionLayer, this.drawlayer],
                     target: 'map',
 
                     view: myView,
@@ -1548,13 +1576,13 @@ exportPNGElement.addEventListener('click', function () {
         //var ctx = e;
         ctx.fillStyle = "#ffffff";
         console.log(250 / 150 * dpi);
-        ctx.fillRect(10, 10, 250 / 150 * dpi, 80 / 150 * dpi);
+        // no legend ctx.fillRect(10, 10, 250 / 150 * dpi, 80 / 150 * dpi);
         //ctx.strokeStile = "#000000";
         //ctx.strokeRect(10, 10, 250, 400);
 
         ctx.fillStyle = "#000000";
         ctx.font = "25px Arial";
-        ctx.fillText("Leyenda", 15, 40 / 150 * dpi);
+        // no legend ctx.fillText("Leyenda", 15, 40 / 150 * dpi);
 
 
 
@@ -1579,7 +1607,7 @@ exportPNGElement.addEventListener('click', function () {
             }
         }
 
-        GeoWebGIS.legendLayers.forEach(function (Layer) {
+        /*GeoWebGIS.legendLayers.forEach(function (Layer) {
             var img = new Image();
             img.src = '/proxy/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=' + 60 / 150 * dpi + '&Legend_options=forceLabels:on&LAYER=' + Layer;
 
@@ -1612,7 +1640,7 @@ exportPNGElement.addEventListener('click', function () {
                 }
             }
             ctx.drawImage(img, 10, legendy);
-        });
+        });*/
 
     }
 
@@ -1738,7 +1766,41 @@ exportPNGElement.addEventListener('click', function () {
     $(document).on("legendLoaded", createThePDF);
 
     function createThePDF() {
-        console.log("CreateTHePDF");
+
+
+        // could only print osm or bing maps
+
+        radioValue = $("input[name='bgmap']").val();
+        if (radioValue == "osm") {
+            GeoWebGIS.backgroudosm.setVisible(true);
+            GeoWebGIS.backgroudimagery.setVisible(false);
+            GeoWebGIS.backgroundesri.setVisible(false);
+            GeoWebGIS.backgroundesriImage.setVisible(false);
+        }
+        else if (radioValue == "sat") {
+
+            GeoWebGIS.backgroudosm.setVisible(false);
+            GeoWebGIS.backgroudimagery.setVisible(true);
+            GeoWebGIS.backgroundesri.setVisible(false);
+            GeoWebGIS.backgroundesriImage.setVisible(false);
+        }
+        else if (radioValue == "esri") {
+
+            GeoWebGIS.backgroudosm.setVisible(true);
+            GeoWebGIS.backgroudimagery.setVisible(false);
+            GeoWebGIS.backgroundesri.setVisible(false);
+            GeoWebGIS.backgroundesriImage.setVisible(false);
+        }
+        else if (radioValue == "esriImage") {
+            GeoWebGIS.backgroudosm.setVisible(false);
+            GeoWebGIS.backgroudimagery.setVisible(true);
+            GeoWebGIS.backgroundesri.setVisible(false);
+            GeoWebGIS.backgroundesriImage.setVisible(false);
+        }
+
+
+
+
 
         window.setTimeout(function () {
 
@@ -1783,7 +1845,6 @@ exportPNGElement.addEventListener('click', function () {
                 GeoWebGIS.map.getView().fit(extent, { size: size, constrainResolution: false });
                 GeoWebGIS.map.renderSync();
                 document.body.style.cursor = 'auto';
-                $(document).unbind("legendLoaded");
             });
             //};
         }, 5000);
@@ -1806,7 +1867,6 @@ exportPNGElement.addEventListener('click', function () {
     // check if it is reloading. If not, start pdf creation anyway
     window.setTimeout(function () {
         if (!isReloading) {
-            console.log("Generatin anyway");
             GeoWebGIS.generateLegend();
             WriteScaletoCanvas();
             WriteLegendtoCanvas();

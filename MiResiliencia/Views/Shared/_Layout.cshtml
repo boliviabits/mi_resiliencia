@@ -172,6 +172,7 @@
                             <i class="fa fa-tasks"></i>
                         </a>
                     </li>
+                    <li><a href="#layers" role="tab"><i class="fa fa-layer-group" title="@Resources.Global.Map"></i></a></li>
                     <li><a href="#print" role="tab"><i class="fa fa-print" title="Imprimir"></i></a></li>
                     <li><a href="#profile" role="tab"><i class="fa fa-user" title="Administración"></i></a></li>
                 </ul>
@@ -216,6 +217,99 @@
 
                 </div>
 
+                <div class="olsidebar-pane" id="layers">
+                    <h1 class="olsidebar-header">
+                        @Resources.Global.Map
+                        <span class="olsidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+                    <div>
+                        <section>
+                            <div class="section-body">
+                                <p></p>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>@Resources.Global.Layers
+                                                    </h5>
+                                                </div>
+                                                 <div class="card-body floating-label">
+                                                <div class="row">
+                                                    <div class="form-group m-t-15 custom-radio-ml" style="padding-left:10px;">
+
+                                                            <div class="radio radio-primary">
+                                                                <input type="radio" name="bgmap" id="radio4" value="osm" checked>
+                                                                <label for="radio4">Open Street Map</label>
+                                                            </div>
+                                                        <div class="radio radio-primary">
+                                                            <input type="radio" name="bgmap" id="radio3" value="sat">
+                                                            <label for="radio3">Bing Map</label>
+                                                        </div>
+                                                        <div class="radio radio-primary">
+                                                            <input type="radio" name="bgmap" id="radio1" value="esri">
+                                                            <label for="radio1">ESRI Topo Map</label>
+                                                        </div>
+                                                        <div class="radio radio-primary">
+                                                            <input type="radio" name="bgmap" id="radio2" value="esriImage">
+                                                            <label for="radio2">ESRI World Imagery</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <script>
+
+                                            jQuery(document).ready(function () {
+                                                $("input[name='bgmap']").change(radioValueChanged);
+
+                                                GeoWebGIS.backgroudosm.setVisible(true);
+                                                GeoWebGIS.backgroudimagery.setVisible(false);
+                                                GeoWebGIS.backgroundesri.setVisible(false);
+                                                GeoWebGIS.backgroundesriImage.setVisible(false);
+                                            });
+                                            function radioValueChanged() {
+                                                radioValue = $(this).val();
+                                                if (radioValue == "osm") {
+                                                    GeoWebGIS.backgroudosm.setVisible(true);
+                                                    GeoWebGIS.backgroudimagery.setVisible(false);
+                                                    GeoWebGIS.backgroundesri.setVisible(false);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(false);
+                                                }
+                                                else if (radioValue == "sat") {
+                                                    
+                                                    GeoWebGIS.backgroudosm.setVisible(false);
+                                                    GeoWebGIS.backgroudimagery.setVisible(true);
+                                                    GeoWebGIS.backgroundesri.setVisible(false);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(false);
+                                                }
+                                                else if (radioValue == "esri") {
+                                                    
+                                                    GeoWebGIS.backgroudosm.setVisible(false);
+                                                    GeoWebGIS.backgroudimagery.setVisible(false);
+                                                    GeoWebGIS.backgroundesri.setVisible(true);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(false);
+                                                }
+                                                else if (radioValue == "esriImage") {
+
+                                                    GeoWebGIS.backgroudosm.setVisible(false);
+                                                    GeoWebGIS.backgroudimagery.setVisible(false);
+                                                    GeoWebGIS.backgroundesri.setVisible(false);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(true);
+                                                }
+
+
+                                            }
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                </div>
 
 
                 <div class="olsidebar-pane" id="print">
@@ -260,11 +354,8 @@
                                                             <option value="300">300 dpi (@Resources.Global.slow)</option>
                                                         </select>
                                                     </div>
-                                                </div>
-                                                <div class="card-actionbar">
-                                                    <div class="card-actionbar-row">
-                                                        <button id="export-png" class="btn btn-flat btn-primary ink-reaction" download="map.png">@Resources.Global.ExportAsPDF</button>
-                                                    </div>
+                                                    <h6>Sólo se pueden imprimir los mapas de Open Street Maps y Bing</h6>
+                                                    <button id="export-png" class="btn btn-flat btn-primary ink-reaction" download="map.png">@Resources.Global.ExportAsPDF</button>
                                                 </div>
                                             </div>
 
