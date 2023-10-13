@@ -66,22 +66,18 @@
                         @if (!(ViewBag.print ?? false))
                         {
                             var urlPrint = Url.ActionLink("Summary", "Result",
-                                new { id = Model.Project.Id, details = false, attachCss = true, print = false },
-                                null,
-                                (string)ViewBag.hostname
+                                new { id = Model.Project.Id, details = false, attachCss = true, print = false }
                                 );
                             <button class="btn ink-reaction btn-raised btn-primary" type="button"
-                                    onclick="window.open('@urlPrint', '_blank')">
+                                onclick="window.open(window.location.protocol+'//'+window.location.hostname+(window.location.port ? ':'+window.location.port: '') + '/api/Result/Summary/@Model.Project.Id?details=False&attachCss=True&print=False', '_blank')">
                                 @Html.Raw(ResSummary.TXT_Open)
                             </button>
 
                             string urlPrint2 = Url.ActionLink("Summary", "Result",
-                                new { id = Model.Project.Id, details = true, attachCss = true, print = false },
-                                null,
-                                (string)ViewBag.hostname
+                                new { id = Model.Project.Id, details = true, attachCss = true, print = false }
                                 );
                             <button class="btn ink-reaction btn-raised btn-primary" type="button"
-                                    onclick="window.open('@urlPrint2', '_blank')">
+                                onclick="window.open(window.location.protocol+'//'+window.location.hostname+(window.location.port ? ':'+window.location.port: '') + '/api/Result/Summary/@Model.Project.Id?details=True&attachCss=True&print=False', '_blank')">
                                 @Html.Raw(ResSummary.TXT_OpenDetails)
                             </button>
                         }
