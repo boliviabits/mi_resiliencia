@@ -23,19 +23,31 @@ namespace MiResiliencia.Controllers
 
         private async Task<int> getMyCompanyID()
         {
-            var id = _userManager.GetUserId((ClaimsPrincipal)User);
-            var applicationUser = await _userManager.GetUserAsync((ClaimsPrincipal)User);
-            await _context.Entry(applicationUser).Reference(m => m.MyWorkingProjekt).LoadAsync();
-            await _context.Entry(applicationUser).Reference(m => m.MainCompany).LoadAsync();
-            await _context.Entry(applicationUser).Reference(m => m.UserSettings).LoadAsync();
+            try
+            {
+                var id = _userManager.GetUserId((ClaimsPrincipal)User);
+                var applicationUser = await _userManager.GetUserAsync((ClaimsPrincipal)User);
+                await _context.Entry(applicationUser).Reference(m => m.MyWorkingProjekt).LoadAsync();
+                await _context.Entry(applicationUser).Reference(m => m.MainCompany).LoadAsync();
+                await _context.Entry(applicationUser).Reference(m => m.UserSettings).LoadAsync();
 
-            if (applicationUser.MainCompanyID != null) return (int)applicationUser.MainCompanyID;
-            Company myCompany = await _context.Companies.Where(m => m.AdminUsers.Any(x => x.AdminRefId == applicationUser.Id)).FirstOrDefaultAsync();
-            if (myCompany != null) return myCompany.ID;
-            myCompany = await _context.Companies.Where(m => m.CompanyUsers.Any(x => x.CompanyUserRefId == applicationUser.Id)).FirstOrDefaultAsync();
-            if (myCompany != null) return myCompany.ID;
-            else return 0;
+                if (applicationUser.MainCompanyID != null) 
+                    return (int)applicationUser.MainCompanyID;
 
+                Company myCompany = await _context.Companies.Where(m => m.AdminUsers.Any(x => x.AdminRefId == applicationUser.Id)).FirstOrDefaultAsync();
+                if (myCompany != null) 
+                    return myCompany.ID;
+
+                myCompany = await _context.Companies.Where(m => m.CompanyUsers.Any(x => x.CompanyUserRefId == applicationUser.Id)).FirstOrDefaultAsync();
+                if (myCompany != null) 
+                    return myCompany.ID;
+                else 
+                    return 0;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
         }
 
         // GET: GeoserverProxy
