@@ -84,7 +84,14 @@
                                 </tr>
                             </thead>
                         <tbody>
-                            @foreach (MiResiliencia.Models.Project p in Model.Projects)
+                            @{
+                                var sortedProjectList = Model.Projects.OrderBy(x =>
+                                {
+                                    int i;
+                                    return int.TryParse(x.Number, out i) ? i : 0;
+                                });
+                            }
+                            @foreach (MiResiliencia.Models.Project p in sortedProjectList)
                             {
                                 <tr>
                                     <td>
