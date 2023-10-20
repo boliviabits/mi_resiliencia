@@ -54,7 +54,7 @@
 		"                source: new ol.source.Vector({" +
 		"                    format: new ol.format.GeoJSON()," +
 		"                    url: function (extent) {" +
-		"                        return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectsView&cql_filter=BBOX([geometry],\' + extent.join(\',\') + \')%20AND%20ProjectId={ProjectID}&outputFormat=application/json';" +
+		"                        return '/proxy/miresiliencia/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=miresiliencia:MappedObjectsView&cql_filter=BBOX%28%5Bgeometry%5D%2C\' + extent.join(\'%2C\') + \'%29%20AND%20ProjectId={ProjectID}&outputFormat=application/json';" +
 		"                    }," +
 		"					strategy: ol.loadingstrategy.bbox" +
 		"                })," +
