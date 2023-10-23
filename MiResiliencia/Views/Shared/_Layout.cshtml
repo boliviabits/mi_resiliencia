@@ -238,10 +238,10 @@
                                                 <div class="row">
                                                     <div class="form-group m-t-15 custom-radio-ml" style="padding-left:10px;">
 
-                                                            <div class="radio radio-primary">
-                                                                <input type="radio" name="bgmap" id="radio4" value="osm" checked>
-                                                                <label for="radio4">Open Street Map</label>
-                                                            </div>
+                                                        <div class="radio radio-primary">
+                                                            <input type="radio" name="bgmap" id="radio4" value="osm" checked>
+                                                            <label for="radio4">Open Street Map</label>
+                                                        </div>
                                                         <div class="radio radio-primary">
                                                             <input type="radio" name="bgmap" id="radio3" value="sat">
                                                             <label for="radio3">Bing Map</label>
@@ -261,39 +261,73 @@
 
                                         </div>
                                         <script>
-
                                             jQuery(document).ready(function () {
-                                                $("input[name='bgmap']").change(radioValueChanged);
-
-                                                GeoWebGIS.backgroudosm.setVisible(true);
-                                                GeoWebGIS.backgroudimagery.setVisible(false);
-                                                GeoWebGIS.backgroundesri.setVisible(false);
-                                                GeoWebGIS.backgroundesriImage.setVisible(false);
-                                            });
-                                            function radioValueChanged() {
-                                                radioValue = $(this).val();
-                                                if (radioValue == "osm") {
+                                                $("input[type='radio']").on('click change', radioValueChanged);
+                                                var savedBGMap = Cookies.get('BGMap');
+                                                console.log("Cookievalue");
+                                                console.log(savedBGMap);
+                                                if (savedBGMap == "osm") {
+                                                    $('#radio4').prop('checked', true);
+                                                    
                                                     GeoWebGIS.backgroudosm.setVisible(true);
                                                     GeoWebGIS.backgroudimagery.setVisible(false);
                                                     GeoWebGIS.backgroundesri.setVisible(false);
                                                     GeoWebGIS.backgroundesriImage.setVisible(false);
                                                 }
-                                                else if (radioValue == "sat") {
-                                                    
-                                                    GeoWebGIS.backgroudosm.setVisible(false);
-                                                    GeoWebGIS.backgroudimagery.setVisible(true);
-                                                    GeoWebGIS.backgroundesri.setVisible(false);
-                                                    GeoWebGIS.backgroundesriImage.setVisible(false);
-                                                }
-                                                else if (radioValue == "esri") {
+                                                else if (savedBGMap == "esri")  {
+                                                    $('#radio1').prop('checked', true);
                                                     
                                                     GeoWebGIS.backgroudosm.setVisible(false);
                                                     GeoWebGIS.backgroudimagery.setVisible(false);
                                                     GeoWebGIS.backgroundesri.setVisible(true);
                                                     GeoWebGIS.backgroundesriImage.setVisible(false);
                                                 }
-                                                else if (radioValue == "esriImage") {
+                                                else if (savedBGMap == "esriImage")  {
+                                                    $('#radio2').prop('checked', true);
+                                                    
+                                                    GeoWebGIS.backgroudosm.setVisible(false);
+                                                    GeoWebGIS.backgroudimagery.setVisible(false);
+                                                    GeoWebGIS.backgroundesri.setVisible(false);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(true);
+                                                }
+                                                else  {
+                                                    $('#radio3').prop('checked', true);
+                                                    
+                                                    GeoWebGIS.backgroudosm.setVisible(false);
+                                                    GeoWebGIS.backgroudimagery.setVisible(true);
+                                                    GeoWebGIS.backgroundesri.setVisible(false);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(false);
+                                                };
+                                            });
+                                            function radioValueChanged() {
+                                                console.log("radiovalue");
 
+                                                radioValue = $(this).val();
+                                                console.log(radioValue);
+                                                if (radioValue == "osm") {
+                                                    
+                                                    Cookies.set('BGMap', 'osm');
+                                                    GeoWebGIS.backgroudosm.setVisible(true);
+                                                    GeoWebGIS.backgroudimagery.setVisible(false);
+                                                    GeoWebGIS.backgroundesri.setVisible(false);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(false);
+                                                }
+                                                else if (radioValue == "sat") {
+                                                    Cookies.set('BGMap', 'sat');
+                                                    GeoWebGIS.backgroudosm.setVisible(false);
+                                                    GeoWebGIS.backgroudimagery.setVisible(true);
+                                                    GeoWebGIS.backgroundesri.setVisible(false);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(false);
+                                                }
+                                                else if (radioValue == "esri") {
+                                                    Cookies.set('BGMap', 'esri');
+                                                    GeoWebGIS.backgroudosm.setVisible(false);
+                                                    GeoWebGIS.backgroudimagery.setVisible(false);
+                                                    GeoWebGIS.backgroundesri.setVisible(true);
+                                                    GeoWebGIS.backgroundesriImage.setVisible(false);
+                                                }
+                                                else if (radioValue == "esriImage") {
+                                                    Cookies.set('BGMap', 'esriImage');
                                                     GeoWebGIS.backgroudosm.setVisible(false);
                                                     GeoWebGIS.backgroudimagery.setVisible(false);
                                                     GeoWebGIS.backgroundesri.setVisible(false);
@@ -502,39 +536,6 @@
         }
 
         sidebar.open("home");
-
-
-
-        $('#bing').change(function () {
-            if ($("#bing").prop('checked')) {
-                GeoWebGIS.map.addLayer(GeoWebGIS.bingmap);
-                Cookies.set('Bing', true);
-            }
-            else {
-                GeoWebGIS.map.removeLayer(GeoWebGIS.bingmap);
-                Cookies.set('Bing', false);
-
-            }
-        });
-
-
-
-
-        $("document").ready(function () {
-
-
-            var savedBing = Cookies.get('Bing');
-            if (savedBing == "false") {
-                $('#bing').prop('checked', false);
-            }
-            else {
-                $('#bing').prop('checked', true);
-            }
-            $('#bing').change();
-
-
-        });
-
 
         $("#olsidebar").resizable({
             handles: 'e',
