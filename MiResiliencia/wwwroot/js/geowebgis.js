@@ -484,6 +484,10 @@
                         deselected: []
                     });
                 });
+                if (GeoWebGIS.clusterselect.getFeatures().getArray().length==0) {
+                    var element = GeoWebGIS.popup.getElement();
+                    $(element).popover('dispose');
+                }
             });
 
             this.map.addInteraction(this.clusterselect);

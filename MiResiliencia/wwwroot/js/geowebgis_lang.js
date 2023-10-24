@@ -1,6 +1,6 @@
 ﻿var en = {
     wait: "Please wait",
-    errorwas: "The error was",
+    errorwas: "El error es",
     change: "Change",
     wrongPolyTitle: "Could not generate the polygon",
     wrongPolyText: "The polygon is not valid. These polygons are invalid",
