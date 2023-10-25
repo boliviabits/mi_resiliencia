@@ -77,3 +77,5 @@ MiResiliencia/
 ## Database
 The database schema is created using Entity Framework Core and Code first generation. The tables and relations are completely mapped in the code (models).
 Additionally, views for export and GeoServer connection were developed.
+![Generated ER diagram of the current scheme](https://raw.githubusercontent.com/GEOTEST-AG/MiResiliencia/master/Specs/ER_Diagram_MiResiliencia.png)
+Generated ER diagram of the current scheme
