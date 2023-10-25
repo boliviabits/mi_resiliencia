@@ -123,5 +123,8 @@ To compile MiResiliencia on linux machines the Microsoft DotNet SDK 6 is require
 For the local instance to work, the MiResiliencia/appsettings.json file must be edited (the database and geoserver address are specified here). Then the local instance can be executed with the following command:
 
     dotnet run --project MiResiliencia/MiResiliencia.csproj
+
+## Technical specifications
+Detailed technical specifications can be found at [Specs/TechnicalSpecs](Specs/TechnicalSpecs.md)
     
 
