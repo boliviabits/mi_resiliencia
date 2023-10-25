@@ -112,3 +112,16 @@ Download GeoServer stable version (e.g. 2.23.2 for the moment) from http://geose
 	```
 
 Login to http://localhost:8080. The default Login-Credentials are: ```admin / MiResiliencia23!```
+
+## Compilation
+To compile MiResiliencia on linux machines the Microsoft DotNet SDK 6 is required.  The following commands must be executed:
+
+    sudo apt-get update &&   sudo apt-get install -y dotnet-sdk-6.0
+    git clone https://github.com/GEOTEST-AG/MiResiliencia.git
+    cd MiResiliencia
+    dotnet build MiResiliencia/MiResiliencia.csproj
+For the local instance to work, the MiResiliencia/appsettings.json file must be edited (the database and geoserver address are specified here). Then the local instance can be executed with the following command:
+
+    dotnet run --project MiResiliencia/MiResiliencia.csproj
+    
+
