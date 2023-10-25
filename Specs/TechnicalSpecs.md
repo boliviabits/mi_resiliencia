@@ -4,24 +4,24 @@ Microsoft .NET 6.0 Core
 
 ## Directory Structure
 
-MiResiliencia/ 
-├── .git/ # Git version control directory 
-├── .github/ # GitHub-specific configurations 
-├── MiResiliencia / # Source code 
-│ ├── App_Data/Import / # Temporary imported project files 
-│ ├── Areas/Identity/Pages # Identity Management Sites and Logic 
-│ ├── Components/ # Views Components 
-│ ├── Helpers/ # Helper Classes
-│ ├── Models/ # Model classes, DB abstraction layer
-│ ├── Views/ # Razor views 
-│ ├── wwwroot/ # Static web assets (CSS, JavaScript, images) 
-│ ├── appsettings.json # Application settings 
-│ ├── Program.cs # Application startup configuration
-│ ├── Dockerfile # Docker generation file
-│ └── ... 
-├── README.md # Project documentation 
-├── LICENSE # License information 
-└── ...
+MiResiliencia/ \
+├── .git/ # Git version control directory  \
+├── .github/ # GitHub-specific configurations  \
+├── MiResiliencia / # Source code  \
+│ ├── App_Data/Import / # Temporary imported project files  \
+│ ├── Areas/Identity/Pages # Identity Management Sites and Logic  \
+│ ├── Components/ # Views Components  \
+│ ├── Helpers/ # Helper Classes \
+│ ├── Models/ # Model classes, DB abstraction layer \
+│ ├── Views/ # Razor views  \
+│ ├── wwwroot/ # Static web assets (CSS, JavaScript, images)  \
+│ ├── appsettings.json # Application settings  \
+│ ├── Program.cs # Application startup configuration \
+│ ├── Dockerfile # Docker generation file \
+│ └── ...  \
+├── README.md # Project documentation  \
+├── LICENSE # License information  \
+└── ... \
 
 ## Packages 
 
