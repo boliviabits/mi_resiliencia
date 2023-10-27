@@ -1756,8 +1756,8 @@ exportPNGElement.addEventListener('click', function () {
 
 
 
-                loading = 0;
-                loaded = -1;
+                //loading = 0;
+                //loaded = -1;
                 console.log("WriteScaleAndLegfen");
 
                 $.event.trigger({
