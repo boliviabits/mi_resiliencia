@@ -274,7 +274,7 @@
     <value>Log out</value>
   </data>
   <data name="MaintenanceCosts" xml:space="preserve">
-    <value>Costos de mantención [Bs/año]</value>
+    <value>Costos de mantenimiento [Bs/año]</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Mapa</value>
