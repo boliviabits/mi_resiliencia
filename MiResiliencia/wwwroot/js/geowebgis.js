@@ -1549,7 +1549,7 @@ var legend_loading = 0;
 
 
 exportPNGElement.addEventListener('click', function () {
-
+    console.log("Bin in ExportPNGElement");
 
 
     document.body.style.cursor = 'progress';
@@ -1557,10 +1557,12 @@ exportPNGElement.addEventListener('click', function () {
     var dpi = 150;
 
     var dim = [297, 210];
+    console.log(GeoWebGIS.map.getSize());
     var width = Math.round(dim[0] * dpi / 25.4);
-    var height = Math.round(dim[1] * dpi / 25.4) - 20;
+    var height = Math.round(dim[1] * dpi / 25.4);
     var size = /** @type {ol.Size} */ (GeoWebGIS.map.getSize());
     var extent = GeoWebGIS.map.getView().calculateExtent(size);
+
 
     var olscale = $('.ol-scale-line-inner');
     //Scaleline thicknes
@@ -1572,7 +1574,7 @@ exportPNGElement.addEventListener('click', function () {
     var fontsize1 = 15;
     var font1 = fontsize1 + 'px Arial';
     // how big should the scale be (original css-width multiplied)
-    var multiplier = 2;
+    var multiplier = 1;
 
     function WriteLegendtoCanvas() {
         var canvas = $('canvas').get(0);
@@ -1580,13 +1582,13 @@ exportPNGElement.addEventListener('click', function () {
         //var ctx = e;
         ctx.fillStyle = "#ffffff";
         console.log(250 / 150 * dpi);
-        // no legend ctx.fillRect(10, 10, 250 / 150 * dpi, 80 / 150 * dpi);
+        ctx.fillRect(10, 10, 250 / 150 * dpi, 80 / 150 * dpi);
         //ctx.strokeStile = "#000000";
         //ctx.strokeRect(10, 10, 250, 400);
 
         ctx.fillStyle = "#000000";
         ctx.font = "25px Arial";
-        // no legend ctx.fillText("Leyenda", 15, 40 / 150 * dpi);
+        ctx.fillText("Leyenda", 15, 40 / 150 * dpi);
 
 
 
@@ -1611,7 +1613,7 @@ exportPNGElement.addEventListener('click', function () {
             }
         }
 
-        /*GeoWebGIS.legendLayers.forEach(function (Layer) {
+        GeoWebGIS.legendLayers.forEach(function (Layer) {
             var img = new Image();
             img.src = '/proxy/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=' + 60 / 150 * dpi + '&Legend_options=forceLabels:on&LAYER=' + Layer;
 
@@ -1644,7 +1646,7 @@ exportPNGElement.addEventListener('click', function () {
                 }
             }
             ctx.drawImage(img, 10, legendy);
-        });*/
+        });
 
     }
 
@@ -1761,8 +1763,8 @@ exportPNGElement.addEventListener('click', function () {
                 $.event.trigger({
                     type: "legendLoaded"
                 });
-                //WriteScaletoCanvas();
-                //WriteLegendtoCanvas();
+                WriteScaletoCanvas();
+                WriteLegendtoCanvas();
 
             }
         }, 1000);
@@ -1772,35 +1774,7 @@ exportPNGElement.addEventListener('click', function () {
     function createThePDF() {
 
 
-        // could only print osm or bing maps
-
-        radioValue = $("input[name='bgmap']").val();
-        if (radioValue == "osm") {
-            GeoWebGIS.backgroudosm.setVisible(true);
-            GeoWebGIS.backgroudimagery.setVisible(false);
-            GeoWebGIS.backgroundesri.setVisible(false);
-            GeoWebGIS.backgroundesriImage.setVisible(false);
-        }
-        else if (radioValue == "sat") {
-
-            GeoWebGIS.backgroudosm.setVisible(false);
-            GeoWebGIS.backgroudimagery.setVisible(true);
-            GeoWebGIS.backgroundesri.setVisible(false);
-            GeoWebGIS.backgroundesriImage.setVisible(false);
-        }
-        else if (radioValue == "esri") {
-
-            GeoWebGIS.backgroudosm.setVisible(true);
-            GeoWebGIS.backgroudimagery.setVisible(false);
-            GeoWebGIS.backgroundesri.setVisible(false);
-            GeoWebGIS.backgroundesriImage.setVisible(false);
-        }
-        else if (radioValue == "esriImage") {
-            GeoWebGIS.backgroudosm.setVisible(false);
-            GeoWebGIS.backgroudimagery.setVisible(true);
-            GeoWebGIS.backgroundesri.setVisible(false);
-            GeoWebGIS.backgroundesriImage.setVisible(false);
-        }
+        
 
 
 
@@ -1844,10 +1818,9 @@ exportPNGElement.addEventListener('click', function () {
                 source.un('tileloadstart', tileLoadStart);
                 source.un('tileloadend', tileLoadEnd, canvas);
                 source.un('tileloaderror', tileLoadEnd, canvas);
-                GeoWebGIS.map.setSize(size);
-                //GeoWebGIS.map.getView().fit(extent, size);
-                GeoWebGIS.map.getView().fit(extent, { size: size, constrainResolution: false });
-                GeoWebGIS.map.renderSync();
+                GeoWebGIS.map.getTargetElement().style.width = '';
+                GeoWebGIS.map.getTargetElement().style.height = '';
+                GeoWebGIS.map.updateSize();
                 document.body.style.cursor = 'auto';
             });
             //};
@@ -1864,9 +1837,13 @@ exportPNGElement.addEventListener('click', function () {
     });
 
 
-    GeoWebGIS.map.setSize([width, height]);
-    GeoWebGIS.map.getView().fit(extent, { size: /** @type {ol.Size} */([width, height]), constrainResolution: false });
-    GeoWebGIS.map.renderSync();
+    GeoWebGIS.map.getTargetElement().style.width = width + 'px';
+    GeoWebGIS.map.getTargetElement().style.height = height + 'px';
+    GeoWebGIS.map.updateSize();
+
+    //GeoWebGIS.map.setSize([width, height]);
+    //GeoWebGIS.map.getView().fit(extent, { size: /** @type {ol.Size} */([width, height]), constrainResolution: false });
+    //GeoWebGIS.map.renderSync();
 
     // check if it is reloading. If not, start pdf creation anyway
     window.setTimeout(function () {
