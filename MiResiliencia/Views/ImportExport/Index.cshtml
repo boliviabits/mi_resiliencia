@@ -5,14 +5,14 @@
     <button class="btn ink-reaction btn-raised btn-danger" type="button" onclick="exportProject();">@Resources.Global.ExportProject</button>
 </div>
 <div class="row" style="padding:10px;">
-    <form method="post" enctype="multipart/form-data" asp-action="Import">
+    <form method="post" enctype="multipart/form-data" id="importForm">
                     <div class="card-body">
             <p>@Resources.Global.ImportMessage</p>
-                        <input type="file" name="file" />
+                        <input type="file" name="file" id="file" />
                     </div>
 
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary" onclick="doImport();">@Resources.Global.Import</button>
+                        <button type="submit" class="btn btn-primary">@Resources.Global.Import</button>
                     </div>
                 </form>
 </div>
@@ -40,8 +40,43 @@
     }
 
     function doImport() {
-        waitingDialog.show("Procesando. Por favor, espere...");
+        importLoadingDialog.show();
     }
+
+    $(document).ready(function (e) {
+        $("#importForm").on('submit', (function (e) {
+            e.preventDefault();
+            if ($("#file")[0].files.length == 0) {
+                alert("Seleccione un archivo para importar");
+            }
+            else if (loadedProject == 0) {
+                alert("En primer lugar, debe seleccionarse un proyecto en el que puedan importarse los datos.");
+            }
+            else {
+                $.ajax({
+                    url: "/ImportExport/Import",
+                    type: "POST",
+                    data: new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    beforeSend: function () {
+                        importLoadingDialog.show();
+                        var auto_refresh = setInterval(
+                            function () {
+                                    $('#logFile').load('/ImportExport/CurrentLogFileContent').fadeIn("slow");
+                            }, 5000); // refresh every 10000 milliseconds
+                    },
+                    success: function (data) {
+                    
+                    },
+                    error: function (e) {
+                        $("#err").html(e).fadeIn();
+                    }
+                });
+            }
+        }));
+    });
 
 
 </script>

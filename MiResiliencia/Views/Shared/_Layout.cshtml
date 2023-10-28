@@ -477,6 +477,7 @@
         @await Component.InvokeAsync("LayerStyle");
 
         var mainbar = new ol.control.Bar();
+        var loadedProject = 0;
 
         GeoWebGIS.map.addControl(mainbar);
         var gps = new ol.control.Toggle(
@@ -645,6 +646,64 @@
                             }
                         });
                     });
+
+                },
+                /**
+                 * Closes dialog
+                 */
+                hide: function () {
+                    $bs_dialog.modal('hide');
+                }
+            };
+
+        })(jQuery);
+
+        var importLoadingDialog = importLoadingDialog || (function ($) {
+            'use strict';
+
+            var $bs_dialog;
+            // Creating modal dialog's DOM
+            var $dialog = $(
+                '<div class="modal right fade" data-backdrop="true" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="overflow-y:visible;z-index:10000000;">' +
+                '<div class="modal-dialog modal-m">' +
+                '<div class="modal-content">' +
+                '<div class="modal-header bg-info"><h3 style="margin:0;"></h3><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>' +
+                '<div class="modal-body" id="importDialogContent">' +
+                'La importación se ejecuta en segundo plano. El proceso puede seguirse aquí: <a href="/ImportExport/LogFileViewer" target="_blank">Visualizador de archivos de registro</a>' +
+                '<div id="logFile" style="height:200px;overflow:scroll;width:100%;background-color: lightgrey;"></div></div>' +
+                '</div></div></div>');
+
+            return {
+
+                show: function (url, options) {
+
+                    // Assigning defaults
+                    if (typeof options === 'undefined') {
+                        options = {};
+                    }
+                    var title = 'Import';
+
+                    var settings = $.extend({
+                        dialogSize: 'lg',
+                        progressType: '',
+                        onHide: null // This callback runs after the dialog was hidden
+                    }, options);
+
+                    // Configuring dialog
+                    $dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
+
+                    $dialog.find('h3').text(title);
+                    // Adding callbacks
+                    if (typeof settings.onHide === 'function') {
+                        $dialog.off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+                            settings.onHide.call($dialog);
+                        });
+                    }
+
+                    // Opening dialog
+                    $bs_dialog = new bootstrap.Modal($dialog);
+                    $bs_dialog.show();
+
 
                 },
                 /**

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +8,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MiResiliencia.Models;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using NuGet.ProjectModel;
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Channels;
 
@@ -30,6 +34,18 @@ namespace MiResiliencia.Controllers
 
         public IActionResult Index()
         {
+            string exportf = Path.GetRandomFileName();
+            string[] fname = exportf.Split(".");
+
+
+            string? logFile = HttpContext.Session.GetString("logFile");
+            if (logFile == null)
+            {
+                string dataDir = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+                if (!Directory.Exists(dataDir + "//Logs")) Directory.CreateDirectory(dataDir + "//Logs");
+                logFile = dataDir + "//Logs//" + fname[0] + ".txt";
+                HttpContext.Session.SetString("logFile", logFile);
+            }
             return View();
         }
 
@@ -42,9 +58,16 @@ namespace MiResiliencia.Controllers
         [HttpPost]
         public async Task<IActionResult> Import(IFormFile file)
         {
+            string dataDir = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+            string logFile = HttpContext.Session.GetString("logFile");
+            System.IO.File.WriteAllText(logFile, "");
+            System.IO.File.AppendAllText(logFile, $"Iniciar la importación  {file.FileName}" + System.Environment.NewLine);
 
             int? projectId = HttpContext.Session.GetInt32("Project");
             if (projectId == null) { return NotFound(); }
+            
+
+            System.IO.File.AppendAllText(logFile, $"Importar a ID {projectId} de proyecto" + System.Environment.NewLine);
 
             Project p = _context.Projects.Include(m => m.Intesities).ThenInclude(m=>m.IKClasses)
                 .Include(m => m.Intesities).ThenInclude(m => m.NatHazard)
@@ -52,7 +75,6 @@ namespace MiResiliencia.Controllers
 
             string prefix = "import_" + RandomString(4);
             string changes = "";
-            string dataDir = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
             string filePath = dataDir + "\\Import\\" + file.FileName;
             if (file.Length > 0)
             {
@@ -63,8 +85,6 @@ namespace MiResiliencia.Controllers
                     await file.CopyToAsync(stream);
                 }
             }
-
-
 
             ProcessStartInfo psi = new ProcessStartInfo();
 
@@ -95,42 +115,53 @@ namespace MiResiliencia.Controllers
             psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_perimeter\" \"" + filePath + "\" -sql \"select * from perimeter\"";
             try
             {
+                System.IO.File.AppendAllText(logFile, $"Importar perímetro" + System.Environment.NewLine);
                 ExecuteProzess(psi);
-                changes += updateProject(prefix + "_perimeter", p);
+                changes = updateProject(prefix + "_perimeter", p);
+                System.IO.File.AppendAllText(logFile, changes + System.Environment.NewLine);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 changes = "Error: " + ex.ToString();
+                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
             try
             {
+                System.IO.File.AppendAllText(logFile, $"Importar intensidades" + System.Environment.NewLine);
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_intensities\" \"" + filePath + "\" -sql \"select * from intensities\"";
                 ExecuteProzess(psi);
-                changes += await updateIntensities(prefix + "_intensities", p);
+                changes = await updateIntensities(prefix + "_intensities", p);
+                System.IO.File.AppendAllText(logFile, changes + System.Environment.NewLine);
 
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 changes = "Error: " + ex.ToString();
+                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
             try
             {
+                System.IO.File.AppendAllText(logFile, $"Importar potenciales" + System.Environment.NewLine);
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_potentials\" \"" + filePath + "\" -sql \"select * from potentials\"";
                 ExecuteProzess(psi);
-                changes += await updatePotentials(prefix + "_potentials", p);
+                changes = await updatePotentials(prefix + "_potentials", p, logFile);
 
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 changes = "Error: " + ex.ToString();
+                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
-            return RedirectToAction("Index", "Home", new { @id = p.Id });
+
+            System.IO.File.AppendAllText(logFile, $"FIN" + System.Environment.NewLine);
+
+            return Content(changes);
 
 
         }
@@ -277,11 +308,11 @@ namespace MiResiliencia.Controllers
 
             }
 
-            return "Ok";
+            return changes;
 
         }
 
-        private async Task<string> updatePotentials(string tablename, Project p)
+        private async Task<string> updatePotentials(string tablename, Project p, string logFile)
         {
             string changes = "";
             try
@@ -292,10 +323,22 @@ namespace MiResiliencia.Controllers
                     {
                         using (var command = context.Database.GetDbConnection().CreateCommand())
                         {
+                            context.Database.OpenConnection();
+
+                            command.CommandText = "select count(*) from " + tablename;
+                            int totalToImport = 0;
+
+                            using (DbDataReader dataReader = command.ExecuteReader())
+                                if (dataReader.HasRows)
+                                    while (dataReader.Read())
+                                        totalToImport = dataReader.GetInt32(0);
+
+                            System.IO.File.AppendAllText(logFile, $"Importar ${totalToImport} potentiales" + System.Environment.NewLine);
+
                             command.CommandText = "select *, st_astext(ST_Force2D(geometry)) as wkt_geometrie from " + tablename;
                             command.CommandType = CommandType.Text;
 
-                            context.Database.OpenConnection();
+                            int counter = 0;
 
                             try
                             {
@@ -306,6 +349,8 @@ namespace MiResiliencia.Controllers
 
                                     while (result.Read())
                                     {
+                                        counter++;
+
                                         string geom = result.GetString("wkt_geometrie");
                                         WKTReader reader = new WKTReader();
                                         reader.IsOldNtsCoordinateSyntaxAllowed = false;
@@ -347,6 +392,8 @@ namespace MiResiliencia.Controllers
                                             tc.SaveChanges(mo.ID, name, description, value, changevalue, "", floors, personcount, staff, changepersoncount, presence, numberofvehicles, velocity);
 
                                             changes += "<li>Potentiales agregadas</li>";
+                                            
+                                            System.IO.File.AppendAllText(logFile, $"Potential ({counter} / {totalToImport}) {mo.Objectparameter.Name} agregada" + System.Environment.NewLine);
 
 
                                         }
@@ -356,7 +403,9 @@ namespace MiResiliencia.Controllers
                                 }
                             }
                             catch (Exception ex)
-                            { }
+                            {
+                                System.IO.File.AppendAllText(logFile, $"ERROR in potentials: {ex.ToString()}");
+                            }
 
                         }
                     }
@@ -364,11 +413,26 @@ namespace MiResiliencia.Controllers
             }
             catch (Exception e2)
             {
-
+                System.IO.File.AppendAllText(logFile, $"ERROR in potentials: {e2.ToString()}" + System.Environment.NewLine);
             }
 
             return changes;
 
+        }
+
+        public IActionResult LogFileViewer()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> CurrentLogFileContent()
+        {
+            string? logFile = HttpContext.Session.GetString("logFile");
+            if (logFile != null)
+            {
+                return Content(System.IO.File.ReadAllText(logFile).Replace(System.Environment.NewLine, "<br>"));
+            }
+            else return Content("No logFile defined");
         }
 
         /// <summary>
