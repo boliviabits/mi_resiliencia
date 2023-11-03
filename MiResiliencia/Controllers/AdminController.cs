@@ -213,7 +213,11 @@ namespace MiResiliencia.Controllers
             else
             {
                 ViewBag.TheResult = false;
-                ViewBag.Error = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
+                //ViewBag.Error = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
+                string error = result.Errors.First().Description;
+                if (error.Contains("already exists"))  error = "El nombre de usuario ya existe";
+                else error = "Se ha producido un error, por favor compruebe la entrada de nuevo.";
+                ViewBag.Error = error;
 
             }
 
