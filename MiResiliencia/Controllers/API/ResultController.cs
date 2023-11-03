@@ -92,12 +92,29 @@ namespace MiResiliencia.Controllers.API
         /// <returns></returns>
         public async Task<ActionResult> RunAsync(int id, bool attachCss = false)
         {
+            string exportf = Path.GetRandomFileName();
+            string[] fname = exportf.Split(".");
+
+
+            string? logFile = HttpContext.Session.GetString("logCalcFile");
+            string dataDir = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+            if (logFile == null)
+            {
+                if (!Directory.Exists(dataDir + "//Logs")) Directory.CreateDirectory(dataDir + "//Logs");
+                logFile = dataDir + "//Logs//" + fname[0] + ".txt";
+                HttpContext.Session.SetString("logCalcFile", logFile);
+            }
+            
+            System.IO.File.WriteAllText(logFile, "");
+
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
             await _damageExtentService.CreateDamageExtent(id);
 
             _logger.LogWarning($"ID {id.ToString().PadLeft(4)} - Damage Extent Computed: elapsed time = " + stopWatch.Elapsed.ToString());
+            System.IO.File.AppendAllText(logFile, $"ID {id.ToString().PadLeft(4)} - Damage Extent Computed: elapsed time = " + stopWatch.Elapsed.ToString() + System.Environment.NewLine);
+
             stopWatch.Restart();
 
             ProjectResult _result = await _damageExtentService.ComposeProjectResultAsync(id);
