@@ -22,7 +22,7 @@
         $.ajax({
             type: "GET",
             url: '@Url.Action("Export", "ImportExport")',
-            async: false,
+            async: true,
             cache: false,
             dataType: 'JSON',
             success: function (retData) {

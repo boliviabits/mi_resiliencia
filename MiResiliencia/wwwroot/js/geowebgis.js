@@ -554,8 +554,8 @@
                             var extent = firstfeature[0].getGeometry().getExtent();
                             var middlepint = ol.extent.getCenter(extent);
                             var coord = ol.proj.transform(middlepint, 'EPSG:900913', 'EPSG:4326');
-
-                            reloadMappedObject(firstfeature[0].getProperties()["ID"], coord[0], coord[1]);
+                            if (firstfeature[0].getProperties()["ID"] !== undefined)
+                                reloadMappedObject(firstfeature[0].getProperties()["ID"], coord[0], coord[1]);
 
                         }
                         else if (GeoWebGIS.workingNamespace == 'Resilience') {

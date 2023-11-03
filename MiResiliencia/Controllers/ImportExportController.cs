@@ -145,8 +145,42 @@ namespace MiResiliencia.Controllers
 
             try
             {
+                System.IO.File.AppendAllText(logFile, $"Importar PrA" + System.Environment.NewLine);
+                psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_pra\" \"" + filePath + "\" -sql \"select * from pra\"";
+                ExecuteProzess(psi);
+                changes = await updatePras(prefix + "_pra", p);
+                System.IO.File.AppendAllText(logFile, changes + System.Environment.NewLine);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                changes = "Error: " + ex.ToString();
+                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
+            }
+
+            try
+            {
+                System.IO.File.AppendAllText(logFile, $"Importar Medida de Mitigación" + System.Environment.NewLine);
+                psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_protect\" \"" + filePath + "\" -sql \"select * from protect\"";
+                ExecuteProzess(psi);
+                changes = await updateProtectionMeasure(prefix + "_protect", p);
+                System.IO.File.AppendAllText(logFile, changes + System.Environment.NewLine);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                changes = "Error: " + ex.ToString();
+                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
+            }
+
+            try
+            {
                 System.IO.File.AppendAllText(logFile, $"Importar potenciales" + System.Environment.NewLine);
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_potentials\" \"" + filePath + "\" -sql \"select * from potentials\"";
+                ExecuteProzess(psi);
+                psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_resiliencevalues\" \"" + filePath + "\" -sql \"select * from resiliencevalues\"";
                 ExecuteProzess(psi);
                 changes = await updatePotentials(prefix + "_potentials", p, logFile);
 
@@ -158,6 +192,7 @@ namespace MiResiliencia.Controllers
                 System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
+            // TODO: Delete importet tables
 
             System.IO.File.AppendAllText(logFile, $"FIN" + System.Environment.NewLine);
 
@@ -312,6 +347,155 @@ namespace MiResiliencia.Controllers
 
         }
 
+        private async Task<string> updatePras(string tablename, Project p)
+        {
+            string changes = "";
+            try
+            {
+                using (var context = new MiResilienciaContext())
+                {
+                    using (var command = context.Database.GetDbConnection().CreateCommand())
+                    {
+                        command.CommandText = "select * from " + tablename;
+                        command.CommandType = CommandType.Text;
+
+                        context.Database.OpenConnection();
+
+                        try
+                        {
+
+                            using (var result = command.ExecuteReader())
+                            {
+                                var names = Enumerable.Range(0, result.FieldCount).Select(result.GetName).ToList();
+
+                                while (result.Read())
+                                {
+                                    int nathaz = result.GetInt32("NatHazardID");
+                                    int ikclass = result.GetInt32("IKClassesId");
+                                    double value = result.GetDouble("Value");
+
+                                    PrA existingPra = p.PrAs.Where(m=>m.NatHazardId == nathaz && m.IKClassesId == ikclass).FirstOrDefault();
+
+                                    bool changed = false;
+                                    if (existingPra != null)
+                                    {
+                                        if (existingPra.Value != value)
+                                        {
+                                            existingPra.Value = value;
+                                            changed = true;
+                                        }
+
+                                        if (changed)
+                                        {
+                                            changes += "<li>Pra adaptado</li>";
+                                            _context.Entry(existingPra).State = EntityState.Modified;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        PrA newpra = new PrA() { IKClassesId = ikclass, Value = value, NatHazardId = nathaz };
+
+                                        p.PrAs.Add(newpra);
+                                        _context.Entry(p).State = EntityState.Modified;
+                                        changes += "<li>PrA agregadas</li>";
+                                    }
+
+
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        { }
+
+                    }
+                }
+            }
+            catch (Exception e2)
+            {
+
+            }
+
+            return changes;
+
+        }
+
+        private async Task<string> updateProtectionMeasure(string tablename, Project p)
+        {
+            string changes = "";
+            try
+            {
+                using (var context = new MiResilienciaContext())
+                {
+                    using (var command = context.Database.GetDbConnection().CreateCommand())
+                    {
+                        command.CommandText = "select *, st_astext(ST_Force2D(geometry)) as wkt_geometrie from " + tablename;
+                        command.CommandType = CommandType.Text;
+
+                        context.Database.OpenConnection();
+
+                        try
+                        {
+
+                            using (var result = command.ExecuteReader())
+                            {
+                                var names = Enumerable.Range(0, result.FieldCount).Select(result.GetName).ToList();
+
+                                while (result.Read())
+                                {
+                                    string geom = result.GetString("wkt_geometrie");
+
+                                    int Costs = result.GetInt32("Costs");
+                                    int LifeSpan = result.GetInt32("LifeSpan");
+                                    int OperatingCosts = result.GetInt32("OperatingCosts");
+                                    int MaintenanceCosts = result.GetInt32("MaintenanceCosts");
+                                    double RateOfReturn = result.GetDouble("RateOfReturn");
+                                    string Description = result.GetString("Description");
+                                    double ValueAddedTax = result.GetDouble("ValueAddedTax");
+                                    double DiscountRate = result.GetDouble("DiscountRate");
+
+                                    ProtectionMeasure existingPM = p.ProtectionMeasure;
+                                    if (existingPM == null)
+                                    {
+                                        existingPM = new ProtectionMeasure();
+                                        existingPM.Project = p;
+                                    }
+
+                                    WKTReader reader = new WKTReader();
+                                    reader.IsOldNtsCoordinateSyntaxAllowed = false;
+                                    Geometry geometrie = reader.Read(geom);
+                                    geometrie.SRID = 3857;
+                                    
+                                    existingPM.geometry = (MultiPolygon)geometrie;
+                                    existingPM.Costs = Costs;
+                                    existingPM.LifeSpan = LifeSpan;
+                                    existingPM.OperatingCosts = OperatingCosts;
+                                    existingPM.MaintenanceCosts = MaintenanceCosts;
+                                    existingPM.RateOfReturn= RateOfReturn;
+                                    existingPM.Description = Description;
+                                    existingPM.ValueAddedTax= ValueAddedTax;
+                                    existingPM.DiscountRate= DiscountRate;
+
+                                    changes += "<li>Medida adaptado</li>";
+                                    _context.Entry(existingPM).State = EntityState.Modified;
+                                   
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        { }
+
+                    }
+                }
+            }
+            catch (Exception e2)
+            {
+
+            }
+
+            return changes;
+
+        }
+
         private async Task<string> updatePotentials(string tablename, Project p, string logFile)
         {
             string changes = "";
@@ -335,7 +519,7 @@ namespace MiResiliencia.Controllers
 
                             System.IO.File.AppendAllText(logFile, $"Importar ${totalToImport} potentiales" + System.Environment.NewLine);
 
-                            command.CommandText = "select *, st_astext(ST_Force2D(geometry)) as wkt_geometrie from " + tablename;
+                            command.CommandText = "select *, st_astext(ST_Force2D(geometry)) as wkt_geometrie from " + tablename; // + " iop left outer join "+ tablename.Replace("potentials", "resiliencevalues") + " rv on (iop.id = rv.mappedobjectid) " + tablename;
                             command.CommandType = CommandType.Text;
 
                             int counter = 0;
@@ -357,6 +541,7 @@ namespace MiResiliencia.Controllers
                                         Geometry geometrie = reader.Read(geom);
                                         geometrie.SRID = 3857;
                                         string name = result.GetString("name");
+                                        int id = result.GetInt32("id");
 
                                         Objectparameter? o = await ct.Objektparameter.Where(m => m.Name == name && m.MotherOtbjectparameter == null).SingleOrDefaultAsync();
                                         if (o != null)
@@ -388,11 +573,38 @@ namespace MiResiliencia.Controllers
                                             int velocity = result.GetInt32("velocity");
                                             int staff = result.GetInt32("staff");
 
+                                            
+
                                             ToolsController tc = new ToolsController(_userManager, ct);
                                             tc.SaveChanges(mo.ID, name, description, value, changevalue, "", floors, personcount, staff, changepersoncount, presence, numberofvehicles, velocity);
 
                                             changes += "<li>Potentiales agregadas</li>";
-                                            
+                                            // Resilience values
+                                            using (var context2 = new MiResilienciaContext())
+                                            {
+                                                using (var command2 = context2.Database.GetDbConnection().CreateCommand())
+                                                {
+                                                    context2.Database.OpenConnection();
+                                                    command2.CommandText = "select * from " + tablename.Replace("potentials", "resiliencevalues") + " where mappedobjectid = " + id;
+
+                                                    using (DbDataReader dataReader2 = command2.ExecuteReader())
+                                                        if (dataReader2.HasRows)
+                                                            while (dataReader2.Read())
+                                                            {
+                                                                int resilienceweightid = dataReader2.GetInt32("resilienceweightid");
+                                                                double overwrittenweight = dataReader2.GetDouble("overwrittenweight");
+                                                                double rvalue = dataReader2.GetDouble("value");
+
+                                                                ResilienceWeight rw = await ct.ResilienceWeights.Where(m => m.ID == resilienceweightid).FirstOrDefaultAsync();
+
+                                                                ResilienceValues rv = new ResilienceValues() { MappedObject = mo, OverwrittenWeight = overwrittenweight, Value = rvalue, ResilienceWeight = rw };
+                                                                if (mo.ResilienceValues == null) mo.ResilienceValues = new List<ResilienceValues>();
+                                                                mo.ResilienceValues.Add(rv);
+                                                            }
+                                                }
+                                            }
+
+
                                             System.IO.File.AppendAllText(logFile, $"Potential ({counter} / {totalToImport}) {mo.Objectparameter.Name} agregada" + System.Environment.NewLine);
 
 
@@ -502,6 +714,28 @@ namespace MiResiliencia.Controllers
                 return Json(new ExportProcess() { Error = ex.ToString() });
             }
 
+            // Export Pra
+            try
+            {
+                psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"PrA\" -where \"\\\"ProjectId\\\" = " + projectId.Value + "\" -nln \"pra\"";
+                ExecuteProzess(psi);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ExportProcess() { Error = ex.ToString() });
+            }
+
+            // Export Protection Measure
+            try
+            {
+                psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"ProtectionMeasure\" -where \"\\\"ProjectID\\\" = " + projectId.Value + "\" -nln \"protect\"";
+                ExecuteProzess(psi);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ExportProcess() { Error = ex.ToString() });
+            }
+
             // Export Intensities
             try
             {
@@ -517,6 +751,17 @@ namespace MiResiliencia.Controllers
             try
             {
                 psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"Export_Potential\" -where \"\\\"ProjectId\\\" = " + projectId.Value + "\" -nln \"potentials\"";
+                ExecuteProzess(psi);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ExportProcess() { Error = ex.ToString() });
+            }
+
+            // Export Resilience Values
+            try
+            {
+                psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"Export_Resiliencevalues\" -where \"\\\"ProjectId\\\" = " + projectId.Value + "\" -nln \"resiliencevalues\"";
                 ExecuteProzess(psi);
             }
             catch (Exception ex)
@@ -593,6 +838,28 @@ namespace MiResiliencia.Controllers
                 return Json(new ExportProcess() { Error = ex.ToString() });
             }
 
+            // Export Pra
+            try
+            {
+                psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"PrA\" -where \"\\\"ProjectId\\\" = " + projectId.Value + "\" -nln \"pra\"";
+                ExecuteProzess(psi);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ExportProcess() { Error = ex.ToString() });
+            }
+
+            // Export Protection Measure
+            try
+            {
+                psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"ProtectionMeasure\" -where \"\\\"ProjectId\\\" = " + projectId.Value + "\" -nln \"protectionmeasure\"";
+                ExecuteProzess(psi);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ExportProcess() { Error = ex.ToString() });
+            }
+
             // Export Intensities
             try
             {
@@ -608,6 +875,17 @@ namespace MiResiliencia.Controllers
             try
             {
                 psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"Export_Potential\" -where \"\\\"ProjectId\\\" = " + projectId.Value + "\" -nln \"potentials\"";
+                ExecuteProzess(psi);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ExportProcess() { Error = ex.ToString() });
+            }
+
+            // Export Resilience Values
+            try
+            {
+                psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"Export_Resiliencevalues\" -where \"\\\"ProjectId\\\" = " + projectId.Value + "\" -nln \"resiliencevalues\"";
                 ExecuteProzess(psi);
             }
             catch (Exception ex)
