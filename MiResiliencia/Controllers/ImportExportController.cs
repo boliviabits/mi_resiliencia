@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MiResiliencia.Helpers;
 using MiResiliencia.Models;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
@@ -23,6 +24,7 @@ namespace MiResiliencia.Controllers
     {
         private UserManager<ApplicationUser> _userManager;
         private MiResilienciaContext _context;
+        private ThreadSafeFileWriter _safeFileWriter;
         private IConfiguration _configuration { get; }
 
         public ImportExportController(UserManager<ApplicationUser> userManager, MiResilienciaContext context, IConfiguration configuration)
@@ -30,6 +32,7 @@ namespace MiResiliencia.Controllers
             _userManager = userManager;
             _context = context;
             _configuration = configuration;
+            _safeFileWriter = new ThreadSafeFileWriter();
         }
 
         public IActionResult Index()
@@ -61,13 +64,13 @@ namespace MiResiliencia.Controllers
             string dataDir = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
             string logFile = HttpContext.Session.GetString("logFile");
             System.IO.File.WriteAllText(logFile, "");
-            System.IO.File.AppendAllText(logFile, $"Iniciar la importación  {file.FileName}" + System.Environment.NewLine);
+            _safeFileWriter.WriteFile(logFile, $"Iniciar la importación  {file.FileName}" + System.Environment.NewLine);
 
             int? projectId = HttpContext.Session.GetInt32("Project");
             if (projectId == null) { return NotFound(); }
             
 
-            System.IO.File.AppendAllText(logFile, $"Importar a ID {projectId} de proyecto" + System.Environment.NewLine);
+            _safeFileWriter.WriteFile(logFile, $"Importar a ID {projectId} de proyecto" + System.Environment.NewLine);
 
             Project p = _context.Projects.Include(m => m.Intesities).ThenInclude(m=>m.IKClasses)
                 .Include(m => m.Intesities).ThenInclude(m => m.NatHazard)
@@ -115,69 +118,69 @@ namespace MiResiliencia.Controllers
             psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_perimeter\" \"" + filePath + "\" -sql \"select * from perimeter\"";
             try
             {
-                System.IO.File.AppendAllText(logFile, $"Importar perímetro" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"Importar perímetro" + System.Environment.NewLine);
                 ExecuteProzess(psi);
                 changes = updateProject(prefix + "_perimeter", p);
-                System.IO.File.AppendAllText(logFile, changes + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, changes + System.Environment.NewLine);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 changes = "Error: " + ex.ToString();
-                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
             try
             {
-                System.IO.File.AppendAllText(logFile, $"Importar intensidades" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"Importar intensidades" + System.Environment.NewLine);
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_intensities\" \"" + filePath + "\" -sql \"select * from intensities\"";
                 ExecuteProzess(psi);
                 changes = await updateIntensities(prefix + "_intensities", p);
-                System.IO.File.AppendAllText(logFile, changes + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, changes + System.Environment.NewLine);
 
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 changes = "Error: " + ex.ToString();
-                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
             try
             {
-                System.IO.File.AppendAllText(logFile, $"Importar PrA" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"Importar PrA" + System.Environment.NewLine);
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_pra\" \"" + filePath + "\" -sql \"select * from pra\"";
                 ExecuteProzess(psi);
                 changes = await updatePras(prefix + "_pra", p);
-                System.IO.File.AppendAllText(logFile, changes + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, changes + System.Environment.NewLine);
 
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 changes = "Error: " + ex.ToString();
-                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
             try
             {
-                System.IO.File.AppendAllText(logFile, $"Importar Medida de Mitigación" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"Importar Medida de Mitigación" + System.Environment.NewLine);
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_protect\" \"" + filePath + "\" -sql \"select * from protect\"";
                 ExecuteProzess(psi);
                 changes = await updateProtectionMeasure(prefix + "_protect", p);
-                System.IO.File.AppendAllText(logFile, changes + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, changes + System.Environment.NewLine);
 
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 changes = "Error: " + ex.ToString();
-                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
             try
             {
-                System.IO.File.AppendAllText(logFile, $"Importar potenciales" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"Importar potenciales" + System.Environment.NewLine);
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_potentials\" \"" + filePath + "\" -sql \"select * from potentials\"";
                 ExecuteProzess(psi);
                 psi.Arguments = "-F \"PostgreSQL\" " + pgstring + " -nln \"" + prefix + "_resiliencevalues\" \"" + filePath + "\" -sql \"select * from resiliencevalues\"";
@@ -189,12 +192,12 @@ namespace MiResiliencia.Controllers
             catch (Exception ex)
             {
                 changes = "Error: " + ex.ToString();
-                System.IO.File.AppendAllText(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"ERROR: {ex.ToString()}" + System.Environment.NewLine);
             }
 
             // TODO: Delete importet tables
 
-            System.IO.File.AppendAllText(logFile, $"FIN" + System.Environment.NewLine);
+            _safeFileWriter.WriteFile(logFile, $"FIN" + System.Environment.NewLine);
 
             return Content(changes);
 
@@ -517,7 +520,7 @@ namespace MiResiliencia.Controllers
                                     while (dataReader.Read())
                                         totalToImport = dataReader.GetInt32(0);
 
-                            System.IO.File.AppendAllText(logFile, $"Importar ${totalToImport} potentiales" + System.Environment.NewLine);
+                            _safeFileWriter.WriteFile(logFile, $"Importar ${totalToImport} potentiales" + System.Environment.NewLine);
 
                             command.CommandText = "select *, st_astext(ST_Force2D(geometry)) as wkt_geometrie from " + tablename; // + " iop left outer join "+ tablename.Replace("potentials", "resiliencevalues") + " rv on (iop.id = rv.mappedobjectid) " + tablename;
                             command.CommandType = CommandType.Text;
@@ -605,7 +608,7 @@ namespace MiResiliencia.Controllers
                                             }
 
 
-                                            System.IO.File.AppendAllText(logFile, $"Potential ({counter} / {totalToImport}) {mo.Objectparameter.Name} agregada" + System.Environment.NewLine);
+                                            _safeFileWriter.WriteFile(logFile, $"Potential ({counter} / {totalToImport}) {mo.Objectparameter.Name} agregada" + System.Environment.NewLine);
 
 
                                         }
@@ -616,7 +619,7 @@ namespace MiResiliencia.Controllers
                             }
                             catch (Exception ex)
                             {
-                                System.IO.File.AppendAllText(logFile, $"ERROR in potentials: {ex.ToString()}");
+                                _safeFileWriter.WriteFile(logFile, $"ERROR in potentials: {ex.ToString()}");
                             }
 
                         }
@@ -625,7 +628,7 @@ namespace MiResiliencia.Controllers
             }
             catch (Exception e2)
             {
-                System.IO.File.AppendAllText(logFile, $"ERROR in potentials: {e2.ToString()}" + System.Environment.NewLine);
+                _safeFileWriter.WriteFile(logFile, $"ERROR in potentials: {e2.ToString()}" + System.Environment.NewLine);
             }
 
             return changes;
@@ -637,12 +640,17 @@ namespace MiResiliencia.Controllers
             return View();
         }
 
-        public async Task<IActionResult> CurrentLogFileContent()
+        public async Task<IActionResult> CurrentLogFileContent(string target="import")
         {
             string? logFile = HttpContext.Session.GetString("logFile");
+            if (target=="calc") logFile = HttpContext.Session.GetString("logCalcFile");
+
+            ThreadSafeFileWriter threadSafeFileWriter = new ThreadSafeFileWriter();
+
             if (logFile != null)
             {
-                return Content(System.IO.File.ReadAllText(logFile).Replace(System.Environment.NewLine, "<br>"));
+                return Content(threadSafeFileWriter.ReadFile
+                    (logFile).Replace(System.Environment.NewLine, "<br>"));
             }
             else return Content("No logFile defined");
         }
@@ -852,7 +860,7 @@ namespace MiResiliencia.Controllers
             // Export Protection Measure
             try
             {
-                psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"ProtectionMeasure\" -where \"\\\"ProjectId\\\" = " + projectId.Value + "\" -nln \"protectionmeasure\"";
+                psi.Arguments = "-f GPKG -append " + exportfilename + pgstring + " \"ProtectionMeasure\" -where \"\\\"ProjectID\\\" = " + projectId.Value + "\" -nln \"protect\"";
                 ExecuteProzess(psi);
             }
             catch (Exception ex)

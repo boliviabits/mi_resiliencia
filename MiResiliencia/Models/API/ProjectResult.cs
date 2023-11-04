@@ -142,8 +142,13 @@ namespace MiResiliencia.Models.API
         {
             get
             {
-                double discountRate = ProtectionMeasure.DiscountRate / 100.0d;
-                return discountRate;
+                try
+                {
+                    double discountRate = ProtectionMeasure.DiscountRate / 100.0d;
+                    return discountRate;
+                }
+                catch (Exception ex) 
+                { return 0; }
             }
         }
 

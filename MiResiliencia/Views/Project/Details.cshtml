@@ -934,20 +934,54 @@
                                 @Resources.Global.LoadingMessage
                                 <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
                             </div>
+                            <div id="results-log" style="width:100%;display:none;">
+                                El proceso puede seguirse aquí: <a class="insideTab" href="/ImportExport/LogFileViewer?target=calc" target="_blank">Visualizador de archivos de registro</a>
+                                <div id="logResultsFile" style="height:200px;overflow:scroll;width:100%;background-color: lightgrey;"></div>
+                            </div>
 
                             <div id="calcResults">
                             </div>
                         </div>
 
                         <script type="text/javascript">
+                            var auto_refresh;
                             function showCalcResults() {
-                                $('#loading-spinner-results').show();
-                                sidebar.fullscreen();
-                                $.get('/api/Result/Run/@Model.Id', function (data) {
-                                    $('#loading-spinner-results').hide();
-                                    $('#calcResults').html(data);
 
-                                })
+
+                                sidebar.fullscreen();
+                                
+                                $.ajax({
+                                    url: "/api/Result/Run/@Model.Id",
+                                    type: "GET",
+                                    contentType: false,
+                                    cache: false,
+                                    async: true,
+                                    processData: false,
+                                    beforeSend: function () {
+                                        
+                                        $('#loading-spinner-results').show();
+                                        $('#results-log').show();
+                                        auto_refresh = setInterval(
+                                            function () {
+                                                $('#logResultsFile').load('/ImportExport/CurrentLogFileContent?target=calc', function() {
+                                                    $('#logResultsFile').scrollTop($('#logResultsFile')[0].scrollHeight);
+                                                }).fadeIn("slow");
+                                                
+                                            }, 5000); // refresh every 10000 milliseconds
+                                    },
+                                    success: function (data) {
+                                        $('#loading-spinner-results').hide();
+                                        $('#calcResults').html(data);
+                                        clearInterval(auto_refresh);
+                                    },
+                                    error: function (xhr, status, error) {
+                                        var err = JSON.parse(xhr.responseText);
+                                        console.log(err);
+                                        alert("ERROR: " +error.error);
+                                        $("#err").html(e.message).fadeIn();
+                                    }
+                                });
+                                
                             };
                             function showCalcSummary() {
                                 $('#loading-spinner-results').show();

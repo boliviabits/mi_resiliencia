@@ -64,7 +64,9 @@
                         importLoadingDialog.show();
                         var auto_refresh = setInterval(
                             function () {
-                                    $('#logFile').load('/ImportExport/CurrentLogFileContent').fadeIn("slow");
+                                $('#logFile').load('/ImportExport/CurrentLogFileContent', function () {
+                                    $('#logFile').scrollTop($('#logFile')[0].scrollHeight);
+                                }).fadeIn("slow");
                             }, 5000); // refresh every 10000 milliseconds
                     },
                     success: function (data) {

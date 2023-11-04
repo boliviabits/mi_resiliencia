@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using MiResiliencia.Helpers;
 using MiResiliencia.Helpers.API;
 using MiResiliencia.Models;
 using MiResiliencia.Models.API;
 using MiResiliencia.Resources.API;
 using NetTopologySuite.Geometries;
+using NuGet.ProjectModel;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection;
@@ -18,6 +20,7 @@ namespace MiResiliencia.Controllers.API
         private readonly MiResilienciaContext _context;
         private readonly ILogger<DamageExtentService> _logger;
         //private readonly IntensityService _intensityService;
+        private readonly ThreadSafeFileWriter _safeFileWriter;
 
         public DamageExtentService(
             MiResilienciaContext context,
@@ -27,6 +30,7 @@ namespace MiResiliencia.Controllers.API
         {
             _context = context;
             _logger = logger;
+            _safeFileWriter = new ThreadSafeFileWriter();
             //_intensityService = intensityService;
         }
 
@@ -673,7 +677,7 @@ namespace MiResiliencia.Controllers.API
         /// Save damage extents to db
         /// </summary>
         /// <param name="damageExtents"></param>
-        public async Task SaveDamageExtentToDBAsync(List<DamageExtent> damageExtents)
+        public async Task SaveDamageExtentToDBAsync(List<DamageExtent> damageExtents, string logFile)
         {
             if (damageExtents == null || damageExtents.Count() == 0)
                 return;
@@ -694,6 +698,7 @@ namespace MiResiliencia.Controllers.API
                         _saveWatch.Restart();
                         try
                         {
+                            int counter = 0;
                             foreach (DamageExtent item in damageExtents)
                             {
                                 //item.IntensityId = item.Intensity.ID;
@@ -703,12 +708,14 @@ namespace MiResiliencia.Controllers.API
 
                                 //_context.DamageExtents.Add(item);
                                 _context.Entry(item).State = EntityState.Added;
-                                await _context.SaveChangesAsync();
+                                counter++;
+                                _safeFileWriter.WriteFile(logFile, $"({counter}/{damageExtents.Count}) Objeto {item.MappedObject.ID} agregado a la base de datos" + System.Environment.NewLine);
                             }
 
                             _logger.LogWarning($" + save: elapsed time = " + _saveWatch.Elapsed.ToString());
                             _saveWatch.Restart();
 
+                            await _context.SaveChangesAsync();
                             await transaction.CommitAsync();
                         }
                         catch (Exception ex)
@@ -1190,7 +1197,7 @@ namespace MiResiliencia.Controllers.API
         /// </summary>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public async Task CreateDamageExtent(int projectId)
+        public async Task CreateDamageExtent(int projectId, string logFile)
         {
             Stopwatch _stopWatch = new Stopwatch();
             _stopWatch.Start();
@@ -1199,28 +1206,37 @@ namespace MiResiliencia.Controllers.API
 
             //ConcurrentBag<DamageExtent> _saveDamageExtents = new ConcurrentBag<DamageExtent>();
             List<DamageExtent> _saveDamageExtents = new List<DamageExtent>();
-
+            _safeFileWriter.WriteFile(logFile, $"El cálculo comienza" + System.Environment.NewLine);
             await this.DeleteDamageExtentsFromDBAsync(projectId);  //DELETE ALL
-
+            _safeFileWriter.WriteFile(logFile, $"Datos ya calculados borrados de la base de datos" + System.Environment.NewLine);
             var _hazards = await _context.NatHazards.ToListAsync<NatHazard>();
             var _ikClasses = await _context.IntensitaetsKlassen.ToListAsync<IKClasses>();
             List<bool> _beforeActions = new List<bool>() { true, false };
 
             _logger.LogWarning($"querying: elapsed time = " + _stopWatch.Elapsed.ToString());
+            _safeFileWriter.WriteFile(logFile, $"Datos cargados desde la base de datos" + System.Environment.NewLine);
             _stopWatch.Restart();
 
             var _damagePotentialController = this;
             var _allAffectedDamagePotentials = await _damagePotentialController.GetAllDamagePotentials(projectId); //unprocessed Damage Potentials in the project perimeter
 
-            _logger.LogWarning($"getAllDamagePotentials: elapsed time = " + _stopWatch.Elapsed.ToString() + $", count= {_allAffectedDamagePotentials.Count()}");
+            _logger.LogWarning($" " + _stopWatch.Elapsed.ToString() + $", count= {_allAffectedDamagePotentials.Count()}");
+            _safeFileWriter.WriteFile(logFile, $"Cargar los potenciales de peligro de la base de datos. Cantidad = {_allAffectedDamagePotentials.Count()}" + System.Environment.NewLine);
             _stopWatch.Restart();
 
             foreach (var hazard in _hazards)
             {
+                _safeFileWriter.WriteFile(logFile, $"Riesgos naturales {hazard.Name}" + System.Environment.NewLine);
                 foreach (var period in _ikClasses)
                 {
+                    _safeFileWriter.WriteFile(logFile, $"Periodo {period.Description}" + System.Environment.NewLine);
+
                     foreach (var beforeAction in _beforeActions)
                     {
+                        if (beforeAction) _safeFileWriter.WriteFile(logFile, $"Cálculo del riesgo antes de la medida" + System.Environment.NewLine);
+                        else if (beforeAction) _safeFileWriter.WriteFile(logFile, $"Cálculo del riesgo despuiés de la medida" + System.Environment.NewLine);
+
+
                         _stopWatch.Restart();
 
                         List<Intensity> _intensities = await this.GetIntensityMap(projectId, hazard.ID, period.ID, beforeAction);
@@ -1231,6 +1247,8 @@ namespace MiResiliencia.Controllers.API
 
                         if (_intensities == null || _intensities.Count() == 0)
                             continue;
+                        _safeFileWriter.WriteFile(logFile, $"Cálculo del riesgo natural {hazard.Name} y la intensidad {period.Description}" + System.Environment.NewLine);
+
                         Stopwatch _damageWatch = new Stopwatch();
                         _damageWatch.Start();
 
@@ -1243,6 +1261,7 @@ namespace MiResiliencia.Controllers.API
                             List<MappedObject> outlist = dpListWithin.ToList();
 
                             _logger.LogWarning($">getDamagePotentialsWithin: elapsed time = " + _damageWatch.Elapsed.ToString());
+                            
                             _damageWatch.Restart();
 
                             //IList<MappedObject> dpListWithin2 = _damagePotentialController.getDamagePotentialsWithin2(intensity, projectId);
@@ -1254,6 +1273,7 @@ namespace MiResiliencia.Controllers.API
                             outlist.AddRange(dpListCrossing); //Merge Within and Crossing for Intensity
 
                             _logger.LogWarning($">getDamagePotentialCrossing: elapsed time = " + _damageWatch.Elapsed.ToString());
+                            _safeFileWriter.WriteFile(logFile, $"Mezcla de todos los potenciales de peligro dentro de la intensidad con ID {intensity.ID}" + System.Environment.NewLine);
                             _damageWatch.Restart();
 
                             //IList<MappedObject> dpListCrossing2 = _damagePotentialController.getDamagePotentialCrossing2(intensity, projectId);
@@ -1266,12 +1286,15 @@ namespace MiResiliencia.Controllers.API
                         _damageWatch.Stop();
 
                         _logger.LogWarning($"getDamagePotential: elapsed time = " + _stopWatch.Elapsed.ToString());
+                        
                         _stopWatch.Restart();
 
                         //Parallel.ForEach(_intensities,
                         //    (intensity) =>
                         //    {
-
+                        int totalDamageCounter = _allProcessedDamagePotentials.Count;
+                        _safeFileWriter.WriteFile(logFile, $"Potenciales totales por calcular: {totalDamageCounter})" + System.Environment.NewLine);
+                        int currentDamageCounter = 1;
                         foreach (var intensity in _intensities)
                         {
 
@@ -1282,13 +1305,17 @@ namespace MiResiliencia.Controllers.API
 
                             //Parallel.ForEach(outlist, (damagePotential) =>
                             //{
-
-                            foreach (MappedObject damagePotential in outlist)
+                             foreach (MappedObject damagePotential in outlist)
                             {
                                 DamageExtent damageExtent = await this.ComputeDamageExtent(damagePotential, intensity);
 
                                 if (damageExtent != null)
+                                {
                                     outDamageExtents.Add(damageExtent);
+                                    _safeFileWriter.WriteFile(logFile, $"({currentDamageCounter} / {totalDamageCounter}) Registro para ID {damageExtent.MappedObject.ID} {damageExtent.Log}" + System.Environment.NewLine);
+                                }
+
+                                currentDamageCounter++;
                             }
                             //});
 
@@ -1305,6 +1332,7 @@ namespace MiResiliencia.Controllers.API
                           //});
 
                         _logger.LogWarning($"computeDamageExtent: elapsed time = " + _stopWatch.Elapsed.ToString());
+                        _safeFileWriter.WriteFile(logFile, $"Todos los potenciales calculados" + System.Environment.NewLine);
                         _stopWatch.Restart();
 
                     }//loop over actions
@@ -1315,10 +1343,12 @@ namespace MiResiliencia.Controllers.API
             _logger.LogWarning($"inbetween: elapsed time = " + _stopWatch.Elapsed.ToString());
             _stopWatch.Restart();
 
+            _safeFileWriter.WriteFile(logFile, $"Los resultados se guardan en una base de datos" + System.Environment.NewLine);
             //one time saving to db <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            await this.SaveDamageExtentToDBAsync(_saveDamageExtents); //SAVE
+            await this.SaveDamageExtentToDBAsync(_saveDamageExtents, logFile); //SAVE
 
             _logger.LogWarning($"saveDamageExtentToDB: elapsed time = " + _stopWatch.Elapsed.ToString());
+            _safeFileWriter.WriteFile(logFile, $"Los resultados se guardaron en la base de datos" + System.Environment.NewLine); 
             _stopWatch.Restart();
 
             _stopWatch.Stop();

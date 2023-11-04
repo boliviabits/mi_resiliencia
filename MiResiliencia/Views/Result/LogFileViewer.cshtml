@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "Calc log file";
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<h1>Log-Viewer</h1>
+<div id="logFile"></div>
+<script>
+var auto_refresh = setInterval(
+    function () {
+            $('#logFile').load('/Result/CurrentLogFileContent').fadeIn("slow");
+    }, 5000); // refresh every 10000 milliseconds
+</script>

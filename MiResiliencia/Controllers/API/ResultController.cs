@@ -75,8 +75,8 @@ namespace MiResiliencia.Controllers.API
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-
-            await _damageExtentService.CreateDamageExtent(id);
+            string logFile = HttpContext.Session.GetString("logCalcFile");
+            await _damageExtentService.CreateDamageExtent(id, logFile);
 
             _logger.LogWarning($"ID {id.ToString().PadLeft(4)} - Damage Extent Computed: elapsed time = " + stopWatch.Elapsed.ToString());
             stopWatch.Stop();
@@ -92,34 +92,26 @@ namespace MiResiliencia.Controllers.API
         /// <returns></returns>
         public async Task<ActionResult> RunAsync(int id, bool attachCss = false)
         {
-            string exportf = Path.GetRandomFileName();
-            string[] fname = exportf.Split(".");
 
-
-            string? logFile = HttpContext.Session.GetString("logCalcFile");
-            string dataDir = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
-            if (logFile == null)
-            {
-                if (!Directory.Exists(dataDir + "//Logs")) Directory.CreateDirectory(dataDir + "//Logs");
-                logFile = dataDir + "//Logs//" + fname[0] + ".txt";
-                HttpContext.Session.SetString("logCalcFile", logFile);
-            }
-            
+            string logFile = HttpContext.Session.GetString("logCalcFile");
+                        
             System.IO.File.WriteAllText(logFile, "");
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            await _damageExtentService.CreateDamageExtent(id);
+            await _damageExtentService.CreateDamageExtent(id, logFile);
 
             _logger.LogWarning($"ID {id.ToString().PadLeft(4)} - Damage Extent Computed: elapsed time = " + stopWatch.Elapsed.ToString());
             System.IO.File.AppendAllText(logFile, $"ID {id.ToString().PadLeft(4)} - Damage Extent Computed: elapsed time = " + stopWatch.Elapsed.ToString() + System.Environment.NewLine);
+            
 
             stopWatch.Restart();
 
             ProjectResult _result = await _damageExtentService.ComposeProjectResultAsync(id);
 
             _logger.LogWarning($"ID {id.ToString().PadLeft(4)} - Project Result Created: elapsed time = " + stopWatch.Elapsed.ToString());
+            System.IO.File.AppendAllText(logFile, $"ID {id.ToString().PadLeft(4)} - Project Result Created: elapsed time = " + stopWatch.Elapsed.ToString() + System.Environment.NewLine);
             stopWatch.Stop();
 
             ViewBag.attachCss = attachCss;
@@ -144,6 +136,22 @@ namespace MiResiliencia.Controllers.API
         public PartialViewResult SummaryChart(ProjectResult projectResult)
         {
             return PartialView(projectResult);
+        }
+
+        public IActionResult LogFileViewer()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> CurrentLogFileContent(string target = "calc")
+        {
+            string? logFile = HttpContext.Session.GetString("logFile");
+            if (target == "calc") logFile = HttpContext.Session.GetString("logCalcFile");
+            if (logFile != null)
+            {
+                return Content(System.IO.File.ReadAllText(logFile).Replace(System.Environment.NewLine, "<br>"));
+            }
+            else return Content("No logFile defined");
         }
 
 

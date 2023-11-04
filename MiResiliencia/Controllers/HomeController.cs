@@ -84,6 +84,19 @@ namespace MiResiliencia.Controllers
                 }
             }
 
+            string exportf = Path.GetRandomFileName();
+            string[] fname = exportf.Split(".");
+
+
+            string? logFile = HttpContext.Session.GetString("logCalcFile");
+            string dataDir = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+            if (logFile == null)
+            {
+                if (!Directory.Exists(dataDir + "/Logs")) Directory.CreateDirectory(dataDir + "/Logs");
+                logFile = dataDir + "/Logs/" + fname[0] + ".txt";
+                HttpContext.Session.SetString("logCalcFile", logFile);
+            }
+
             /*ViewBag.Geoserver = WebConfigurationManager.AppSettings["GeoServerURL"];
 
             System.Configuration.Configuration rootWebConfig =
