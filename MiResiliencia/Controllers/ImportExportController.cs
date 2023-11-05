@@ -454,7 +454,13 @@ namespace MiResiliencia.Controllers
                                     double RateOfReturn = result.GetDouble("RateOfReturn");
                                     string Description = result.GetString("Description");
                                     double ValueAddedTax = result.GetDouble("ValueAddedTax");
-                                    double DiscountRate = result.GetDouble("DiscountRate");
+                                    // Compatibility with V1 where no DiscountRate exists   
+                                    double DiscountRate = 0.0;
+                                    try
+                                    {
+                                        DiscountRate = result.GetDouble("DiscountRate");
+                                    }
+                                    catch(Exception ex) { }
 
                                     ProtectionMeasure existingPM = p.ProtectionMeasure;
                                     if (existingPM == null)

@@ -935,7 +935,7 @@
                                 <i class="fa fa-spinner fa-spin" style="font-size:25px;text-align:center;margin-top:50px;"></i>
                             </div>
                             <div id="results-log" style="width:100%;display:none;">
-                                El proceso puede seguirse aquí: <a class="insideTab" href="/ImportExport/LogFileViewer?target=calc" target="_blank">Visualizador de archivos de registro</a>
+                                El proceso puede seguirse aquí:
                                 <div id="logResultsFile" style="height:200px;overflow:scroll;width:100%;background-color: lightgrey;"></div>
                             </div>
 
@@ -975,9 +975,9 @@
                                         clearInterval(auto_refresh);
                                     },
                                     error: function (xhr, status, error) {
-                                        var err = JSON.parse(xhr.responseText);
+                                        var err = xhr.responseText;
                                         console.log(err);
-                                        alert("ERROR: " +error.error);
+                                        alert("ERROR: " +err);
                                         $("#err").html(e.message).fadeIn();
                                     }
                                 });

@@ -1157,7 +1157,28 @@ namespace MiResiliencia.Controllers.API
             foreach (var damagePotential in dpListFiltered)
             {
                 //damagePotential can't be outside of intensity
-                Geometry clippedDamagePotentialGeometry = intensity.geometry.Intersection(damagePotential.geometry);
+
+                try
+                {
+                    // Check geometries for validity. Thanks to all persons who are not able the work with GIS ;-)
+                    Geometry clippedDamagePotentialGeometry; 
+                    var validIntensityGeometry = intensity.geometry;
+                    var t = intensity.geometry.IsValid;
+                    var w = damagePotential.geometry.IsValid;
+                    var validDamagePotential = damagePotential.geometry;
+                    if (!w)
+                    {
+                        validDamagePotential = NetTopologySuite.Geometries.Utilities.GeometryFixer.Fix(damagePotential.geometry);
+                    }
+
+                    if (!validIntensityGeometry.IsValid)
+                    {
+                        var validGeometry = NetTopologySuite.Geometries.Utilities.GeometryFixer.Fix(intensity.geometry);
+                        clippedDamagePotentialGeometry = validGeometry.Intersection(validDamagePotential);
+                    }
+                    else 
+                        clippedDamagePotentialGeometry = validIntensityGeometry.Intersection(validDamagePotential);
+           
 
                 //#if DEBUG
                 //                //area difference due to intersection
@@ -1179,6 +1200,9 @@ namespace MiResiliencia.Controllers.API
                 };
 
                 clippedList.Add(clippedDamagePotential);
+                }
+                catch (Exception xxx)
+                { }
             }
 
             //long ts3 = _timer.ElapsedMilliseconds; //////////////////////////////
