@@ -1,4 +1,14 @@
-﻿(function (window) {
+﻿/**
+ * 
+ * geowebgis.js - GeoWebGIS Library
+ * ================================
+ * creates Openlayer 6.0 Background and Vector Layers based on the selected tools. Handles Click, Multiselect and edit of objects
+ * Author: Christoph Suter
+ * 
+ */
+
+
+(function (window) {
     'use strict';
 
     function define_GeoWebGIS() {
@@ -90,19 +100,15 @@
             var urlAddon = '';
             this.projection = ol.proj.get('EPSG:3857');
 
+            /**
+             * Definitions for the 4 different background maps
+             */
+
             this.backgroudosm = new ol.layer.Tile({
                 source: new ol.source.OSM({
                 }),
                 opacity: 0.6
             });
-
-            /*this.backgroudimagery = new ol.layer.Tile({
-                source: new ol.source.XYZ({
-                    url: 'https://atlas.microsoft.com/map/tile?subscription-key=z-ehgM0XS8-dfBEeY1guLd4YiO02xNyZ6n7Ni5I5FNo&api-version=2.0&tilesetId=microsoft.imagery&zoom={z}&x={x}&y={y}&tileSize=256&language=en-US',
-                    attributions: ''
-                }),
-                opacity: 0.8
-            });*/
 
             this.backgroudimagery = new ol.layer.Tile({
                 source: new ol.source.BingMaps({
@@ -111,7 +117,7 @@
                     maxZoom: 19
                 }),
                 opacity: 0.8
-            }); 
+            });
 
             this.backgroundesri = new ol.layer.Tile({
                 source: new ol.source.XYZ({
@@ -123,7 +129,7 @@
                         'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
                 }),
                 opacity: 0.8
-            }); 
+            });
 
             this.backgroundesriImage = new ol.layer.Tile({
                 source: new ol.source.XYZ({
@@ -135,8 +141,8 @@
                         'World_Imagery/MapServer/tile/{z}/{y}/{x}',
                 }),
                 opacity: 0.8
-            }); 
-            
+            });
+
 
             // create a vector layer used for editing
             this.drawlayer = new ol.layer.Vector({
@@ -241,14 +247,14 @@
 
 
 
-            var styleFunctionFeldApp = function (feature) {
+            var styleFunctionMiResioiencia = function (feature) {
                 if (feature.getGeometry().getType() == 'Point') return pointStyleFunction(feature);
                 if (feature.getGeometry().getType() == 'LineString') return lineStyleFunction(feature);
                 if (feature.getGeometry().getType() == 'Polygon') return polygonStyleFunction(feature);
 
             };
 
-            var styleFunctionGeneral = styleFunctionFeldApp;
+            var styleFunctionGeneral = styleFunctionMiResioiencia;
 
             // measure
             /**
@@ -344,7 +350,9 @@
             var wfsurl = "";
             var formatWFS = new ol.format.WFS();
 
-
+            /**
+             * Vector layer on map, which is selectable. Geojson from geoserver-Proxy
+             */
             this.wfssource = new ol.source.Vector({
                 format: new ol.format.GeoJSON(),
                 url: function (extent) {
@@ -366,7 +374,9 @@
                 progress.addLoaded();
             });
 
-
+            /**
+             * WFSLayer is the main vector layer on map which is selectable
+             */
             this.wfslayer = new ol.layer.Vector({
                 source: this.wfssource,
                 id: 'wfslayer',
@@ -464,8 +474,9 @@
                 multi: true
             });
 
-            // GeoWebGIS.clusterselect.getFeatures().push(feature);
-
+            /**
+             * Check click on map -> no object, dispose popover     
+             */
             this.map.on('singleclick', function (e) {
                 if (GeoWebGIS.workingNamespace == 'MappedObject') {
                     if (e.originalEvent.altKey != true) {
@@ -484,7 +495,7 @@
                         deselected: []
                     });
                 });
-                if (GeoWebGIS.clusterselect.getFeatures().getArray().length==0) {
+                if (GeoWebGIS.clusterselect.getFeatures().getArray().length == 0) {
                     var element = GeoWebGIS.popup.getElement();
                     $(element).popover('dispose');
                 }
@@ -492,8 +503,10 @@
 
             this.map.addInteraction(this.clusterselect);
 
+            /**
+             * Handles clicks on objects
+             */
             this.clusterselect.on('select', function (e) {
-                console.log("Selected");
                 var isLoadingTable = false;
                 if (e.target.getFeatures().getLength() > 0) {
                     var firstfeature = e.target.getFeatures().getArray();
@@ -523,7 +536,7 @@
                                 'animation': false,
                                 'html': true,
                                 'content': '<p>' + GeoWebGIS.translator.get("errorwas") + ':</p><b>' + firstfeature[0].getProperties()["Log"] + '</b></p>'
-                                    //+ '<a href="#" onclick="reloadErrorViewMappedObject(' + firstfeature[0].getProperties()["ID"] + ', ' + coord[0] + ', ' + coord[1] + '); ">' + GeoWebGIS.translator.get("change") + '</a><div id="mappedObjectDivErrorView"></div>'
+                                //+ '<a href="#" onclick="reloadErrorViewMappedObject(' + firstfeature[0].getProperties()["ID"] + ', ' + coord[0] + ', ' + coord[1] + '); ">' + GeoWebGIS.translator.get("change") + '</a><div id="mappedObjectDivErrorView"></div>'
                             });
                             $(element).popover('show');
                         }
@@ -629,6 +642,11 @@
                 }
             }
 
+            /**
+             * Get the layer structure for layer-id
+             * @param {*} id 
+             * @returns 
+             */
             GeoWebGIS.getLayer = function (id) {
                 for (var i = 0, numLayers = GeoWebGIS.customLayers.length; i < numLayers; i++) {
                     if (GeoWebGIS.customLayers[i].id == id) {
@@ -637,6 +655,9 @@
                 }
             }
 
+            /**
+             * Centers the map to extent
+             */
             GeoWebGIS.fit = function (extent) {
                 var mySize = GeoWebGIS.map.getSize();
 
@@ -648,7 +669,17 @@
 
             }
 
-
+            /**
+             * Starts the draw interaction. Called from the toolboxes with correct geomType, mode, id, projectid
+             * @param {*} geomType 
+             * @param {*} mode 
+             * @param {*} featureId 
+             * @param {*} natgef 
+             * @param {*} ikclass 
+             * @param {*} isbefore 
+             * @param {*} degree 
+             * @param {*} projectid 
+             */
             GeoWebGIS.addDrawInteraction = function (geomType, mode, featureId, natgef, ikclass, isbefore, degree, projectid) {
                 //remove other interactions
                 var dirty = {};
@@ -1099,6 +1130,9 @@
 
             }
 
+            /**
+             * End the interaction and clears everything
+             */
             GeoWebGIS.endDrawInteraction = function () {
                 this.isDrawing = false;
                 if (this.interactionSelect) this.interactionSelect.getFeatures().clear();
@@ -1109,6 +1143,11 @@
                 GeoWebGIS.showWFSLayer(GeoWebGIS.wfsurl);
             }
 
+            /**
+             * Save function for the new feature. Mode coud be insert, update or delete. After successful call to /MapImageProxy/GetGeoServe (Geoserver Proxy) refresh the content
+             * @param {string} mode 
+             * @param {feature} newFeature 
+             */
             GeoWebGIS.saveData = function (mode, newFeature) {
                 var self = this;
 
@@ -1122,10 +1161,9 @@
                     srsName: 'EPSG:3857'
                 });
 
-                var xs = new XMLSerializer();
-                //var newFeature = this.drawlayer.getSource().getFeatures()[0];
+                var xs = new XMLSerializer();;
                 var param = "";
-                // geoserver Arbeitsbereich
+                // geoserver Workbench
                 var workbench = "miresiliencia";
 
                 var node;
@@ -1150,8 +1188,6 @@
                     contentType: 'json',
                     data: payload,
                     success: function (data) {
-                        console.log("Datatata");
-                        console.log(data);
                         // parse data
                         if (data.length > 0) {
                             if (data[0].indexOf("Intensity.") == 0) {
@@ -1183,7 +1219,10 @@
 
             }
 
-
+            /**
+             * Checks if the project is editable. If not, show the corresponding dialog box
+             * @param {*} successhandler 
+             */
             GeoWebGIS.checkProjectState = function (successhandler) {
                 $.ajax('/Project/GetProjectState', {
                     dataType: 'json',
@@ -1246,12 +1285,12 @@
                     }
 
                 });
-
-
-
-
             }
 
+            /**
+             * Show the wfs layer by a given url. Load only the visible BBOX
+             * @param {string} wfsurl 
+             */
             GeoWebGIS.showWFSLayer = function (wfsurl) {
                 GeoWebGIS.wfsurl = wfsurl;
                 var self = this;
@@ -1265,8 +1304,6 @@
                         var proj = projection.getCode();
                         var url = GeoWebGIS.wfsurl;
                         url = url.replace("cql_filter=", "cql_filter=BBOX%28%5Bgeometry%5D," + extent.join(',') + "%29%20AND%20");
-                        //if (GeoWebGIS.wfsurl.indexOf("featureID") < 0) url = GeoWebGIS.wfsurl + '&bbox=' + extent.join(',');
-
 
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
@@ -1312,38 +1349,10 @@
                 this.map.addLayer(this.wfslayer);
             }
 
-            /*
-            GeoWebGIS.showWFSLayer = function (wfsurl2) {
-                console.log("ShowWFSLayer: "+wfsurl2);
-                GeoWebGIS.wfsurl = wfsurl2;
-
-
-                GeoWebGIS.clusterselect.getFeatures().clear();
-                this.map.removeInteraction(this.clusterselect);
-
-                //this.wfslayer.getSource().clear();
-
-                this.wfslayer.getSource().getFeatures().forEach(function (feature) {
-                    GeoWebGIS.wfslayer.getSource().removeFeature(feature);
-                });
-
-                this.map.removeLayer(this.wfslayer);
-                this.wfssource = null;
-                this.wfssource = new ol.source.Vector({
-                    format: new ol.format.GeoJSON(),
-                    url: GeoWebGIS.wfsurl + '&t=' + new Date().getTime(),
-                    strategy: ol.loadingstrategy.bbox
-                });
-                
-
-                this.wfslayer.setSource(null);
-                this.wfslayer.setSource(this.wfssource);
-                this.map.addLayer(this.wfslayer);
-
-                this.map.addInteraction(this.clusterselect);
-            }
-            */
-
+            /**
+             * Shows the layer with the given id
+             * @param {*} id 
+             */
             GeoWebGIS.showLayer = function (id) {
                 var self = this;
                 var la = getLayer(id);
@@ -1355,12 +1364,20 @@
                 GeoWebGIS.map.addLayer(la);
             }
 
+            /**
+             * Hides the layer with the given id
+             * @param {*} id 
+             */
             GeoWebGIS.hideLayer = function (id) {
                 var self = this;
                 var la = getLayer(id);
                 GeoWebGIS.map.removeLayer(getLayer(id));
             }
 
+            /**
+             * Loads the legend for all current layers into the div (for printing purposes)
+             * @param {*} legendDiv 
+             */
             GeoWebGIS.generateLegend = function (legendDiv) {
                 GeoWebGIS.legendLayers = [];
                 GeoWebGIS.map.getLayers().forEach(function (layer) {
@@ -1447,7 +1464,10 @@
 
 
 
-
+        /**
+         * Progress class for showing the layer loading progress
+         * @param {*} el 
+         */
 
         function Progress(el) {
             this.el = el;
@@ -1545,9 +1565,11 @@ var loaded = 0;
 var legend_loaded = 0;
 var legend_loading = 0;
 
-
-
-
+/**
+ * 
+ * Print functions
+ * 
+ */
 exportPNGElement.addEventListener('click', function () {
     console.log("Bin in ExportPNGElement");
 
@@ -1746,9 +1768,6 @@ exportPNGElement.addEventListener('click', function () {
         ++loading;
     };
 
-
-
-
     var tileLoadEnd = function () {
         ++loaded;
         window.setTimeout(function () {
@@ -1772,14 +1791,6 @@ exportPNGElement.addEventListener('click', function () {
     $(document).on("legendLoaded", createThePDF);
 
     function createThePDF() {
-
-
-        
-
-
-
-
-
         window.setTimeout(function () {
 
             const exportOptions = {
