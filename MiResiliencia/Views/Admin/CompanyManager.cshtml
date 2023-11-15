@@ -1,0 +1,98 @@
+﻿@model MiResiliencia.Models.CompanyManagerViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutInsideBox.cshtml";
+}
+
+
+<div class="row">
+    @if (ViewBag.TheResult != null)
+    {
+        if (ViewBag.TheResult == true)
+        {
+            <div class="alert alert-success">
+                @ViewBag.SuccessMessage
+            </div>
+        }
+        else if (ViewBag.TheResult == false)
+        {
+            <div class="alert alert-danger">
+                <strong>Error!</strong> @ViewBag.Error
+            </div>
+        }
+
+    }
+    <div class="col-xs-12">
+
+
+
+        @using (Html.BeginForm("UserManager", "Admin", FormMethod.Post, new { @id = "createNewCompanyForm", @class = "form insideTab", ic_post_to = "/Admin/CompanyManager", ic_target = "#companymanagercontent", ic_on_beforeSend = "validateCompanyForm()" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form">
+
+                        
+
+                        <div class="card" style="margin-top:20px;">
+                            <div class="card-header">
+                                <h5>@Resources.Global.New_Company</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group floating-label">
+                                    @Html.LabelFor(model => model.NewCompany.CompanyName, htmlAttributes: new { @class = "" })
+                                    @Html.EditorFor(model => model.NewCompany.CompanyName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                                </div>
+
+
+
+                    </div>
+                    <div class="card-footer" style="padding-right:20px;">
+                            <button class="btn ink-reaction btn-raised btn-danger" type="submit">@Resources.Global.Create</button>
+                        </div>
+                        </div>
+            </div>
+        }
+
+        <div class="card panel expanded">
+            <div class="card-header" data-toggle="collapse" data-parent="#newUserPanel" data-target="#newUserPanel-2">
+                <h5>@Resources.Global.Company</h5>
+
+            </div>
+            <div id="newCompanyPanel-2" class="">
+                <div class="card-body">
+                    <div class="row">
+                    <table class="table" id="companylisttable">
+                            <thead>
+                                <tr>
+                                    <th>@Resources.Global.Company</th>
+                                </tr>
+                            </thead>
+                        <tbody>
+                            @foreach (MiResiliencia.Models.Company c in Model.editableCompanies.OrderBy(m=>m.CompanyName))
+                            {
+                                <tr>
+                                    <td>
+                                        @c.CompanyName
+                                    </td>
+                                    
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div><!--end .panel -->
+        </div></div>
+
+<script type="text/javascript">
+
+            function validateCompanyForm() {
+                var f = $("#createNewCompanyForm");
+                $.validator.unobtrusive.parse(f);
+    }
+
+            
+
+</script>

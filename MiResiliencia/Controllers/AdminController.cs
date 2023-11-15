@@ -186,10 +186,10 @@ namespace MiResiliencia.Controllers
                     {
                         CompanyAdmin ca = new CompanyAdmin() { Company = c, User = newUserCreated };
                         newUserCreated.IsCompanyAdminOf.Add(ca);
-                        if (c.MySuperCompany == null)
+                        /*if (c.MySuperCompany == null)
                         {
                             await _userManager.AddToRoleAsync(newUser, "CompanyCreator");
-                        }
+                        }*/
 
 
                     }
@@ -308,6 +308,65 @@ namespace MiResiliencia.Controllers
 
         }
 
+        public async Task<IActionResult> CompanyManager()
+        {
+            CompanyManagerViewModel cmvm = new CompanyManagerViewModel();
+            cmvm.Rights = await GetMyRights();
+
+            cmvm.editableCompanies = new List<Company>();
+            foreach (Company c in cmvm.Rights.EditableCompanies.Distinct())
+            {
+                cmvm.editableCompanies.Add(c);
+            }
+
+            return View(cmvm);
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> CompanyManager(CompanyManagerViewModel p)
+        {
+            ModelState["Rights"]?.Errors.Clear();
+            ModelState["Companies"]?.Errors.Clear();
+try {
+            Company c = new Company();
+            c.CompanyName = p.NewCompany.CompanyName;
+            c.CompanyTitle = p.NewCompany.CompanyName;
+            c.LogoID = 1;
+            _context.Companies.Add(c);
+
+            var id = _userManager.GetUserId(User);
+            ApplicationUser u = await _userManager.GetUserAsync(User);
+            CompanyAdmin ca = new CompanyAdmin() {Company = c, User = u};
+            u.IsCompanyAdminOf.Add(ca);
+            _context.Entry(u).State = EntityState.Modified;
+
+            _context.SaveChanges();
+
+}
+catch (Exception ex)
+{
+                ViewBag.TheResult = false;
+                //ViewBag.Error = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
+                string error = ex.ToString();
+                if (error.Contains("already exists"))  error = "El nombre de usuario ya existe";
+                else error = "Se ha producido un error, por favor compruebe la entrada de nuevo.";
+                ViewBag.Error = error;
+
+            }
+
+            CompanyManagerViewModel cmvm = new CompanyManagerViewModel();
+            cmvm.Rights = await GetMyRights();
+
+            cmvm.editableCompanies = new List<Company>();
+            foreach (Company c in cmvm.Rights.EditableCompanies.Distinct())
+            {
+                cmvm.editableCompanies.Add(c);
+            }
+
+            return View(cmvm);
+
+        }
+
 
         private async Task<Rights> GetMyRights()
         {
@@ -323,6 +382,8 @@ namespace MiResiliencia.Controllers
             await _context.Entry(applicationUser).Collection(m => m.IsCompanyAdminOf).Query().Include(m => m.Company).ThenInclude(m => m.Projects).LoadAsync();
 
             var roles = await _userManager.GetRolesAsync(applicationUser);
+
+
 
             // SuperAdmin. Can do everything
             if (roles.Where(m => m.Contains("Admin")).Any())
@@ -345,9 +406,10 @@ namespace MiResiliencia.Controllers
             }
 
             // CompanyCreator
-            if (roles.Where(m => m.Contains("CompanyCreator")).Any())
+            if (roles.Where(m => m.Contains("CompanyCreator")).Any() || (applicationUser.UserName.ToLower() == "christoph.suter@geotest.ch" ))
             {
                 r.CanCreateCompany = true;
+                r.EditableCompanies = await _context.Companies.ToListAsync();
             }
 
             // go through all subcompanies and add them to editable Companies
