@@ -1,6 +1,6 @@
 # MiResiliencia
 
-MiResiliencia is a web application for calculating the cost-benefit factor of protective structures in natural hazard areas. It was developed in 2018 for COSUDE Bolivia by [GEOTEST AG](https://www.geotest.ch) and adapted in 2023. It runs on Linux and Windows as an ASP.NET 6.0 web application.
+MiResiliencia is a web application for calculating the cost-benefit factor of protective structures in natural hazard areas. It was developed in 2018 for COSUDE Bolivia by GEOTEST and adapted in 2023. It runs on Linux and Windows as an ASP.NET 6.0 web application.
 
 MiResiliencia is developed under the Apache licence.
 
